@@ -16,7 +16,6 @@ export function About() {
     <section id="about" className="section section--first">
       <Panel
         title={t.nav.about}
-        led="var(--mint)"
         barExtra={
           <span className="bar-langs">
             <LangSwitcher variant="bar" />
@@ -31,7 +30,6 @@ export function About() {
               <h1 className="h2">{t.hero.name}</h1>
             </div>
             <p className="hero__pron">{t.hero.pron}</p>
-            <p className="hero__roles">{t.hero.roles}</p>
             <div className="hero__ctas">
               <a
                 href="#projects"
@@ -57,21 +55,31 @@ export function About() {
           </div>
 
           <div className="hero__aside">
-            <div className="mac">
-              <div className="mac__screen">
-                <span>M1 PRO</span>
+            <div className="mac-wrap">
+              <div className="mac">
+                <div className="mac__screen">
+                  <span>M1 PRO</span>
+                </div>
+                <div className="mac__base" />
               </div>
-              <div className="mac__base" />
+
+              {/* Blob and cup perch at the laptop's bottom-left corner. */}
+              <div className="hero__mascots">
+                <Blob label={t.hero.lines[0]} bubble={line} />
+                <Icon name="coffee-cup" size={72} className="cup" />
+              </div>
             </div>
             <p className="mac__caption">{t.hero.mac}</p>
           </div>
         </div>
 
-        <div className="blobrow">
-          <Blob label={t.hero.lines[0]} />
-          <div className="bubble">{line}</div>
-          <Icon name="coffee-cup" size={72} className="cup" />
-        </div>
+        <ul className="hero__titles">
+          {t.hero.roles.map((role, i) => (
+            <li key={role} className={i === 0 ? "hero__title--current" : undefined}>
+              {role}
+            </li>
+          ))}
+        </ul>
       </Panel>
     </section>
   );

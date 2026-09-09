@@ -1,6 +1,13 @@
 "use client";
 
-import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+  type ReactNode,
+} from "react";
 import { Icon, type IconName } from "./icons";
 
 interface BlobContextValue {
@@ -26,15 +33,20 @@ export function useBlob() {
 /**
  * `variant="hero"` shows the idle sprite and winks once poked;
  * `variant="wave"` is the waving sprite the icon kit ships for the Contact box.
+ *
+ * `bubble` renders a speech bubble that only appears while the blob is hovered
+ * or keyboard-focused, so it never takes up layout space of its own.
  */
 export function Blob({
   variant = "hero",
   size = 120,
   label,
+  bubble,
 }: {
   variant?: "hero" | "wave";
   size?: number;
   label: string;
+  bubble?: ReactNode;
 }) {
   const { poke, bump } = useBlob();
 
@@ -42,8 +54,17 @@ export function Blob({
     variant === "wave" ? "blob-wave" : poke > 0 ? "blob-wink" : "blob-idle";
 
   return (
-    <button type="button" className="blob-hit" onMouseEnter={bump} onClick={bump} aria-label={label}>
-      <Icon name={sprite} size={size} className="pixel-blob" />
-    </button>
+    <div className="blob-mascot">
+      {bubble ? <div className="blob-bubble">{bubble}</div> : null}
+      <button
+        type="button"
+        className="blob-hit"
+        onMouseEnter={bump}
+        onClick={bump}
+        aria-label={label}
+      >
+        <Icon name={sprite} size={size} className="pixel-blob" />
+      </button>
+    </div>
   );
 }

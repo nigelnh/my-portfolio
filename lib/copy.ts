@@ -47,7 +47,7 @@ export interface Strings {
     hi: string;
     name: string;
     pron: string;
-    roles: string;
+    roles: string[];
     ctaA: string;
     ctaB: string;
     mac: string;
@@ -103,10 +103,15 @@ const en: Strings = {
     contact: "CONTACT",
   },
   hero: {
-    hi: "Hi there!",
+    hi: "Helo",
     name: "I'm Nhan Nguyen",
-    pron: "Pronunciation: [Nahn Nwin]",
-    roles: "Software Engineer  |  Quantitative Finance  |  CS Student",
+    pron: "Pronunciation: [Nyan N-wen]",
+    roles: [
+      "Senior at Gettysburg College",
+      "Prev. SWE Intern @KBSecuritiesVietnam",
+      "Prev. SWE Intern @FinbudAI",
+      "Prev. SWE Intern @eSmartSolutionsAgency",
+    ],
     ctaA: "VIEW PROJECTS",
     ctaB: "SAY HELLO",
     mac: "2021 14-inch MacBook Pro\nwith M1 Pro",
@@ -241,8 +246,13 @@ const vi: Strings = {
   hero: {
     hi: "Xin chào!",
     name: "Mình là Nhan Nguyen",
-    pron: "Phát âm: [Nahn Nwin]",
-    roles: "Software Engineer  |  Tài chính định lượng  |  Sinh viên CS",
+    pron: "Phát âm: [Nyan N-wen]",
+    roles: [
+      "Sinh viên năm cuối tại Gettysburg College",
+      "Cựu Thực tập sinh SWE @KBSecuritiesVietnam",
+      "Cựu Thực tập sinh SWE @FinbudAI",
+      "Cựu Thực tập sinh SWE @eSmartSolutionsAgency",
+    ],
     ctaA: "XEM DỰ ÁN",
     ctaB: "GỬI EMAIL",
     mac: "MacBook Pro 14-inch 2021\nchip M1 Pro",
@@ -380,7 +390,12 @@ const zh: Strings = {
     hi: "你好！",
     name: "我叫阮春仁",
     pron: "发音：ruăn chūn rén",
-    roles: "软件工程师  |  量化金融  |  计算机科学在读",
+    roles: [
+      "葛底斯堡学院大四在读",
+      "前软件工程实习生 @KBSecuritiesVietnam",
+      "前软件工程实习生 @FinbudAI",
+      "前软件工程实习生 @eSmartSolutionsAgency",
+    ],
     ctaA: "查看项目",
     ctaB: "写信给我",
     mac: "2021 款 14 英寸 MacBook Pro\nM1 Pro 芯片",

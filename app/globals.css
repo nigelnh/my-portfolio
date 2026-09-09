@@ -443,11 +443,42 @@ textarea:focus {
   color: var(--muted);
 }
 
-.hero__roles {
+/* The titles list sits where the blob used to, below the hero grid. */
+.hero__titles {
   margin: 0;
-  font-size: clamp(14px, 1.5vw, 17px);
-  line-height: 1.6;
+  padding: 4px 30px 34px;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.hero__titles li {
+  position: relative;
+  padding-left: 20px;
+  font-size: clamp(13px, 1.3vw, 15px);
+  line-height: 1.5;
   font-weight: 500;
+  color: var(--muted);
+}
+
+.hero__titles li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 8px;
+  height: 8px;
+  background: var(--accent-soft);
+}
+
+.hero__title--current {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.hero__title--current::before {
+  background: var(--mint);
 }
 
 .hero__ctas {
@@ -480,14 +511,22 @@ textarea:focus {
   min-width: 0;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
   gap: 14px;
+}
+
+.mac-wrap {
+  position: relative;
+  width: 100%;
+  /* Room for the mascots below the laptop. The blob is 120px tall and is
+     anchored to the bottom of this box, so it overlaps the laptop's bottom
+     edge by (120px - this padding). */
+  padding-bottom: 92px;
 }
 
 .mac {
   width: 100%;
-  max-width: 340px;
-  padding: 14px;
+  padding: 18px;
   background: var(--panel-2);
   border: 4px solid var(--ink);
   box-shadow: var(--shadow-hard);
@@ -508,13 +547,13 @@ textarea:focus {
 
 .mac__screen span {
   font-family: var(--font-display);
-  font-size: 13px;
+  font-size: clamp(13px, 1.6vw, 20px);
   color: #8fb8da;
 }
 
 .mac__base {
-  height: 8px;
-  margin-top: 6px;
+  height: 12px;
+  margin-top: 8px;
   background: var(--panel-4);
   border: 2px solid var(--ink);
 }
@@ -528,35 +567,85 @@ textarea:focus {
   white-space: pre-line;
 }
 
-.blobrow {
+.hero__mascots {
+  position: absolute;
+  left: 12px;
+  bottom: 0;
+  z-index: 2;
   display: flex;
-  flex-wrap: wrap;
   align-items: flex-end;
-  gap: 20px;
-  padding: 0 30px 34px;
-}
-
-.bubble {
-  position: relative;
-  max-width: 320px;
-  padding: 14px 16px;
-  background: var(--paper);
-  border: 4px solid var(--ink);
-  box-shadow: var(--shadow-hard);
-  font-size: 13px;
-  line-height: 1.55;
+  gap: 12px;
 }
 
 .cup {
   flex: 0 0 auto;
-  align-self: flex-end;
 }
 
 /* ---------------------------------------------------------------------------
    Blob — sprites from the Pixel Blob Icon Kit
    --------------------------------------------------------------------------- */
-.blob-hit {
+.blob-mascot {
+  position: relative;
   flex: 0 0 auto;
+}
+
+/* The speech bubble only appears on hover / keyboard focus, so it never takes
+   layout space of its own. Anchored above the blob, tail pointing down-left. */
+.blob-bubble {
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 14px);
+  z-index: 3;
+  width: max-content;
+  max-width: 240px;
+  padding: 10px 12px;
+  background: var(--paper);
+  border: 3px solid var(--ink);
+  box-shadow: 3px 3px 0 var(--ink);
+  font-size: 12.5px;
+  line-height: 1.5;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(4px);
+  transition:
+    opacity 0.12s ease,
+    transform 0.12s ease,
+    visibility 0.12s;
+}
+
+/* Bubble tail: an outline triangle with a paper-coloured one on top. */
+.blob-bubble::before,
+.blob-bubble::after {
+  content: "";
+  position: absolute;
+  left: 22px;
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+}
+
+.blob-bubble::before {
+  bottom: -11px;
+  border-top: 9px solid var(--ink);
+}
+
+.blob-bubble::after {
+  bottom: -7px;
+  left: 23px;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-top: 7px solid var(--paper);
+}
+
+.blob-mascot:hover .blob-bubble,
+.blob-mascot:focus-within .blob-bubble {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.blob-hit {
   display: block;
   padding: 0;
   border: none;
