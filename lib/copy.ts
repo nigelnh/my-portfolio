@@ -51,7 +51,22 @@ export interface Strings {
     ctaA: string;
     ctaB: string;
     mac: string;
-    lines: string[];
+    blob: {
+      label: string;
+      sound: string;
+      /** One line per blob state, plus the boba request and its answers. */
+      idle: string;
+      code: string;
+      boba: string;
+      sleep: string;
+      angry: string;
+      wave: string;
+      ask: string;
+      yes: string;
+      no: string;
+      accepted: string;
+      refused: string;
+    };
   };
   journey: {
     label: string;
@@ -115,13 +130,21 @@ const en: Strings = {
     ctaA: "VIEW PROJECTS",
     ctaB: "SAY HELLO",
     mac: "2021 14-inch MacBook Pro\nwith M1 Pro",
-    lines: [
-      "I'm the blob. Hover or click me.",
-      "Currently pricing covered warrants. Ping me.",
-      "Iced coffee keeps the pipeline running.",
-      "Gettysburg College, class of 2027.",
-      "Click again — I have plenty to say.",
-    ],
+    blob: {
+      label: "Nhan's blob mascot",
+      sound: "SOUND",
+      idle: "Hi! I'm the blob. Poke me.",
+      code: "Building the Black-Scholes pricer. Very on fire. 💻📈",
+      boba: "Slurp. Tapioca pearls incoming. 🧋",
+      sleep: "Zzz... recharging for tomorrow's quant work. 😴",
+      angry: "Hmph! Stop poking me! 💢",
+      wave: "Say hi over email or LinkedIn below! 👋",
+      ask: "Could I have a bubble tea? 🧋",
+      yes: "YES",
+      no: "NO",
+      accepted: "Yesss! Extra pearls, please. 🧋✨",
+      refused: "Hmph. I'll remember this. 💢",
+    },
   },
   journey: {
     label: "JOURNEY",
@@ -256,13 +279,21 @@ const vi: Strings = {
     ctaA: "XEM DỰ ÁN",
     ctaB: "GỬI EMAIL",
     mac: "MacBook Pro 14-inch 2021\nchip M1 Pro",
-    lines: [
-      "Mình là blob — hover hoặc click mình nhé.",
-      "Đang định giá chứng quyền. Nhắn mình nha.",
-      "Cà phê sữa đá giữ cho pipeline chạy.",
-      "Gettysburg College, khóa 2027.",
-      "Click nữa đi — mình còn nhiều câu lắm.",
-    ],
+    blob: {
+      label: "Blob của Nhan",
+      sound: "ÂM THANH",
+      idle: "Xin chào! Mình là Blob, chọc mình đi. ✨",
+      code: "Đang build mô hình định giá chứng quyền Black-Scholes cực cháy! 💻📈",
+      boba: "Hút trân châu cái rột! 🧋✨",
+      sleep: "Khò khò... Đang sạc pin để mai viết thuật toán quant tiếp... Zzz 😴",
+      angry: "Hứ! Chọc mình hoài à?! Giận tím người luôn! 💢",
+      wave: "Gửi email hoặc kết nối LinkedIn với Nhan ở dưới nhé! 👋💙",
+      ask: "Cho mình xin một ly trà sữa được không? 🧋",
+      yes: "ĐƯỢC",
+      no: "KHÔNG",
+      accepted: "Yeahhh! Cho mình thêm trân châu nha! 🧋✨",
+      refused: "Hứ. Mình nhớ đó nha. 💢",
+    },
   },
   journey: {
     label: "HÀNH TRÌNH",
@@ -399,13 +430,21 @@ const zh: Strings = {
     ctaA: "查看项目",
     ctaB: "写信给我",
     mac: "2021 款 14 英寸 MacBook Pro\nM1 Pro 芯片",
-    lines: [
-      "我是这只小水滴 — 把鼠标放上来或点我。",
-      "最近在给备兑权证定价，欢迎来聊。",
-      "越南冰咖啡让数据管道一直跑着。",
-      "葛底斯堡学院，2027 届。",
-      "再点一下 — 我还有很多话。",
-    ],
+    blob: {
+      label: "阮的小水滴",
+      sound: "声音",
+      idle: "你好！我是小水滴，戳戳我吧。✨",
+      code: "正在写 Black-Scholes 权证定价模型，火力全开！💻📈",
+      boba: "咻——珍珠上来了。🧋✨",
+      sleep: "呼呼……充电中，明天继续写量化模型。Zzz 😴",
+      angry: "哼！别老戳我啦！💢",
+      wave: "在下面用邮件或 LinkedIn 联系阮吧！👋💙",
+      ask: "可以请我喝一杯奶茶吗？🧋",
+      yes: "好",
+      no: "不行",
+      accepted: "耶！珍珠多加一点！🧋✨",
+      refused: "哼。我记住了。💢",
+    },
   },
   journey: {
     label: "求学历程",

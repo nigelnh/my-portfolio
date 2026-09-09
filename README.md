@@ -46,13 +46,18 @@ components/
   Portfolio.tsx     providers + section order
   Nav.tsx           sticky left rail (≥880px) and bottom tab bar (<880px)
   Panel.tsx         the bordered window with its coloured title bar
-  Blob.tsx          the mascot; its poke counter is shared across sections
   icons.tsx         icon registry — see below
   LangSwitcher.tsx
+  SoundToggle.tsx
+  blob/
+    sprites.tsx     the six avatar states, ported from the animation studio
+    useBlobBrain.ts the mascot's state machine — see below
+    BlobStage.tsx   the roaming blob and the static waving one
   sections/         About, Journey, Experience, Projects, Stack, Contact
 lib/
   copy.ts           all EN/VI/ZH content + language-independent metadata
   i18n.tsx          language context, persisted to localStorage
+  sfx.ts            8-bit sound synthesis (Web Audio, no assets)
   site.ts           pixel-grid and nav-label switches
   useActiveSection.ts  scroll-spy for the nav
 ```
@@ -91,6 +96,35 @@ Where each sprite is used:
 
 Nav and job icons come from `SECTIONS[].icon` and `jobsMeta[].icon` in
 `lib/copy.ts`, both typed as `IconName` so a bad name fails the build.
+
+## The blob
+
+The mascot comes from the Pixel Blue Blob Avatar & Animation Studio kit. Its six
+states live in `components/blob/sprites.tsx` (32×26 viewBox, animated inner
+elements driven by the kit's `.zzz-*`, `.pearl-anim-*` and `.smoke-*` classes in
+`globals.css`).
+
+`useBlobBrain` runs its day, and every timing sits in one `TIMING` object at the
+top of that file:
+
+| Behaviour | Trigger |
+| --- | --- |
+| Wander | Continuous — hops to a random spot along the shelf under the laptop |
+| Stop | On arrival it picks `idle`, `code` (typing) or `boba` at random, and holds for 2.6–5.2s |
+| Ask for boba | 45% of `boba` stops open a bubble with YES / NO; unanswered after 14s it moves on |
+| Sleep | 26s with no hover on the blob; any hover wakes it |
+| Sulk | 4 clicks inside 3s → `angry` for 3s |
+
+`prefers-reduced-motion: reduce` stops the wandering entirely and leaves a still
+idle blob. The Contact box uses the static `wave` sprite.
+
+## Sound
+
+`lib/sfx.ts` synthesises the kit's chiptune cues with oscillators — no audio
+files. Two gates guard it: the visitor's own toggle in the About title bar
+(**off by default**, since the blob hops every couple of seconds), and a check
+that a user gesture has happened, because browsers refuse to start an
+AudioContext before one.
 
 ## Contact form
 

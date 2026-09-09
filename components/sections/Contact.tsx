@@ -3,7 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { links } from "@/lib/copy";
 import { useLang } from "@/lib/i18n";
-import { Blob } from "../Blob";
+import { WaveBlob } from "../blob/BlobStage";
 import { Icon } from "../icons";
 import { Panel } from "../Panel";
 
@@ -142,7 +142,7 @@ export function Contact() {
             </div>
 
             <div className="contact__reply">
-              <Blob variant="wave" size={72} label={t.contact.reply} />
+              <WaveBlob size={72} label={t.contact.reply} />
               <p>{t.contact.reply}</p>
             </div>
           </div>

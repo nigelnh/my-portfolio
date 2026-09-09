@@ -1,25 +1,27 @@
 "use client";
 
 import { useLang } from "@/lib/i18n";
-import { Blob, useBlob } from "../Blob";
+import { BlobStage } from "../blob/BlobStage";
 import { Icon } from "../icons";
 import { LangSwitcher } from "../LangSwitcher";
+import { SoundToggle } from "../SoundToggle";
 import { Panel } from "../Panel";
 import { scrollToSection } from "../Nav";
 
 export function About() {
   const { t } = useLang();
-  const { poke } = useBlob();
-  const line = t.hero.lines[poke % t.hero.lines.length];
 
   return (
     <section id="about" className="section section--first">
       <Panel
         title={t.nav.about}
         barExtra={
-          <span className="bar-langs">
-            <LangSwitcher variant="bar" />
-          </span>
+          <>
+            <SoundToggle label={t.hero.blob.sound} />
+            <span className="bar-langs">
+              <LangSwitcher variant="bar" />
+            </span>
+          </>
         }
         bodyClassName=""
       >
@@ -70,12 +72,10 @@ export function About() {
                 <div className="mac__base" />
               </div>
 
-              {/* The band under the laptop: mascots on the left, spec caption on
-                  the right, so nothing below the laptop reads as dead space. */}
-              <div className="hero__mascots">
-                <Blob size={80} label={t.hero.lines[0]} bubble={line} />
-                <Icon name="coffee-cup" size={48} className="cup" />
-              </div>
+              {/* The band under the laptop: a fixed cup, the blob's roaming
+                  stage, and (on wide screens) the spec caption on the right. */}
+              <Icon name="coffee-cup" size={44} className="cup" />
+              <BlobStage />
             </div>
             <p className="mac__caption">{t.hero.mac}</p>
           </div>

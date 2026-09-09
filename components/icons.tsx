@@ -23,9 +23,6 @@ export type IconName =
   | "ai-brain-chip"
   | "split-keyboard"
   | "macbook-m1"
-  | "blob-idle"
-  | "blob-wink"
-  | "blob-wave"
   | "rocket-launch"
   | "coffee-cup"
   | "scooter-vespa"
@@ -206,53 +203,6 @@ export const ICONS: Record<IconName, Sprite> = {
       <rect x="4" y="18" width="16" height="1" fill="#122c44"/>
     </>,
   ),
-  /** Blob (Bình Thường) — Slime xanh nguyên bản như ảnh header */
-  "blob-idle": sprite(
-    <>
-      <path d="M8 3H16V5H19V8H22V17H20V20H4V17H2V8H5V5H8V3Z" fill="#122c44"/>
-      <path d="M8 4H16V6H19V9H21V16H19V19H5V16H3V9H5V6H8V4Z" fill="#58b3ea"/>
-      <path d="M5 16H19V19H5V16ZM3 14H5V16H3V14ZM19 14H21V16H19V14Z" fill="#296ea6"/>
-      <path d="M8 5H13V7H8V5ZM5 8H8V11H5V8Z" fill="#b9e7fc"/>
-      <rect x="14" y="5" width="2" height="1" fill="#ffffff"/>
-      <rect x="5" y="13" width="2" height="1" fill="#ff8da1"/>
-      <rect x="17" y="13" width="2" height="1" fill="#ff8da1"/>
-      <rect x="8" y="10" width="2" height="2" fill="#122c44"/>
-      <rect x="8" y="10" width="1" height="1" fill="#ffffff"/>
-      <rect x="14" y="10" width="2" height="2" fill="#122c44"/>
-      <rect x="14" y="10" width="1" height="1" fill="#ffffff"/>
-      <rect x="11" y="13" width="2" height="1" fill="#122c44"/>
-    </>,
-  ),
-  /** Blob (Nháy Mắt Wink) — Biểu cảm nháy mắt đáng yêu */
-  "blob-wink": sprite(
-    <>
-      <path d="M8 3H16V5H19V8H22V17H20V20H4V17H2V8H5V5H8V3Z" fill="#122c44"/>
-      <path d="M8 4H16V6H19V9H21V16H19V19H5V16H3V9H5V6H8V4Z" fill="#58b3ea"/>
-      <path d="M5 16H19V19H5V16Z" fill="#296ea6"/>
-      <path d="M8 5H13V7H8V5Z" fill="#b9e7fc"/>
-      <rect x="5" y="13" width="2" height="1" fill="#ff8da1"/>
-      <rect x="17" y="13" width="2" height="1" fill="#ff8da1"/>
-      <rect x="8" y="10" width="2" height="2" fill="#122c44"/>
-      <rect x="8" y="10" width="1" height="1" fill="#ffffff"/>
-      <path d="M14 11H17V12H14V11ZM13 10H14V11H13V10ZM17 10H18V11H17V10Z" fill="#122c44"/>
-      <path d="M11 13H13V15H11V13Z" fill="#122c44"/>
-      <rect x="11" y="14" width="2" height="1" fill="#ff8da1"/>
-    </>,
-  ),
-  /** Blob (Vẫy Tay Chào) — Blob giơ tay nhỏ chào người dùng như trong box Contact */
-  "blob-wave": sprite(
-    <>
-      <path d="M8 4H16V6H18V9H20V6H23V11H21V17H19V20H4V17H2V8H5V5H8V4Z" fill="#122c44"/>
-      <rect x="20" y="7" width="2" height="3" fill="#58b3ea"/>
-      <path d="M8 5H16V7H18V10H20V16H18V19H5V16H3V9H5V6H8V5Z" fill="#58b3ea"/>
-      <rect x="5" y="17" width="13" height="2" fill="#296ea6"/>
-      <rect x="5" y="13" width="2" height="1" fill="#ff8da1"/>
-      <rect x="15" y="13" width="2" height="1" fill="#ff8da1"/>
-      <path d="M7 11H10V10H8V11ZM13 11H16V10H14V11Z" fill="#122c44"/>
-      <rect x="10" y="13" width="3" height="2" fill="#122c44"/>
-      <rect x="11" y="14" width="1" height="1" fill="#ff8da1"/>
-    </>,
-  ),
   /** Tên Lửa (Chương Mới) — Tên lửa cất cánh đại diện Interactive Roadmap & Milestone */
   "rocket-launch": sprite(
     <>
@@ -343,9 +293,6 @@ export const ICON_META: Record<IconName, { name: string; category: string }> = {
   "ai-brain-chip": { name: "AI Brain (Finbud AI)", category: "tech" },
   "split-keyboard": { name: "Bàn Phím Split (Sofle v2.1)", category: "tech" },
   "macbook-m1": { name: "MacBook Pro M1", category: "tech" },
-  "blob-idle": { name: "Blob (Bình Thường)", category: "blob" },
-  "blob-wink": { name: "Blob (Nháy Mắt Wink)", category: "blob" },
-  "blob-wave": { name: "Blob (Vẫy Tay Chào)", category: "blob" },
   "rocket-launch": { name: "Tên Lửa (Chương Mới)", category: "items" },
   "coffee-cup": { name: "Ly Cà Phê (Coffee Cup)", category: "items" },
   "scooter-vespa": { name: "Xe Tay Ga (Vespa)", category: "items" },
