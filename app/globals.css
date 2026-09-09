@@ -443,14 +443,15 @@ textarea:focus {
   color: var(--muted);
 }
 
-/* The titles list sits where the blob used to, below the hero grid. */
+/* Titles sit in the left column under the pronunciation, so the column keeps
+   pace with the laptop on the right instead of leaving a hole. */
 .hero__titles {
   margin: 0;
-  padding: 4px 30px 34px;
+  padding: 0;
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 9px;
 }
 
 .hero__titles li {

@@ -30,6 +30,13 @@ export function About() {
               <h1 className="h2">{t.hero.name}</h1>
             </div>
             <p className="hero__pron">{t.hero.pron}</p>
+            <ul className="hero__titles">
+              {t.hero.roles.map((role, i) => (
+                <li key={role} className={i === 0 ? "hero__title--current" : undefined}>
+                  {role}
+                </li>
+              ))}
+            </ul>
             <div className="hero__ctas">
               <a
                 href="#projects"
@@ -73,13 +80,6 @@ export function About() {
           </div>
         </div>
 
-        <ul className="hero__titles">
-          {t.hero.roles.map((role, i) => (
-            <li key={role} className={i === 0 ? "hero__title--current" : undefined}>
-              {role}
-            </li>
-          ))}
-        </ul>
       </Panel>
     </section>
   );
