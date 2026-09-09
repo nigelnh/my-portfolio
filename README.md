@@ -22,7 +22,18 @@ npm run dev
 
 Then open http://localhost:3000.
 
-Other scripts: `npm run build`, `npm run start`, `npm run lint`, `npm run typecheck`.
+Other scripts: `npm run build`, `npm run start`, `npm run lint`, `npm run typecheck`,
+and `npm run verify` (typecheck + lint in one go).
+
+> **Do not run `npm run build` while `npm run dev` is running.** Both write to
+> `.next/`, so the production build replaces the chunks the dev server is still
+> serving. The dev server then fails with `Cannot find module './NNN.js'` and the
+> browser shows `__webpack_modules__[moduleId] is not a function`. Use
+> `npm run verify` for checks while dev is up. To recover:
+>
+> ```bash
+> pkill -f "next dev" && rm -rf .next && npm run dev
+> ```
 
 ## Layout
 
