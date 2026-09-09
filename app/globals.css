@@ -419,9 +419,9 @@ textarea:focus {
    --------------------------------------------------------------------------- */
 .hero {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
   gap: 32px;
-  padding: 36px 30px 30px;
+  padding: 56px 30px 16px;
 }
 
 .hero__col {
@@ -509,20 +509,22 @@ textarea:focus {
 }
 
 .hero__aside {
+  position: relative;
   min-width: 0;
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: 14px;
+  justify-content: center;
+  gap: 10px;
 }
 
 .mac-wrap {
   position: relative;
   width: 100%;
-  /* Room for the mascots below the laptop. The blob is 120px tall and is
-     anchored to the bottom of this box, so it overlaps the laptop's bottom
-     edge by (120px - this padding). */
-  padding-bottom: 92px;
+  /* The band under the laptop. Both the mascots and the spec caption are
+     anchored to its bottom, so the blob overlaps the laptop's bottom edge by
+     (blob height - this padding). */
+  padding-bottom: 40px;
 }
 
 .mac {
@@ -957,6 +959,21 @@ textarea:focus {
 }
 
 @media (min-width: 880px) {
+  /* Centre the laptop in the right half: the grid gap (32px) and the panel's
+     own padding (30px) are uneven, so nudge it over by the difference. */
+  .hero__aside {
+    padding-left: 14px;
+  }
+
+  /* Share the band under the laptop with the mascots instead of adding a row
+     of its own, which is what kept the laptop off-centre. */
+  .mac__caption {
+    position: absolute;
+    right: 4px;
+    bottom: 0;
+    text-align: right;
+  }
+
   .project {
     flex-direction: row;
   }

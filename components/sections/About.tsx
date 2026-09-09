@@ -70,10 +70,11 @@ export function About() {
                 <div className="mac__base" />
               </div>
 
-              {/* Blob and cup perch at the laptop's bottom-left corner. */}
+              {/* The band under the laptop: mascots on the left, spec caption on
+                  the right, so nothing below the laptop reads as dead space. */}
               <div className="hero__mascots">
-                <Blob label={t.hero.lines[0]} bubble={line} />
-                <Icon name="coffee-cup" size={72} className="cup" />
+                <Blob size={80} label={t.hero.lines[0]} bubble={line} />
+                <Icon name="coffee-cup" size={48} className="cup" />
               </div>
             </div>
             <p className="mac__caption">{t.hero.mac}</p>
