@@ -106,13 +106,31 @@ elements driven by the kit's `.zzz-*`, `.pearl-anim-*`, `.smoke-*` and
 is carried over from the previous revision, which is the last one that had it,
 and the Contact box still uses it.
 
-### Free roaming
+### Free roaming, screen pet, cursor chasing
 
-The blob roams in two dimensions across the whole laptop block, hopping between
-random destinations at **1.4×** speed — 28px steps, 420ms per hop, 200ms rest
-(`HOP` in `useBlobBrain.ts`; `1` and `2` are there too if you want to change
-gear). Each hop plays one `singleHop` animation, with the takeoff and landing
-sounds fired at 20% and 85% of it so they land on the squash and the stretch.
+The blob hops between random destinations in two dimensions at **1.4×** speed —
+28px steps, 420ms per hop, 200ms rest (`HOP` in `useBlobBrain.ts`; `1` and `2`
+are there too if you want to change gear). Each hop plays one `singleHop`
+animation, with the takeoff and landing sounds fired at 20% and 85% of it so
+they land on the squash and the stretch.
+
+Its arena is whatever the stage measures, in pixels:
+
+- **Screen pet (default)** — the stage is `position: fixed` over the whole
+  viewport, so the blob roams the entire page. It is click-through everywhere
+  except the blob itself, and on narrow screens the arena stops 60px short of
+  the bottom so it never sits on the tab bar.
+- **Contained** — the stage is the laptop block, as before.
+
+The **PET** button in the About title bar switches between them and remembers
+the choice in `localStorage`.
+
+With a fine pointer in screen-pet mode the blob chases the cursor: it hops
+toward it while the pointer has moved in the last 2.5s, rests once it is within
+28px, and goes back to free wandering when the pointer sits still. Rules 1–3
+still interrupt the chase, so it will break off to sleep, drink or code — only
+the idle/wander shuffle (rule 4) is suspended while chasing. Touch devices have
+no cursor to follow, so they just wander.
 
 ### State rules
 

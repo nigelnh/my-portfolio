@@ -1,7 +1,7 @@
 "use client";
 
 import { useLang } from "@/lib/i18n";
-import { BlobStage } from "../blob/BlobStage";
+import { BlobStage, usePetMode } from "../blob/BlobStage";
 import { Icon } from "../icons";
 import { LangSwitcher } from "../LangSwitcher";
 import { SoundToggle } from "../SoundToggle";
@@ -10,6 +10,7 @@ import { scrollToSection } from "../Nav";
 
 export function About() {
   const { t } = useLang();
+  const { pet, toggle: togglePet } = usePetMode();
 
   return (
     <section id="about" className="section section--first">
@@ -17,6 +18,15 @@ export function About() {
         title={t.nav.about}
         barExtra={
           <>
+            <button
+              type="button"
+              className="sound-toggle"
+              aria-pressed={pet}
+              onClick={togglePet}
+            >
+              <span aria-hidden="true">{pet ? "◈" : "◇"}</span>
+              <span>{t.hero.blob.pet}</span>
+            </button>
             <SoundToggle label={t.hero.blob.sound} />
             <span className="bar-langs">
               <LangSwitcher variant="bar" />
@@ -75,7 +85,7 @@ export function About() {
               {/* The band under the laptop: a fixed cup, the blob's roaming
                   stage, and (on wide screens) the spec caption on the right. */}
               <Icon name="coffee-cup" size={44} className="cup" />
-              <BlobStage />
+              <BlobStage pet={pet} />
             </div>
             <p className="mac__caption">{t.hero.mac}</p>
           </div>

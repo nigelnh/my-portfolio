@@ -8,8 +8,12 @@ import type { BlobState } from "./sprites";
  * The blob's Tamagotchi brain, transcribed from the animation studio kit.
  *
  * Four vitals drift every second and decide what the blob does next. The rules
- * are checked in priority order, and each one takes an "action lock" so the
- * blob finishes what it started before the next decision.
+ * are checked in priority order, and each takes an "action lock" so the blob
+ * finishes what it started before the next decision.
+ *
+ * Positions are pixels inside whatever arena the caller measures — the laptop
+ * block normally, the whole viewport in screen-pet mode — so the kit's step
+ * distances carry over unchanged.
  */
 
 /** Hop shape at each speed. The site runs at 1.4x. */
@@ -24,20 +28,20 @@ export const HOP_PARAMS = HOP[SPEED];
 
 export const RULES = {
   tickMs: 1000,
-  /** Rule 1 — out of energy. */
+  /** Rule 1 - out of energy. */
   sleepAtEnergy: 15,
   sleepLockMs: 9000,
   wakeAtEnergy: 95,
   wakeLockMs: 3000,
   wanderAfterWakeMs: 1500,
-  /** Rule 2 — craving boba. */
+  /** Rule 2 - craving boba. */
   bobaAtNeed: 80,
   bobaLockMs: 6500,
-  /** Rule 3 — itching to code. */
+  /** Rule 3 - itching to code. */
   codeAtUrge: 80,
   codeNeedsEnergy: 35,
   codeLockMs: 7000,
-  /** Rule 4 — chill wander. */
+  /** Rule 4 - chill wander. */
   restLockMs: 3500,
   startWanderChance: 0.65,
   startWanderLockMs: 5000,
@@ -49,6 +53,13 @@ export const RULES = {
   rageLockMs: 4500,
   /** Boba request (kept from the earlier brief; the kit itself just drinks). */
   askTimeoutMs: 14_000,
+  /** Cursor chasing. */
+  pointerIdleMs: 2500,
+  /** Close enough to the cursor to stop hopping, per the kit. */
+  catchDistPx: 28,
+  /** The kit aims this far up-left of the pointer so the blob's face lands on it. */
+  pointerOffsetPx: 45,
+  edgePad: 8,
 } as const;
 
 export interface Vitals {
@@ -60,14 +71,36 @@ export interface Vitals {
 
 const START: Vitals = { energy: 85, bobaNeed: 25, codeUrge: 40, anger: 0 };
 
-const clamp = (v: number, lo = 0, hi = 100) => Math.max(lo, Math.min(hi, v));
+const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
+const clamp100 = (v: number) => clamp(v, 0, 100);
 
-export type MoveMode = "idle" | "wander";
+export type MoveMode = "idle" | "wander" | "follow";
+
+export interface Arena {
+  w: number;
+  h: number;
+}
+
+export interface Pointer {
+  x: number;
+  y: number;
+  at: number;
+}
+
+export interface BlobBrainOptions {
+  enabled: boolean;
+  /** Live arena size; read on every hop so a resize is picked up. */
+  arena: React.RefObject<Arena>;
+  /** Live pointer position in arena coordinates, or null when unavailable. */
+  pointer: React.RefObject<Pointer | null>;
+  /** Whether the blob is allowed to chase the cursor. */
+  chase: boolean;
+}
 
 export interface BlobBrain {
   state: BlobState;
   moveMode: MoveMode;
-  /** Position within the arena, as 0-1 fractions of its width/height. */
+  /** Position in arena pixels. */
   x: number;
   y: number;
   facingLeft: boolean;
@@ -79,16 +112,23 @@ export interface BlobBrain {
   answerBoba: (yes: boolean) => void;
   onPoke: () => "poke" | "rage" | "woken";
   onHover: () => void;
+  /** Drop the blob at a spot in arena pixels (used when the arena changes). */
+  placeAt: (x: number, y: number) => void;
+  /** True the first time the blob reaches the cursor after a chase. */
+  caughtAt: number;
 }
 
-export function useBlobBrain(enabled: boolean): BlobBrain {
+export const BLOB_SIZE = { w: 72, h: 59 };
+
+export function useBlobBrain({ enabled, arena, pointer, chase }: BlobBrainOptions): BlobBrain {
   const [state, setState] = useState<BlobState>("idle");
   const [moveMode, setMoveMode] = useState<MoveMode>("idle");
-  const [pos, setPos] = useState({ x: 0.12, y: 0.72 });
+  const [pos, setPos] = useState({ x: 40, y: 200 });
   const [facingLeft, setFacingLeft] = useState(false);
   const [hop, setHop] = useState({ id: 0, active: false });
   const [asking, setAsking] = useState(false);
   const [vitals, setVitals] = useState<Vitals>(START);
+  const [caughtAt, setCaughtAt] = useState(0);
 
   // Mirrors of the reactive values the loops read, so neither loop has to be
   // rebuilt when they change.
@@ -97,12 +137,16 @@ export function useBlobBrain(enabled: boolean): BlobBrain {
   const modeRef = useRef<MoveMode>("idle");
   const posRef = useRef(pos);
   const askingRef = useRef(false);
+  const chaseRef = useRef(chase);
   const lockUntil = useRef(0);
   const pokes = useRef<number[]>([]);
   const dest = useRef<{ x: number; y: number } | null>(null);
+  const wasChasing = useRef(false);
   const askTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hopTimers = useRef<ReturnType<typeof setTimeout>[]>([]);
   const wanderTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  chaseRef.current = chase;
 
   const setBlobState = useCallback((next: BlobState) => {
     stateRef.current = next;
@@ -126,58 +170,114 @@ export function useBlobBrain(enabled: boolean): BlobBrain {
     wanderTimer.current = null;
   }, []);
 
+  const bounds = useCallback(() => {
+    const { w, h } = arena.current;
+    const pad = RULES.edgePad;
+    return {
+      minX: pad,
+      maxX: Math.max(pad, w - BLOB_SIZE.w - pad),
+      minY: pad,
+      maxY: Math.max(pad, h - BLOB_SIZE.h - pad),
+    };
+  }, [arena]);
+
+  const placeAt = useCallback(
+    (x: number, y: number) => {
+      const b = bounds();
+      const next = { x: clamp(x, b.minX, b.maxX), y: clamp(y, b.minY, b.maxY) };
+      posRef.current = next;
+      setPos(next);
+      dest.current = null;
+    },
+    [bounds],
+  );
+
   /* ---------------------------------------------------------------- wander */
 
   const pickDestination = useCallback(() => {
-    dest.current = { x: 0.04 + Math.random() * 0.92, y: 0.06 + Math.random() * 0.88 };
-  }, []);
+    const b = bounds();
+    dest.current = {
+      x: b.minX + Math.random() * (b.maxX - b.minX),
+      y: b.minY + Math.random() * (b.maxY - b.minY),
+    };
+  }, [bounds]);
+
+  /** The cursor when it is fresh and chasing is on, otherwise the wander goal. */
+  const currentTarget = useCallback(() => {
+    const p = pointer.current;
+    if (chaseRef.current && p && Date.now() - p.at < RULES.pointerIdleMs) {
+      return {
+        x: p.x - RULES.pointerOffsetPx,
+        y: p.y - RULES.pointerOffsetPx,
+        chasing: true,
+      };
+    }
+    if (!dest.current) pickDestination();
+    return { ...dest.current!, chasing: false };
+  }, [pickDestination, pointer]);
 
   /**
-   * One hop toward the destination, with the takeoff and landing sounds fired
-   * at 20% and 85% of the jump so they line up with the squash and stretch.
+   * One hop toward the target, with the takeoff and landing sounds fired at 20%
+   * and 85% of the jump so they line up with the squash and the stretch.
    */
   const stepHop = useCallback(() => {
-    if (modeRef.current !== "wander") return;
-    if (!dest.current) pickDestination();
-    const target = dest.current;
-    if (!target) return;
+    if (modeRef.current === "idle") return;
 
-    const dx = target.x - posRef.current.x;
-    const dy = target.y - posRef.current.y;
+    const target = currentTarget();
+    setMode(target.chasing ? "follow" : "wander");
+
+    const b = bounds();
+    const tx = clamp(target.x, b.minX, b.maxX);
+    const ty = clamp(target.y, b.minY, b.maxY);
+    const dx = tx - posRef.current.x;
+    const dy = ty - posRef.current.y;
     const dist = Math.hypot(dx, dy);
 
-    if (dist < 0.05) {
+    if (Math.abs(dx) > 8) setFacingLeft(dx < 0);
+
+    if (target.chasing) {
+      // Caught up: idle next to the cursor and poll for it to move again.
+      if (dist <= RULES.catchDistPx) {
+        setHop((h) => ({ id: h.id, active: false }));
+        if (wasChasing.current) {
+          wasChasing.current = false;
+          if (Math.random() < 0.25) setCaughtAt(Date.now());
+        }
+        wanderTimer.current = setTimeout(stepHop, 120);
+        return;
+      }
+      wasChasing.current = true;
+    } else if (dist < RULES.catchDistPx) {
       // Arrived: stand and look around before choosing somewhere new.
       setHop((h) => ({ id: h.id, active: false }));
       const pause = Math.round((1000 + Math.random() * 1200) / Number(SPEED));
       wanderTimer.current = setTimeout(() => {
-        if (modeRef.current !== "wander") return;
         pickDestination();
         stepHop();
       }, pause);
       return;
     }
 
-    // stepDist is in the kit's pixels; ARENA_SPAN converts it to a fraction of
-    // a typical arena so the 1x / 1.4x / 2x feel carries over.
-    const ARENA_SPAN = 340;
-    const ratio = Math.min(1, HOP_PARAMS.stepDist / ARENA_SPAN / dist);
-    const next = { x: posRef.current.x + dx * ratio, y: posRef.current.y + dy * ratio };
+    const hopDist = Math.min(dist, HOP_PARAMS.stepDist);
+    const ratio = hopDist / dist;
+    const next = {
+      x: clamp(posRef.current.x + dx * ratio, b.minX, b.maxX),
+      y: clamp(posRef.current.y + dy * ratio, b.minY, b.maxY),
+    };
     posRef.current = next;
     setPos(next);
-    if (Math.abs(dx) > 0.008) setFacingLeft(dx < 0);
     setHop((h) => ({ id: h.id + 1, active: true }));
 
     hopTimers.current = [
       setTimeout(
         () => {
-          if (modeRef.current === "wander") playSfx("hopTakeoff", 0.7);
+          if (modeRef.current !== "idle") playSfx("hopTakeoff", 0.7);
         },
         Math.round(HOP_PARAMS.duration * 0.2),
       ),
       setTimeout(
         () => {
-          if (modeRef.current === "wander") playSfx("hopLand", 0.7);
+          if (modeRef.current !== "idle") playSfx("hopLand", 0.7);
         },
         Math.round(HOP_PARAMS.duration * 0.85),
       ),
@@ -186,10 +286,8 @@ export function useBlobBrain(enabled: boolean): BlobBrain {
       }, HOP_PARAMS.duration),
     ];
 
-    wanderTimer.current = setTimeout(() => {
-      if (modeRef.current === "wander") stepHop();
-    }, HOP_PARAMS.duration + HOP_PARAMS.rest);
-  }, [pickDestination]);
+    wanderTimer.current = setTimeout(stepHop, HOP_PARAMS.duration + HOP_PARAMS.rest);
+  }, [bounds, currentTarget, pickDestination, setMode]);
 
   const startWander = useCallback(() => {
     clearHopTimers();
@@ -201,6 +299,7 @@ export function useBlobBrain(enabled: boolean): BlobBrain {
   const stopWander = useCallback(() => {
     clearHopTimers();
     setMode("idle");
+    wasChasing.current = false;
     setHop((h) => ({ id: h.id, active: false }));
   }, [clearHopTimers, setMode]);
 
@@ -242,22 +341,22 @@ export function useBlobBrain(enabled: boolean): BlobBrain {
 
     // Vitals drift, at the kit's per-state rates.
     if (s === "sleep") {
-      v.energy = clamp(v.energy + 8);
-      v.bobaNeed = clamp(v.bobaNeed + 0.5);
+      v.energy = clamp100(v.energy + 8);
+      v.bobaNeed = clamp100(v.bobaNeed + 0.5);
       v.anger = 0;
     } else if (s === "boba") {
-      v.bobaNeed = clamp(v.bobaNeed - 18);
-      v.energy = clamp(v.energy + 2);
+      v.bobaNeed = clamp100(v.bobaNeed - 18);
+      v.energy = clamp100(v.energy + 2);
     } else if (s === "code") {
-      v.codeUrge = clamp(v.codeUrge - 12);
-      v.energy = clamp(v.energy - 2);
-      v.bobaNeed = clamp(v.bobaNeed + 2);
+      v.codeUrge = clamp100(v.codeUrge - 12);
+      v.energy = clamp100(v.energy - 2);
+      v.bobaNeed = clamp100(v.bobaNeed + 2);
     } else {
-      v.energy = clamp(v.energy - (modeRef.current === "wander" ? 2.5 : 1));
-      v.bobaNeed = clamp(v.bobaNeed + 2.2);
-      v.codeUrge = clamp(v.codeUrge + 1.8);
+      v.energy = clamp100(v.energy - (modeRef.current === "idle" ? 1 : 2.5));
+      v.bobaNeed = clamp100(v.bobaNeed + 2.2);
+      v.codeUrge = clamp100(v.codeUrge + 1.8);
     }
-    if (v.anger > 0 && s !== "angry") v.anger = clamp(v.anger - 15);
+    if (v.anger > 0 && s !== "angry") v.anger = clamp100(v.anger - 15);
     setVitals({ ...v });
 
     if (askingRef.current || now < lockUntil.current) return;
@@ -275,7 +374,7 @@ export function useBlobBrain(enabled: boolean): BlobBrain {
         setBlobState("idle");
         lockUntil.current = now + RULES.wakeLockMs;
         setTimeout(() => {
-          if (stateRef.current === "idle" && modeRef.current !== "wander") startWander();
+          if (stateRef.current === "idle" && modeRef.current === "idle") startWander();
         }, RULES.wanderAfterWakeMs);
       }
       return;
@@ -290,7 +389,7 @@ export function useBlobBrain(enabled: boolean): BlobBrain {
       askTimer.current = setTimeout(() => {
         setAsk(false);
         // Nobody answered, so it settles for a sip rather than staying stuck.
-        vitalsRef.current.bobaNeed = clamp(vitalsRef.current.bobaNeed - 25);
+        vitalsRef.current.bobaNeed = clamp100(vitalsRef.current.bobaNeed - 25);
         lockUntil.current = Date.now() + 500;
       }, RULES.askTimeoutMs);
       return;
@@ -311,11 +410,14 @@ export function useBlobBrain(enabled: boolean): BlobBrain {
     }
 
     // Rule 4 - nothing urgent: drift between standing around and wandering.
+    // Skipped while chasing the cursor, which the visitor is driving.
     if (s !== "idle") {
       setBlobState("idle");
       lockUntil.current = now + RULES.restLockMs;
       return;
     }
+    if (modeRef.current === "follow") return;
+
     if (modeRef.current === "idle" && Math.random() < RULES.startWanderChance) {
       startWander();
       lockUntil.current = now + RULES.startWanderLockMs;
@@ -357,8 +459,8 @@ export function useBlobBrain(enabled: boolean): BlobBrain {
 
     // A friendly poke perks the blob up and gives it ideas.
     playSfx("squish", 0.9);
-    v.energy = clamp(v.energy + 4);
-    v.codeUrge = clamp(v.codeUrge + 6);
+    v.energy = clamp100(v.energy + 4);
+    v.codeUrge = clamp100(v.codeUrge + 6);
     setVitals({ ...v });
     return "poke";
   }, [setBlobState, stopWander]);
@@ -385,6 +487,22 @@ export function useBlobBrain(enabled: boolean): BlobBrain {
     };
   }, [clearAsk, clearHopTimers, enabled, runCycle, setBlobState, setMode]);
 
+  // A fresh cursor should pull the blob out of standing still.
+  useEffect(() => {
+    if (!enabled || !chase) return;
+    const id = setInterval(() => {
+      if (modeRef.current !== "idle") return;
+      if (askingRef.current || Date.now() < lockUntil.current) return;
+      const p = pointer.current;
+      if (p && Date.now() - p.at < RULES.pointerIdleMs) {
+        clearHopTimers();
+        setMode("follow");
+        stepHop();
+      }
+    }, 300);
+    return () => clearInterval(id);
+  }, [chase, clearHopTimers, enabled, pointer, setMode, stepHop]);
+
   return {
     state,
     moveMode,
@@ -398,5 +516,7 @@ export function useBlobBrain(enabled: boolean): BlobBrain {
     answerBoba,
     onPoke,
     onHover,
+    placeAt,
+    caughtAt,
   };
 }
