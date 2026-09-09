@@ -4,6 +4,7 @@ import { useState, type FormEvent } from "react";
 import { links } from "@/lib/copy";
 import { useLang } from "@/lib/i18n";
 import { Blob } from "../Blob";
+import { Icon } from "../icons";
 import { Panel } from "../Panel";
 
 const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
@@ -126,7 +127,10 @@ export function Contact() {
 
           <div className="contact__aside">
             <div className="contact__links">
-              <h3 className="label">{t.contact.elsewhere}</h3>
+              <h3 className="label label--icon">
+                <Icon name="pixel-star" size={24} />
+                {t.contact.elsewhere}
+              </h3>
               <div className="contact__links-list">
                 {links.map((l) => (
                   <a key={l.label} href={l.href}>
@@ -138,7 +142,7 @@ export function Contact() {
             </div>
 
             <div className="contact__reply">
-              <Blob mini label={t.contact.reply} />
+              <Blob variant="wave" size={72} label={t.contact.reply} />
               <p>{t.contact.reply}</p>
             </div>
           </div>

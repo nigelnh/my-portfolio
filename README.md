@@ -50,11 +50,36 @@ lib/
 
 Every icon renders through `<Icon name="..." />`, which looks the name up in the
 `ICONS` registry in `components/icons.tsx`. Swapping in a new icon set means
-editing that one file — no call sites change. Icons are 16×16 inline SVG using
-`currentColor` and `shapeRendering="crispEdges"` to stay pixel-crisp.
+editing that one file — no call sites change.
 
-Names in use: `circle`, `triangle`, `square`, `grid`, `diamond`, `dot`
-(assigned in `lib/copy.ts` via `SECTIONS[].icon` and `jobsMeta[].icon`).
+The current set is the **Pixel Blob Icon Kit** (16 sprites, ported verbatim from
+`pixel_blob_icon_kit_interactive_showcase.html`). Unlike a monochrome icon font
+these are full-colour 24×24 sprites: the fills are part of the artwork, so they
+do *not* follow `currentColor`. Keep rendered sizes on integer multiples of 24
+(24 / 48 / 72) so the pixel grid lands on whole device pixels.
+
+Where each sprite is used:
+
+| Sprite | Placement |
+| --- | --- |
+| `graduation-cap` | nav — About |
+| `school-building` | nav — Journey |
+| `split-keyboard` | nav — Work |
+| `retro-monitor` | nav — Projects |
+| `pixel-envelope` | nav — Contact |
+| `ai-brain-chip` | job — Finbud AI |
+| `rocket-launch` | job — eSmart Solutions Agency |
+| `scooter-vespa` | job — FPT IS |
+| `bull-finance` | job — KB Securities |
+| `blob-idle` / `blob-wink` | hero mascot, before / after a poke |
+| `blob-wave` | Contact reply box |
+| `coffee-cup` | beside the hero mascot |
+| `diploma-scroll` | Journey — MILESTONES heading |
+| `macbook-m1` | Stack — SETUP card |
+| `pixel-star` | Contact — ELSEWHERE heading |
+
+Nav and job icons come from `SECTIONS[].icon` and `jobsMeta[].icon` in
+`lib/copy.ts`, both typed as `IconName` so a bad name fails the build.
 
 ## Contact form
 

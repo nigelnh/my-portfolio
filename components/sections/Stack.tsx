@@ -2,6 +2,7 @@
 
 import { skillTags } from "@/lib/copy";
 import { useLang } from "@/lib/i18n";
+import { Icon } from "../icons";
 import { Panel } from "../Panel";
 
 export function Stack() {
@@ -30,7 +31,10 @@ export function Stack() {
             </div>
           ))}
           <div className="stack__card">
-            <h3 className="label">{t.skills.setup}</h3>
+            <h3 className="label label--icon">
+              <Icon name="macbook-m1" size={24} />
+              {t.skills.setup}
+            </h3>
             <p className="stack__setup">{t.skills.setupText}</p>
           </div>
         </div>

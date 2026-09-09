@@ -1,3 +1,5 @@
+import type { IconName } from "@/components/icons";
+
 /**
  * Site content, mirrored from the Claude Design source (`copy.js`).
  *
@@ -506,7 +508,7 @@ export const jobsMeta = [
     id: "finbud",
     name: "Finbud AI",
     place: "Chicago, IL",
-    icon: "circle",
+    icon: "ai-brain-chip",
     term: "2025",
     stack: ["PYTHON", "KAFKA", "REDIS", "NEXT.JS"],
   },
@@ -514,7 +516,7 @@ export const jobsMeta = [
     id: "esmart",
     name: "eSmart Solutions Agency",
     place: "Saint Paul, MN",
-    icon: "square",
+    icon: "rocket-launch",
     term: "2024–2025",
     stack: ["TYPESCRIPT", "REACT", "POSTGRES", "N8N"],
   },
@@ -522,7 +524,7 @@ export const jobsMeta = [
     id: "fptis",
     name: "FPT IS",
     place: "Ho Chi Minh City",
-    icon: "triangle",
+    icon: "scooter-vespa",
     term: "2024",
     stack: ["JAVA", "SPRING", "ORACLE", "DOCKER"],
   },
@@ -530,11 +532,18 @@ export const jobsMeta = [
     id: "kb",
     name: "KB Securities",
     place: "Ho Chi Minh City",
-    icon: "diamond",
+    icon: "bull-finance",
     term: "2025–2026",
     stack: ["BLACK-SCHOLES", "GREEKS", "PANDAS", "NUMPY"],
   },
-] as const;
+] as const satisfies readonly {
+  id: string;
+  name: string;
+  place: string;
+  icon: IconName;
+  term: string;
+  stack: readonly string[];
+}[];
 
 export type JobId = (typeof jobsMeta)[number]["id"];
 
@@ -559,11 +568,11 @@ export const links = [
 export const SECTIONS: {
   id: SectionId;
   navKey: keyof Strings["nav"];
-  icon: string;
+  icon: IconName;
 }[] = [
-  { id: "about", navKey: "about", icon: "circle" },
-  { id: "journey", navKey: "journey", icon: "triangle" },
-  { id: "experience", navKey: "work", icon: "square" },
-  { id: "projects", navKey: "projects", icon: "grid" },
-  { id: "contact", navKey: "contact", icon: "diamond" },
+  { id: "about", navKey: "about", icon: "graduation-cap" },
+  { id: "journey", navKey: "journey", icon: "school-building" },
+  { id: "experience", navKey: "work", icon: "split-keyboard" },
+  { id: "projects", navKey: "projects", icon: "retro-monitor" },
+  { id: "contact", navKey: "contact", icon: "pixel-envelope" },
 ];

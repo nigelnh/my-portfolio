@@ -64,6 +64,10 @@ a:hover {
   border-bottom-color: var(--accent-deep);
 }
 
+svg {
+  shape-rendering: crispEdges;
+}
+
 ::selection {
   background: var(--accent);
   color: var(--panel);
@@ -86,24 +90,16 @@ textarea:focus {
   outline-offset: 2px;
 }
 
-@keyframes blobIdle {
+@keyframes blobSquishBreathe {
   0%,
   100% {
-    transform: translateY(0) scaleY(1);
+    transform: scale(1, 1);
   }
-  50% {
-    transform: translateY(-6px) scaleY(0.96);
+  35% {
+    transform: scale(1.05, 0.95) translateY(2px);
   }
-}
-
-@keyframes blink {
-  0%,
-  92%,
-  100% {
-    transform: scaleY(1);
-  }
-  96% {
-    transform: scaleY(0.1);
+  70% {
+    transform: scale(0.96, 1.04) translateY(-3px);
   }
 }
 
@@ -391,6 +387,12 @@ textarea:focus {
   color: var(--accent);
 }
 
+.label--icon {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .muted {
   margin: 0;
   font-size: 12.5px;
@@ -546,136 +548,38 @@ textarea:focus {
 }
 
 .cup {
-  width: 36px;
-  height: 48px;
-  background: #e8e2d6;
-  border: 3px solid var(--ink);
-  box-shadow: 3px 3px 0 var(--ink);
-  position: relative;
-}
-
-.cup::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  height: 9px;
-  background: #a8674a;
-  border-bottom: 3px solid var(--ink);
+  flex: 0 0 auto;
+  align-self: flex-end;
 }
 
 /* ---------------------------------------------------------------------------
-   Blob
+   Blob — sprites from the Pixel Blob Icon Kit
    --------------------------------------------------------------------------- */
 .blob-hit {
   flex: 0 0 auto;
-  cursor: pointer;
+  display: block;
   padding: 0;
   border: none;
   background: none;
-  animation: blobIdle 3.4s ease-in-out infinite;
+  line-height: 0;
+  cursor: pointer;
+  animation: blobSquishBreathe 3s ease-in-out infinite;
+  transform-origin: bottom center;
 }
 
-.blob {
-  position: relative;
-  background: radial-gradient(circle at 34% 28%, #bfe4f7 0%, #7cc0e8 46%, #4f9ed4 100%);
-  border: 4px solid var(--ink-deep);
-  clip-path: polygon(
-    24% 0,
-    76% 0,
-    88% 10%,
-    100% 30%,
-    100% 78%,
-    88% 92%,
-    66% 100%,
-    34% 100%,
-    12% 92%,
-    0 78%,
-    0 30%,
-    12% 10%
-  );
-  width: 120px;
-  height: 104px;
-  transition: transform 0.12s steps(2, end);
+/* The kit's recommended squish, applied to the sprite so it composes with the
+   breathing animation on the button. */
+.pixel-blob {
+  image-rendering: pixelated;
+  transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.blob--poked {
-  transform: scale(1.06, 0.9);
+.blob-hit:hover .pixel-blob {
+  transform: scale(1.1, 0.9) translateY(-2px);
 }
 
-.blob--mini {
-  width: 74px;
-  height: 66px;
-  border-width: 3px;
-}
-
-.blob__eye {
-  position: absolute;
-  top: 38%;
-  width: 12%;
-  height: 16%;
-  background: var(--ink-deep);
-  animation: blink 5s steps(1, end) infinite;
-}
-
-.blob__eye--l {
-  left: 22%;
-}
-
-.blob__eye--r {
-  right: 22%;
-}
-
-.blob__cheek {
-  position: absolute;
-  top: 58%;
-  width: 14%;
-  height: 7%;
-  background: rgba(93, 164, 214, 0.55);
-}
-
-.blob__cheek--l {
-  left: 16%;
-}
-
-.blob__cheek--r {
-  right: 16%;
-}
-
-.blob__mouth {
-  position: absolute;
-  left: 44%;
-  top: 56%;
-  width: 12%;
-  height: 6%;
-  background: var(--ink-deep);
-}
-
-.blob__shine {
-  position: absolute;
-  left: 26%;
-  top: 20%;
-  width: 16%;
-  height: 10%;
-  background: rgba(255, 255, 255, 0.7);
-}
-
-.blob--mini .blob__eye {
-  top: 40%;
-  animation: none;
-}
-
-.blob--mini .blob__eye--l {
-  left: 24%;
-}
-
-.blob--mini .blob__eye--r {
-  right: 24%;
-}
-
-.blob--mini .blob__mouth {
-  top: 58%;
+.blob-hit:active .pixel-blob {
+  transform: scale(0.85, 1.25) translateY(4px);
 }
 
 /* ---------------------------------------------------------------------------

@@ -48,7 +48,7 @@ export function Experience() {
                   <span className="work__item-name">{m.name}</span>
                   <span className="work__item-place">{m.place}</span>
                 </span>
-                <Icon name={m.icon} size={16} />
+                <Icon name={m.icon} size={24} />
               </button>
             ))}
           </div>

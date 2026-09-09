@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
+import { Icon, type IconName } from "./icons";
 
 interface BlobContextValue {
   poke: number;
@@ -22,37 +23,27 @@ export function useBlob() {
   return useContext(BlobContext);
 }
 
-export function Blob({ mini = false, label }: { mini?: boolean; label: string }) {
+/**
+ * `variant="hero"` shows the idle sprite and winks once poked;
+ * `variant="wave"` is the waving sprite the icon kit ships for the Contact box.
+ */
+export function Blob({
+  variant = "hero",
+  size = 120,
+  label,
+}: {
+  variant?: "hero" | "wave";
+  size?: number;
+  label: string;
+}) {
   const { poke, bump } = useBlob();
 
+  const sprite: IconName =
+    variant === "wave" ? "blob-wave" : poke > 0 ? "blob-wink" : "blob-idle";
+
   return (
-    <button
-      type="button"
-      className="blob-hit"
-      onMouseEnter={bump}
-      onClick={bump}
-      aria-label={label}
-    >
-      <div
-        className={[
-          "blob",
-          mini ? "blob--mini" : "",
-          !mini && poke > 0 ? "blob--poked" : "",
-        ]
-          .filter(Boolean)
-          .join(" ")}
-      >
-        <div className="blob__eye blob__eye--l" />
-        <div className="blob__eye blob__eye--r" />
-        {!mini && (
-          <>
-            <div className="blob__cheek blob__cheek--l" />
-            <div className="blob__cheek blob__cheek--r" />
-          </>
-        )}
-        <div className="blob__mouth" />
-        {!mini && <div className="blob__shine" />}
-      </div>
+    <button type="button" className="blob-hit" onMouseEnter={bump} onClick={bump} aria-label={label}>
+      <Icon name={sprite} size={size} className="pixel-blob" />
     </button>
   );
 }

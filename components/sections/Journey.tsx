@@ -1,6 +1,7 @@
 "use client";
 
 import { useLang } from "@/lib/i18n";
+import { Icon } from "../icons";
 import { Panel } from "../Panel";
 
 export function Journey() {
@@ -25,7 +26,10 @@ export function Journey() {
           </div>
 
           <div className="milestones">
-            <h3 className="label">{t.journey.milestones}</h3>
+            <h3 className="label label--icon">
+              <Icon name="diploma-scroll" size={24} />
+              {t.journey.milestones}
+            </h3>
             <div className="milestones__grid">
               {t.journey.ms.map((m) => (
                 <div key={m.year} className="milestone">

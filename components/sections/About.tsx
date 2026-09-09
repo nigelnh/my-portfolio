@@ -2,6 +2,7 @@
 
 import { useLang } from "@/lib/i18n";
 import { Blob, useBlob } from "../Blob";
+import { Icon } from "../icons";
 import { LangSwitcher } from "../LangSwitcher";
 import { Panel } from "../Panel";
 import { scrollToSection } from "../Nav";
@@ -69,7 +70,7 @@ export function About() {
         <div className="blobrow">
           <Blob label={t.hero.lines[0]} />
           <div className="bubble">{line}</div>
-          <div className="cup" aria-hidden="true" />
+          <Icon name="coffee-cup" size={72} className="cup" />
         </div>
       </Panel>
     </section>

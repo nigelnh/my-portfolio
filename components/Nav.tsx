@@ -40,7 +40,7 @@ export function SideRail({ showLabels = true }: { showLabels?: boolean }) {
             scrollToSection(item.id);
           }}
         >
-          <Icon name={item.icon} size={20} />
+          <Icon name={item.icon} size={24} />
           {showLabels ? (
             <span className="rail__label">{item.label}</span>
           ) : (
@@ -72,7 +72,7 @@ export function TabBar() {
             scrollToSection(item.id);
           }}
         >
-          <Icon name={item.icon} size={16} />
+          <Icon name={item.icon} size={24} />
           <span className="tabbar__label">{item.label}</span>
         </a>
       ))}
