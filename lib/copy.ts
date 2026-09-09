@@ -86,6 +86,23 @@ export interface Strings {
   };
   work: { label: string; jobs: JobCopy[] };
   projects: { label: string; items: ProjectCopy[] };
+  mac: {
+    powerOn: string;
+    booting: string;
+    shutdown: string;
+    screenLabel: string;
+    /** Shown under the running preview. */
+    openHint: string;
+    hintBoot: string;
+    hintTerminal: string;
+    notDeployed: string;
+    unknown: string;
+    selected: string;
+    noSelection: string;
+    blocked: string;
+    blockedHint: string;
+    loading: string;
+  };
   skills: {
     label: string;
     languages: string;
@@ -239,6 +256,22 @@ const en: Strings = {
         ],
       },
     ],
+  },
+  mac: {
+    powerOn: "PRESS TO POWER ON",
+    booting: "BOOTING MACOS M1 PRO",
+    shutdown: "Shutting down.",
+    screenLabel: "MacBook Pro screen",
+    openHint: "Click the screen to open it",
+    hintBoot: "Type help to see what this shell can do.",
+    hintTerminal: "cd into a project, then run it.",
+    notDeployed: "not deployed yet",
+    unknown: "command not found",
+    selected: "selected",
+    noSelection: "no project selected - try: cd cw",
+    blocked: "This deployment refuses to be embedded.",
+    blockedHint: "Open it in a new tab instead",
+    loading: "connecting...",
   },
   skills: {
     label: "STACK",
@@ -397,6 +430,22 @@ const vi: Strings = {
       },
     ],
   },
+  mac: {
+    powerOn: "NHẤN ĐỂ BẬT NGUỒN",
+    booting: "ĐANG KHỞI ĐỘNG MACOS M1 PRO",
+    shutdown: "Đang tắt máy.",
+    screenLabel: "Màn hình MacBook Pro",
+    openHint: "Nhấn vào màn hình để mở trang",
+    hintBoot: "Gõ help để xem shell này làm được gì.",
+    hintTerminal: "cd vào một dự án rồi run.",
+    notDeployed: "chưa được deploy",
+    unknown: "không tìm thấy lệnh",
+    selected: "đã chọn",
+    noSelection: "chưa chọn dự án - thử: cd cw",
+    blocked: "Bản deploy này không cho nhúng vào trang khác.",
+    blockedHint: "Mở trong tab mới",
+    loading: "đang kết nối...",
+  },
   skills: {
     label: "CÔNG NGHỆ",
     languages: "NGÔN NGỮ",
@@ -548,6 +597,22 @@ const zh: Strings = {
       },
     ],
   },
+  mac: {
+    powerOn: "按下开机",
+    booting: "正在启动 MACOS M1 PRO",
+    shutdown: "正在关机。",
+    screenLabel: "MacBook Pro 屏幕",
+    openHint: "点击屏幕打开该项目",
+    hintBoot: "输入 help 看看这个 shell 能做什么。",
+    hintTerminal: "先 cd 进一个项目，再 run。",
+    notDeployed: "尚未部署",
+    unknown: "找不到命令",
+    selected: "已选择",
+    noSelection: "尚未选择项目 - 试试: cd cw",
+    blocked: "该部署不允许被嵌入。",
+    blockedHint: "在新标签页中打开",
+    loading: "连接中...",
+  },
   skills: {
     label: "技术栈",
     languages: "编程语言",
@@ -625,11 +690,21 @@ export const jobsMeta = [
 
 export type JobId = (typeof jobsMeta)[number]["id"];
 
+/**
+ * `url` is the live deployment the MacBook terminal loads with `run`.
+ * Projects without one report "not deployed" instead.
+ */
 export const projectsMeta = [
-  { id: "cw", stack: ["PYTHON", "KAFKA", "REDIS", "NEXT.JS", "FASTAPI"] },
-  { id: "mcp", stack: ["TYPESCRIPT", "MCP", "NODE", "SQLITE"] },
-  { id: "n8n", stack: ["N8N", "NOTION API", "WEBHOOKS"] },
+  {
+    id: "cw",
+    stack: ["PYTHON", "KAFKA", "REDIS", "NEXT.JS", "FASTAPI"],
+    url: "https://cw-research-terminal.vercel.app/",
+  },
+  { id: "mcp", stack: ["TYPESCRIPT", "MCP", "NODE", "SQLITE"], url: null },
+  { id: "n8n", stack: ["N8N", "NOTION API", "WEBHOOKS"], url: null },
 ] as const;
+
+export type ProjectId = (typeof projectsMeta)[number]["id"];
 
 export const skillTags = {
   languages: ["PYTHON", "TYPESCRIPT", "JAVA", "SQL", "C"],

@@ -27,7 +27,11 @@ export type IconName =
   | "coffee-cup"
   | "scooter-vespa"
   | "diploma-scroll"
-  | "pixel-star";
+  | "pixel-star"
+  | "apple-glow"
+  | "apple-silver"
+  | "m1-pro-chip"
+  | "touch-id-power";
 
 type Sprite = (props: SVGProps<SVGSVGElement>) => React.ReactElement;
 
@@ -281,6 +285,71 @@ export const ICONS: Record<IconName, Sprite> = {
       <rect x="14" y="14" width="2" height="2" fill="#4a88c7"/>
     </>,
   ),
+  /** Apple Logo (Lid Glow) */
+  "apple-glow": sprite(
+    <>
+      <rect x="13" y="2" width="2" height="2" fill="#ffffff"/>
+      <rect x="15" y="3" width="2" height="2" fill="#ffffff"/>
+      <rect x="14" y="4" width="2" height="2" fill="#ffffff"/>
+      <rect x="7" y="7" width="4" height="2" fill="#ffffff"/>
+      <rect x="13" y="7" width="4" height="2" fill="#ffffff"/>
+      <rect x="5" y="9" width="14" height="8" fill="#ffffff"/>
+      <rect x="16" y="9" width="4" height="5" fill="#122c44"/>
+      <rect x="15" y="10" width="2" height="3" fill="#122c44"/>
+      <rect x="7" y="17" width="4" height="2" fill="#ffffff"/>
+      <rect x="13" y="17" width="4" height="2" fill="#ffffff"/>
+      <rect x="6" y="11" width="12" height="7" fill="#ffffff"/>
+    </>,
+  ),
+  /** Apple Space Gray */
+  "apple-silver": sprite(
+    <>
+      <rect x="13" y="2" width="2" height="2" fill="#94a3b8"/>
+      <rect x="15" y="3" width="2" height="2" fill="#64748b"/>
+      <rect x="14" y="4" width="2" height="2" fill="#cbd5e1"/>
+      <rect x="7" y="7" width="4" height="2" fill="#cbd5e1"/>
+      <rect x="13" y="7" width="4" height="2" fill="#cbd5e1"/>
+      <rect x="5" y="9" width="14" height="8" fill="#94a3b8"/>
+      <rect x="5" y="9" width="1" height="8" fill="#e2e8f0"/>
+      <rect x="6" y="9" width="10" height="1" fill="#e2e8f0"/>
+      <rect x="16" y="9" width="4" height="5" fill="#122c44"/>
+      <rect x="15" y="10" width="2" height="3" fill="#122c44"/>
+      <rect x="7" y="17" width="4" height="2" fill="#64748b"/>
+      <rect x="13" y="17" width="4" height="2" fill="#64748b"/>
+    </>,
+  ),
+  /** Chip Apple M1 Pro */
+  "m1-pro-chip": sprite(
+    <>
+      <rect x="3" y="3" width="18" height="18" fill="#122c44"/>
+      <rect x="4" y="4" width="16" height="16" fill="#1e293b"/>
+      <rect x="6" y="2" width="2" height="2" fill="#eab308"/>
+      <rect x="11" y="2" width="2" height="2" fill="#eab308"/>
+      <rect x="16" y="2" width="2" height="2" fill="#eab308"/>
+      <rect x="6" y="20" width="2" height="2" fill="#eab308"/>
+      <rect x="11" y="20" width="2" height="2" fill="#eab308"/>
+      <rect x="16" y="20" width="2" height="2" fill="#eab308"/>
+      <rect x="6" y="6" width="12" height="12" fill="#0f172a"/>
+      <rect x="7" y="8" width="1" height="5" fill="#ffffff"/>
+      <rect x="8" y="9" width="1" height="2" fill="#ffffff"/>
+      <rect x="9" y="8" width="1" height="5" fill="#ffffff"/>
+      <rect x="11" y="8" width="2" height="1" fill="#ffffff"/>
+      <rect x="12" y="8" width="1" height="5" fill="#ffffff"/>
+      <rect x="7" y="14" width="10" height="2" fill="#38bdf8"/>
+    </>,
+  ),
+  /** Nút Nguồn Touch ID */
+  "touch-id-power": sprite(
+    <>
+      <rect x="2" y="2" width="20" height="20" fill="#122c44"/>
+      <rect x="3" y="3" width="18" height="18" fill="#1e293b"/>
+      <rect x="5" y="5" width="14" height="14" fill="#0f172a"/>
+      <rect x="7" y="7" width="10" height="10" fill="none" stroke="#64748b" strokeWidth="1"/>
+      <rect x="10" y="9" width="4" height="1" fill="#94a3b8"/>
+      <rect x="9" y="11" width="6" height="1" fill="#94a3b8"/>
+      <rect x="10" y="13" width="4" height="1" fill="#94a3b8"/>
+    </>,
+  ),
 };
 
 /** Kit metadata, kept for reference and for any future icon browser. */
@@ -298,6 +367,10 @@ export const ICON_META: Record<IconName, { name: string; category: string }> = {
   "scooter-vespa": { name: "Xe Tay Ga (Vespa)", category: "items" },
   "diploma-scroll": { name: "Bằng Tốt Nghiệp (Diploma)", category: "items" },
   "pixel-star": { name: "Ngôi Sao (Pixel Star)", category: "items" },
+  "apple-glow": { name: "Apple Logo (Lid Glow)", category: "apple" },
+  "apple-silver": { name: "Apple Space Gray", category: "apple" },
+  "m1-pro-chip": { name: "Chip Apple M1 Pro", category: "apple" },
+  "touch-id-power": { name: "Nút Nguồn Touch ID", category: "apple" },
 };
 
 export function Icon({

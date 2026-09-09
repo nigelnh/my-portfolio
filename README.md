@@ -53,7 +53,12 @@ components/
     sprites.tsx     the six avatar states, ported from the animation studio
     useBlobBrain.ts the mascot's state machine — see below
     BlobStage.tsx   the roaming blob and the static waving one
+    BlobSettings.tsx  shared pet/sound switches, shown beside the languages
+  mac/
+    MacScreen.tsx   power, boot animation, shell, live project preview
+    useTerminal.ts  the shell's commands
   sections/         About, Journey, Experience, Projects, Stack, Contact
+app/api/embeddable/  header check behind the MacBook's live preview
 lib/
   copy.ts           all EN/VI/ZH content + language-independent metadata
   i18n.tsx          language context, persisted to localStorage
@@ -156,6 +161,44 @@ Poking: one poke is friendly (`energy +4`, `codeUrge +6`); **3 pokes inside
 The blob's vitals are mirrored onto `data-energy` / `data-boba` / `data-code` on
 `.blob-actor`, which is what the kit's HUD reads and makes its decisions easy to
 inspect.
+
+## The MacBook
+
+The laptop in the hero is interactive. It boots on the first visit of a session
+(later loads skip straight to the shell), and the power state is yours to
+control — `exit` in the shell turns it off, and the dark screen is a button that
+boots it again.
+
+The shell is real, if small. `useTerminal.ts` implements:
+
+```
+ls              list projects
+cd <id>         select a project (cd .. to deselect)
+run [id]        launch the selected project on this screen
+open            open the running project in a new tab
+clear           clear the screen
+exit            shut the machine down
+help, whoami, pwd
+```
+
+Up and down arrows walk the command history. `run` loads the project's live
+deployment into the screen, scaled down from a 1280px-wide viewport; clicking
+the screen opens the real site.
+
+Project deployments live on `projectsMeta[].url` in `lib/copy.ts`. A project
+without a URL reports "not deployed" instead of running.
+
+### Why there is a server-side header check
+
+A site that sends `X-Frame-Options: DENY` cannot be embedded — but the page
+cannot detect that: the blocked frame still fires `load` (on the browser's own
+error page) and its document is cross-origin, so nothing is readable. So
+`/api/embeddable` fetches the deployment server-side, reads `X-Frame-Options`
+and CSP `frame-ancestors`, and answers whether framing is allowed. When it is
+not, the screen shows a card that opens the project in a new tab instead.
+
+Only URLs already listed in `projectsMeta` are fetched, so the route cannot be
+pointed at arbitrary hosts.
 
 ## Sound
 

@@ -2,12 +2,12 @@
  * Pixel Blue Blob avatar sprites.
  *
  * Ported from the Pixel Blue Blob Avatar & Animation Studio kit
- * (`pixel_blob_icon_kit_interactive_showcase (5).html`). The inner elements
+ * (`pixel_blob_icon_kit_interactive_showcase (6).html`). The inner elements
  * carry the kit's own animation classes (`.zzz-*`, `.pearl-anim-*`,
  * `.smoke-*`, `.paw-tap-*`), which live in globals.css.
  *
- * `wave` is carried over from the previous kit revision, which is the last one
- * that shipped a waving pose; the Contact box still uses it.
+ * `wave` comes from an earlier kit revision — the last one that shipped a
+ * waving pose — and is still used by the Contact box.
  *
  * The fills are part of the artwork, so these do not follow `currentColor`.
  */
@@ -202,7 +202,7 @@ export const BLOB_VARIANTS: Record<BlobState, Variant> = {
       </>
     ),
   },
-  /** Blob Vẫy Tay (Waving Hello) — carried over from the previous kit */
+  /** Blob Vẫy Tay (Waving Hello) (carried over from the earlier kit) */
   wave: {
     sound: "blip",
     art: (

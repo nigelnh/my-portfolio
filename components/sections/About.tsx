@@ -1,37 +1,27 @@
 "use client";
 
 import { useLang } from "@/lib/i18n";
-import { BlobStage, usePetMode } from "../blob/BlobStage";
+import { BlobStage } from "../blob/BlobStage";
+import { BlobToggles, useBlobSettings } from "../blob/BlobSettings";
+import { MacScreen } from "../mac/MacScreen";
 import { Icon } from "../icons";
 import { LangSwitcher } from "../LangSwitcher";
-import { SoundToggle } from "../SoundToggle";
 import { Panel } from "../Panel";
 import { scrollToSection } from "../Nav";
 
 export function About() {
   const { t } = useLang();
-  const { pet, toggle: togglePet } = usePetMode();
+  const { pet } = useBlobSettings();
 
   return (
     <section id="about" className="section section--first">
       <Panel
         title={t.nav.about}
         barExtra={
-          <>
-            <button
-              type="button"
-              className="sound-toggle"
-              aria-pressed={pet}
-              onClick={togglePet}
-            >
-              <span aria-hidden="true">{pet ? "◈" : "◇"}</span>
-              <span>{t.hero.blob.pet}</span>
-            </button>
-            <SoundToggle label={t.hero.blob.sound} />
-            <span className="bar-langs">
-              <LangSwitcher variant="bar" />
-            </span>
-          </>
+          <span className="bar-langs">
+            <LangSwitcher variant="bar" />
+            <BlobToggles variant="bar" />
+          </span>
         }
         bodyClassName=""
       >
@@ -76,18 +66,14 @@ export function About() {
           <div className="hero__aside">
             <div className="mac-wrap">
               <div className="mac">
-                <div className="mac__screen">
-                  <span>M1 PRO</span>
+                <MacScreen />
+                <div className="mac__chin">
+                  <Icon name="apple-silver" size={18} />
                 </div>
-                <div className="mac__base" />
               </div>
 
-              {/* The band under the laptop: a fixed cup, the blob's roaming
-                  stage, and (on wide screens) the spec caption on the right. */}
-              <Icon name="coffee-cup" size={44} className="cup" />
               <BlobStage pet={pet} />
             </div>
-            <p className="mac__caption">{t.hero.mac}</p>
           </div>
         </div>
 

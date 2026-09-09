@@ -5,6 +5,7 @@ import { useLang } from "@/lib/i18n";
 import { useActiveSection } from "@/lib/useActiveSection";
 import { Icon } from "./icons";
 import { LangSwitcher } from "./LangSwitcher";
+import { BlobToggles } from "./blob/BlobSettings";
 
 export function scrollToSection(id: SectionId) {
   const el = document.getElementById(id);
@@ -50,6 +51,7 @@ export function SideRail({ showLabels = true }: { showLabels?: boolean }) {
       ))}
       <div className="rail__langs">
         <LangSwitcher />
+        <BlobToggles />
       </div>
     </nav>
   );

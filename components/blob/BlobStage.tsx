@@ -12,8 +12,6 @@ import {
   type Pointer,
 } from "./useBlobBrain";
 
-const PET_KEY = "portfolio.blobPet";
-
 function usePrefersReducedMotion() {
   const [reduced, setReduced] = useState(false);
   useEffect(() => {
@@ -227,28 +225,4 @@ export function WaveBlob({ label, size = 72 }: { label: string; size?: number })
       <BlobSprite state="wave" size={size} className="pixel-blob anim-idle" />
     </button>
   );
-}
-
-/** Lets the visitor let the blob out onto the whole page, or put it back. */
-export function usePetMode() {
-  const [pet, setPet] = useState(true);
-  useEffect(() => {
-    try {
-      const saved = window.localStorage.getItem(PET_KEY);
-      if (saved !== null) setPet(saved === "1");
-    } catch {
-      // Storage can be unavailable; the default stands.
-    }
-  }, []);
-  const toggle = useCallback(() => {
-    setPet((p) => {
-      try {
-        window.localStorage.setItem(PET_KEY, p ? "0" : "1");
-      } catch {
-        // Ignore — the choice just won't persist.
-      }
-      return !p;
-    });
-  }, []);
-  return { pet, toggle };
 }
