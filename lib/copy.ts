@@ -1,0 +1,569 @@
+/**
+ * Site content, mirrored from the Claude Design source (`copy.js`).
+ *
+ * Language-independent data (employers, project stacks, tag lists, links) lives
+ * in `meta` so translations only ever carry prose.
+ */
+
+export const LANGS = [
+  { id: "en", label: "EN" },
+  { id: "vi", label: "VI" },
+  { id: "zh", label: "中文" },
+] as const;
+
+export type LangId = (typeof LANGS)[number]["id"];
+
+export type SectionId =
+  | "about"
+  | "journey"
+  | "experience"
+  | "projects"
+  | "skills"
+  | "contact";
+
+export interface Milestone {
+  year: string;
+  text: string;
+}
+
+export interface JobCopy {
+  role: string;
+  blurb: string;
+}
+
+export interface ProjectCopy {
+  kicker: string;
+  title: string;
+  thumb: string;
+  blurb: string;
+  bullets: string[];
+}
+
+export interface Strings {
+  nav: Record<"about" | "journey" | "work" | "projects" | "contact", string>;
+  hero: {
+    hi: string;
+    name: string;
+    pron: string;
+    roles: string;
+    ctaA: string;
+    ctaB: string;
+    mac: string;
+    lines: string[];
+  };
+  journey: {
+    label: string;
+    title: string;
+    school: string;
+    blurb: string;
+    photo: string;
+    drop: string;
+    milestones: string;
+    ms: Milestone[];
+  };
+  work: { label: string; jobs: JobCopy[] };
+  projects: { label: string; items: ProjectCopy[] };
+  skills: {
+    label: string;
+    languages: string;
+    infra: string;
+    quant: string;
+    setup: string;
+    setupText: string;
+  };
+  contact: {
+    label: string;
+    title: string;
+    sub: string;
+    name: string;
+    email: string;
+    msg: string;
+    namePh: string;
+    emailPh: string;
+    msgPh: string;
+    btn: string;
+    sent: string;
+    note: string;
+    errAll: string;
+    errEmail: string;
+    elsewhere: string;
+    resume: string;
+    reply: string;
+  };
+}
+
+const en: Strings = {
+  nav: {
+    about: "ABOUT",
+    journey: "JOURNEY",
+    work: "WORK",
+    projects: "PROJECTS",
+    contact: "CONTACT",
+  },
+  hero: {
+    hi: "Hi there!",
+    name: "I'm Nhan Nguyen",
+    pron: "Pronunciation: [Nahn Nwin]",
+    roles: "Software Engineer  |  Quantitative Finance  |  CS Student",
+    ctaA: "VIEW PROJECTS",
+    ctaB: "SAY HELLO",
+    mac: "2021 14-inch MacBook Pro\nwith M1 Pro",
+    lines: [
+      "I'm the blob. Hover or click me.",
+      "Currently pricing covered warrants. Ping me.",
+      "Iced coffee keeps the pipeline running.",
+      "Gettysburg College, class of 2027.",
+      "Click again — I have plenty to say.",
+    ],
+  },
+  journey: {
+    label: "JOURNEY",
+    title: "University years",
+    school: "GETTYSBURG COLLEGE · 2023–2027",
+    blurb:
+      "B.S. Computer Science with a Mathematical Economics minor. A liberal arts foundation that keeps the writing and the modeling in the same head.",
+    photo: "CAMPUS PHOTO",
+    drop: "drop image here",
+    milestones: "MILESTONES",
+    ms: [
+      { year: "2023", text: "Arrived from Ho Chi Minh City. First CS course, first snow." },
+      { year: "2024", text: "First engineering internship. Learned pipelines break at 3am." },
+      { year: "2025", text: "Covered warrants desk work at KB Securities, HCMC." },
+      { year: "2026 →", text: "Quant research and real-time systems. Open to summer 2027 roles." },
+    ],
+  },
+  work: {
+    label: "EXPERIENCE",
+    jobs: [
+      {
+        role: "Software Engineer Intern",
+        blurb:
+          "Built real-time market data ingestion and an LLM-backed research assistant for retail investors. Cut median query latency from 2.1s to 380ms by moving aggregation into a streaming layer.",
+      },
+      {
+        role: "Full-stack Developer",
+        blurb:
+          "Shipped client web platforms end to end — auth, dashboards, payments — and automated onboarding with n8n workflows so the team stopped copying data by hand.",
+      },
+      {
+        role: "Backend Intern",
+        blurb:
+          "Worked on enterprise integration services for banking clients. Wrote the test harness that caught schema drift between two internal APIs before release.",
+      },
+      {
+        role: "Quantitative Analyst Intern",
+        blurb:
+          "Priced and hedged covered warrants on the Vietnamese market. Rebuilt the desk's Black-Scholes and Greeks pipeline to refresh on live ticks instead of end-of-day files.",
+      },
+    ],
+  },
+  projects: {
+    label: "PROJECTS",
+    items: [
+      {
+        kicker: "PROJECT 01",
+        title: "Covered Warrants Real-time Dashboard",
+        thumb: "ARCHITECTURE DIAGRAM\nkafka → python → redis → next.js",
+        blurb:
+          "A live pricing desk for Vietnamese covered warrants: quotes stream in, Greeks recompute per tick, and the desk sees exposure instead of yesterday's spreadsheet.",
+        bullets: [
+          "Black-Scholes pricing with Δ, Γ, Θ, Vega, Rho",
+          "Sub-second ingestion through Kafka and Redis",
+          "Next.js front end, FastAPI service layer",
+        ],
+      },
+      {
+        kicker: "PROJECT 02",
+        title: "AI Coding Assistant with MCP",
+        thumb: "EDITOR SCREENSHOT\nmcp tool panel",
+        blurb:
+          "An MCP server that gives an editor agent real project context — repository memory, codebase search, and tool calls that run against the actual build.",
+        bullets: [
+          "Codebase memory index over embeddings",
+          "Tool server for tests, lint, and git",
+          "Works in any MCP-capable editor",
+        ],
+      },
+      {
+        kicker: "PROJECT 03",
+        title: "Portfolio Automation Workflow",
+        thumb: "WORKFLOW SCREENSHOT\nn8n canvas",
+        blurb:
+          "The contact form on this site routes through n8n: validation, spam scoring, a Notion row, and a templated reply — with no server to maintain.",
+        bullets: [
+          "Mailto fallback when the webhook is down",
+          "Notion CRM sync",
+          "Deployed on a small VPS",
+        ],
+      },
+    ],
+  },
+  skills: {
+    label: "STACK",
+    languages: "LANGUAGES",
+    infra: "DATA & INFRA",
+    quant: "QUANT",
+    setup: "SETUP",
+    setupText:
+      "14-inch MacBook Pro (M1 Pro), Sofle v2.1 split mechanical keyboard, Neovim and a lot of tmux.",
+  },
+  contact: {
+    label: "CONTACT",
+    title: "Send me an email",
+    sub: "I read everything that arrives.",
+    name: "NAME",
+    email: "EMAIL",
+    msg: "MESSAGE",
+    namePh: "Your name",
+    emailPh: "you@mail.com",
+    msgPh: "Say something...",
+    btn: "SEND",
+    sent: "SENT ✓ THANK YOU!",
+    note: "Wired to an n8n automation workflow with a mailto fallback.",
+    errAll: "All fields are required.",
+    errEmail: "That email doesn't look right.",
+    elsewhere: "ELSEWHERE",
+    resume: "Résumé (PDF)",
+    reply: "I usually reply within a day.",
+  },
+};
+
+const vi: Strings = {
+  nav: {
+    about: "GIỚI THIỆU",
+    journey: "HÀNH TRÌNH",
+    work: "KINH NGHIỆM",
+    projects: "DỰ ÁN",
+    contact: "LIÊN HỆ",
+  },
+  hero: {
+    hi: "Xin chào!",
+    name: "Mình là Nhan Nguyen",
+    pron: "Phát âm: [Nahn Nwin]",
+    roles: "Software Engineer  |  Tài chính định lượng  |  Sinh viên CS",
+    ctaA: "XEM DỰ ÁN",
+    ctaB: "GỬI EMAIL",
+    mac: "MacBook Pro 14-inch 2021\nchip M1 Pro",
+    lines: [
+      "Mình là blob — hover hoặc click mình nhé.",
+      "Đang định giá chứng quyền. Nhắn mình nha.",
+      "Cà phê sữa đá giữ cho pipeline chạy.",
+      "Gettysburg College, khóa 2027.",
+      "Click nữa đi — mình còn nhiều câu lắm.",
+    ],
+  },
+  journey: {
+    label: "HÀNH TRÌNH",
+    title: "Hành trình đại học",
+    school: "GETTYSBURG COLLEGE · 2023–2027",
+    blurb:
+      "Cử nhân Khoa học Máy tính, phụ chuyên ngành Kinh tế Toán. Nền giáo dục khai phóng giúp mình vừa viết vừa mô hình hóa được.",
+    photo: "ẢNH CAMPUS",
+    drop: "kéo ảnh vào đây",
+    milestones: "CỘT MỐC",
+    ms: [
+      { year: "2023", text: "Từ Sài Gòn sang. Môn CS đầu tiên, mùa tuyết đầu tiên." },
+      {
+        year: "2024",
+        text: "Kỳ thực tập kỹ thuật đầu tiên. Học được rằng pipeline hay sập lúc 3 giờ sáng.",
+      },
+      { year: "2025", text: "Làm việc tại bộ phận chứng quyền, KB Securities, TP.HCM." },
+      {
+        year: "2026 →",
+        text: "Nghiên cứu định lượng và hệ thống thời gian thực. Đang tìm vị trí hè 2027.",
+      },
+    ],
+  },
+  work: {
+    label: "TRẢI NGHIỆM KỸ THUẬT",
+    jobs: [
+      {
+        role: "Thực tập sinh Kỹ thuật",
+        blurb:
+          "Xây pipeline thu nhận dữ liệu thị trường thời gian thực và trợ lý nghiên cứu dùng LLM cho nhà đầu tư cá nhân. Giảm độ trễ truy vấn trung vị từ 2,1s xuống 380ms.",
+      },
+      {
+        role: "Lập trình viên Full-stack",
+        blurb:
+          "Phát triển nền tảng web cho khách hàng từ đầu đến cuối — xác thực, dashboard, thanh toán — và tự động hóa quy trình onboarding bằng n8n.",
+      },
+      {
+        role: "Thực tập sinh Backend",
+        blurb:
+          "Làm dịch vụ tích hợp doanh nghiệp cho khách hàng ngân hàng. Viết bộ kiểm thử phát hiện lệch schema giữa hai API nội bộ trước khi phát hành.",
+      },
+      {
+        role: "Thực tập sinh Phân tích định lượng",
+        blurb:
+          "Định giá và phòng hộ chứng quyền có bảo đảm trên thị trường Việt Nam. Xây lại pipeline Black-Scholes và Greeks để cập nhật theo tick thay vì file cuối ngày.",
+      },
+    ],
+  },
+  projects: {
+    label: "DỰ ÁN",
+    items: [
+      {
+        kicker: "DỰ ÁN 01",
+        title: "Dashboard chứng quyền thời gian thực",
+        thumb: "SƠ ĐỒ KIẾN TRÚC\nkafka → python → redis → next.js",
+        blurb:
+          "Bàn định giá trực tiếp cho chứng quyền Việt Nam: giá chảy vào, Greeks tính lại theo từng tick, và bàn thấy được rủi ro thay vì bảng tính của hôm qua.",
+        bullets: [
+          "Định giá Black-Scholes với Δ, Γ, Θ, Vega, Rho",
+          "Thu nhận dữ liệu dưới một giây qua Kafka và Redis",
+          "Front end Next.js, tầng dịch vụ FastAPI",
+        ],
+      },
+      {
+        kicker: "DỰ ÁN 02",
+        title: "Trợ lý lập trình AI dùng MCP",
+        thumb: "ẢNH MÀN HÌNH EDITOR\nbảng công cụ mcp",
+        blurb:
+          "Một MCP server cấp cho agent trong editor bối cảnh thật của dự án — bộ nhớ repository, tìm kiếm codebase, và gọi công cụ chạy trên bản build thật.",
+        bullets: [
+          "Chỉ mục bộ nhớ codebase trên embeddings",
+          "Máy chủ công cụ cho test, lint và git",
+          "Chạy trên mọi editor hỗ trợ MCP",
+        ],
+      },
+      {
+        kicker: "DỰ ÁN 03",
+        title: "Quy trình tự động cho portfolio",
+        thumb: "ẢNH MÀN HÌNH WORKFLOW\nn8n canvas",
+        blurb:
+          "Form liên hệ của trang này đi qua n8n: kiểm tra dữ liệu, chấm điểm spam, ghi vào Notion và trả lời theo mẫu — không cần server để bảo trì.",
+        bullets: ["Dự phòng mailto khi webhook lỗi", "Đồng bộ CRM Notion", "Chạy trên một VPS nhỏ"],
+      },
+    ],
+  },
+  skills: {
+    label: "CÔNG NGHỆ",
+    languages: "NGÔN NGỮ",
+    infra: "DỮ LIỆU & HẠ TẦNG",
+    quant: "ĐỊNH LƯỢNG",
+    setup: "THIẾT BỊ",
+    setupText:
+      "MacBook Pro 14-inch (M1 Pro), bàn phím cơ chia đôi Sofle v2.1, Neovim và rất nhiều tmux.",
+  },
+  contact: {
+    label: "LIÊN HỆ",
+    title: "Gửi email cho mình",
+    sub: "Mình đọc hết mọi tin nhắn.",
+    name: "TÊN",
+    email: "EMAIL",
+    msg: "NỘI DUNG",
+    namePh: "Tên bạn",
+    emailPh: "you@mail.com",
+    msgPh: "Nói gì đó...",
+    btn: "GỬI",
+    sent: "ĐÃ GỬI ✓ CẢM ƠN!",
+    note: "Kết nối với quy trình tự động n8n và có dự phòng mailto.",
+    errAll: "Vui lòng điền hết các ô.",
+    errEmail: "Email này chưa đúng định dạng.",
+    elsewhere: "KÊNH KHÁC",
+    resume: "Hồ sơ (PDF)",
+    reply: "Mình thường trả lời trong vòng 24 giờ.",
+  },
+};
+
+const zh: Strings = {
+  nav: {
+    about: "关于我",
+    journey: "求学历程",
+    work: "工作经历",
+    projects: "项目",
+    contact: "联系",
+  },
+  hero: {
+    hi: "你好！",
+    name: "我叫阮春仁",
+    pron: "发音：ruăn chūn rén",
+    roles: "软件工程师  |  量化金融  |  计算机科学在读",
+    ctaA: "查看项目",
+    ctaB: "写信给我",
+    mac: "2021 款 14 英寸 MacBook Pro\nM1 Pro 芯片",
+    lines: [
+      "我是这只小水滴 — 把鼠标放上来或点我。",
+      "最近在给备兑权证定价，欢迎来聊。",
+      "越南冰咖啡让数据管道一直跑着。",
+      "葛底斯堡学院，2027 届。",
+      "再点一下 — 我还有很多话。",
+    ],
+  },
+  journey: {
+    label: "求学历程",
+    title: "大学四年",
+    school: "葛底斯堡学院 · 2023–2027",
+    blurb:
+      "计算机科学学士，辅修数理经济学。文理学院的训练让写作和建模留在同一个脑子里。",
+    photo: "校园照片",
+    drop: "把图片拖到这里",
+    milestones: "时间线",
+    ms: [
+      { year: "2023", text: "从胡志明市来到美国。第一门计算机课，第一场雪。" },
+      { year: "2024", text: "第一份工程实习。明白了数据管道总在凌晨三点崩。" },
+      { year: "2025", text: "在胡志明市 KB 证券的权证交易台工作。" },
+      { year: "2026 →", text: "量化研究与实时系统。正在寻找 2027 年暑期机会。" },
+    ],
+  },
+  work: {
+    label: "技术经历",
+    jobs: [
+      {
+        role: "软件工程实习生",
+        blurb:
+          "搭建实时行情数据接入管道，以及面向散户的 LLM 研究助手。通过把聚合下移到流式层，把查询延迟中位数从 2.1 秒降到 380 毫秒。",
+      },
+      {
+        role: "全栈开发",
+        blurb:
+          "从零交付客户网站平台 — 认证、看板、支付 — 并用 n8n 工作流自动化客户入驻，团队不再手动搬数据。",
+      },
+      {
+        role: "后端实习生",
+        blurb:
+          "为银行客户开发企业集成服务。编写的测试框架在发布前发现了两个内部 API 之间的结构漂移。",
+      },
+      {
+        role: "量化分析实习生",
+        blurb:
+          "为越南市场的备兑权证定价与对冲。重写交易台的 Black-Scholes 与希腊字母管道，使其按实时行情刷新，而不是收盘文件。",
+      },
+    ],
+  },
+  projects: {
+    label: "项目",
+    items: [
+      {
+        kicker: "项目 01",
+        title: "备兑权证实时看板",
+        thumb: "架构图\nkafka → python → redis → next.js",
+        blurb:
+          "面向越南备兑权证的实时定价台：行情持续流入，希腊字母按 tick 重算，交易台看到的是当下的风险敞口，而不是昨天的表格。",
+        bullets: [
+          "Black-Scholes 定价，含 Δ、Γ、Θ、Vega、Rho",
+          "经 Kafka 与 Redis 的亚秒级数据接入",
+          "Next.js 前端，FastAPI 服务层",
+        ],
+      },
+      {
+        kicker: "项目 02",
+        title: "基于 MCP 的 AI 编程助手",
+        thumb: "编辑器截图\nmcp 工具面板",
+        blurb:
+          "一个 MCP 服务器，为编辑器里的 agent 提供真实的项目上下文 — 仓库记忆、代码检索，以及在真实构建上运行的工具调用。",
+        bullets: [
+          "基于向量的代码库记忆索引",
+          "测试、lint 与 git 的工具服务",
+          "适用于任何支持 MCP 的编辑器",
+        ],
+      },
+      {
+        kicker: "项目 03",
+        title: "个人站自动化工作流",
+        thumb: "工作流截图\nn8n 画布",
+        blurb:
+          "本站的联系表单经过 n8n：校验、垃圾信息评分、写入 Notion、按模板回复 — 不需要维护服务器。",
+        bullets: ["Webhook 故障时回落到 mailto", "同步到 Notion CRM", "部署在一台小型 VPS 上"],
+      },
+    ],
+  },
+  skills: {
+    label: "技术栈",
+    languages: "编程语言",
+    infra: "数据与基础设施",
+    quant: "量化",
+    setup: "设备",
+    setupText:
+      "14 英寸 MacBook Pro（M1 Pro）、Sofle v2.1 分体机械键盘、Neovim 和大量 tmux。",
+  },
+  contact: {
+    label: "联系",
+    title: "写信给我",
+    sub: "每一封我都会读。",
+    name: "姓名",
+    email: "邮箱",
+    msg: "内容",
+    namePh: "你的名字",
+    emailPh: "you@mail.com",
+    msgPh: "说点什么…",
+    btn: "发送",
+    sent: "已发送 ✓ 谢谢！",
+    note: "接入 n8n 自动化工作流，并保留 mailto 兜底。",
+    errAll: "请填写所有字段。",
+    errEmail: "这个邮箱格式不太对。",
+    elsewhere: "其他平台",
+    resume: "简历（PDF）",
+    reply: "我通常一天内回复。",
+  },
+};
+
+export const STRINGS: Record<LangId, Strings> = { en, vi, zh };
+
+/** Language-independent data. */
+export const jobsMeta = [
+  {
+    id: "finbud",
+    name: "Finbud AI",
+    place: "Chicago, IL",
+    icon: "circle",
+    term: "2025",
+    stack: ["PYTHON", "KAFKA", "REDIS", "NEXT.JS"],
+  },
+  {
+    id: "esmart",
+    name: "eSmart Solutions Agency",
+    place: "Saint Paul, MN",
+    icon: "square",
+    term: "2024–2025",
+    stack: ["TYPESCRIPT", "REACT", "POSTGRES", "N8N"],
+  },
+  {
+    id: "fptis",
+    name: "FPT IS",
+    place: "Ho Chi Minh City",
+    icon: "triangle",
+    term: "2024",
+    stack: ["JAVA", "SPRING", "ORACLE", "DOCKER"],
+  },
+  {
+    id: "kb",
+    name: "KB Securities",
+    place: "Ho Chi Minh City",
+    icon: "diamond",
+    term: "2025–2026",
+    stack: ["BLACK-SCHOLES", "GREEKS", "PANDAS", "NUMPY"],
+  },
+] as const;
+
+export type JobId = (typeof jobsMeta)[number]["id"];
+
+export const projectsMeta = [
+  { id: "cw", stack: ["PYTHON", "KAFKA", "REDIS", "NEXT.JS", "FASTAPI"] },
+  { id: "mcp", stack: ["TYPESCRIPT", "MCP", "NODE", "SQLITE"] },
+  { id: "n8n", stack: ["N8N", "NOTION API", "WEBHOOKS"] },
+] as const;
+
+export const skillTags = {
+  languages: ["PYTHON", "TYPESCRIPT", "JAVA", "SQL", "C"],
+  infra: ["KAFKA", "REDIS", "POSTGRES", "DOCKER", "FASTAPI"],
+  quant: ["BLACK-SCHOLES", "GREEKS", "HEDGING", "TIME SERIES"],
+} as const;
+
+export const links = [
+  { label: "GitHub — /nhannguyen", href: "#contact" },
+  { label: "LinkedIn — /in/nhannguyen", href: "#contact" },
+];
+
+/** Section order drives both nav rails and scroll-spy. */
+export const SECTIONS: {
+  id: SectionId;
+  navKey: keyof Strings["nav"];
+  icon: string;
+}[] = [
+  { id: "about", navKey: "about", icon: "circle" },
+  { id: "journey", navKey: "journey", icon: "triangle" },
+  { id: "experience", navKey: "work", icon: "square" },
+  { id: "projects", navKey: "projects", icon: "grid" },
+  { id: "contact", navKey: "contact", icon: "diamond" },
+];
