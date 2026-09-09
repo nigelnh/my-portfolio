@@ -99,32 +99,53 @@ Nav and job icons come from `SECTIONS[].icon` and `jobsMeta[].icon` in
 
 ## The blob
 
-The mascot comes from the Pixel Blue Blob Avatar & Animation Studio kit. Its six
+The mascot comes from the Pixel Blue Blob Avatar & Animation Studio kit. Its
 states live in `components/blob/sprites.tsx` (32×26 viewBox, animated inner
-elements driven by the kit's `.zzz-*`, `.pearl-anim-*` and `.smoke-*` classes in
-`globals.css`).
+elements driven by the kit's `.zzz-*`, `.pearl-anim-*`, `.smoke-*` and
+`.paw-tap-*` classes in `globals.css`). The current kit ships five poses; `wave`
+is carried over from the previous revision, which is the last one that had it,
+and the Contact box still uses it.
 
-`useBlobBrain` runs its day, and every timing sits in one `TIMING` object at the
-top of that file:
+### Free roaming
 
-| Behaviour | Trigger |
-| --- | --- |
-| Wander | Continuous — hops to a random spot along the shelf under the laptop |
-| Stop | On arrival it picks `idle`, `code` (typing) or `boba` at random, and holds for 2.6–5.2s |
-| Ask for boba | 45% of `boba` stops open a bubble with YES / NO; unanswered after 14s it moves on |
-| Sleep | 26s with no hover on the blob; any hover wakes it |
-| Sulk | 4 clicks inside 3s → `angry` for 3s |
+The blob roams in two dimensions across the whole laptop block, hopping between
+random destinations at **1.4×** speed — 28px steps, 420ms per hop, 200ms rest
+(`HOP` in `useBlobBrain.ts`; `1` and `2` are there too if you want to change
+gear). Each hop plays one `singleHop` animation, with the takeoff and landing
+sounds fired at 20% and 85% of it so they land on the squash and the stretch.
 
-`prefers-reduced-motion: reduce` stops the wandering entirely and leaves a still
-idle blob. The Contact box uses the static `wave` sprite.
+### State rules
+
+Four vitals drift once a second and decide what happens next. Rules are checked
+in priority order, and each takes an action lock so the blob finishes what it
+started:
+
+| # | Rule | Condition | Then |
+| --- | --- | --- | --- |
+| 1 | Out of energy | `energy ≤ 15` | Sleep for at least 9s; wakes at `energy ≥ 95` and wanders off 1.5s later |
+| 2 | Craving boba | `bobaNeed ≥ 80` | Asks for one with YES / NO — YES drinks for 6.5s, NO sulks; unanswered after 14s it takes a sip anyway |
+| 3 | Inspired | `codeUrge ≥ 80` and `energy > 35` | Opens the MacBook for 7s |
+| 4 | Chill | nothing urgent | Returns to idle, then alternates: 65% chance to start wandering, 35% chance to stop |
+
+Drift rates per second: sleeping `energy +8, boba +0.5, anger 0`; drinking
+`boba −18, energy +2`; coding `codeUrge −12, energy −2, boba +2`; otherwise
+`energy −2.5` wandering or `−1` standing, `boba +2.2`, `codeUrge +1.8`.
+
+Poking: one poke is friendly (`energy +4`, `codeUrge +6`); **3 pokes inside
+2.6s** or **any poke while asleep** sets anger to 100 and sulks for 4.5s.
+
+`prefers-reduced-motion: reduce` stops the roaming and leaves a still idle blob.
+The blob's vitals are mirrored onto `data-energy` / `data-boba` / `data-code` on
+`.blob-actor`, which is what the kit's HUD reads and makes its decisions easy to
+inspect.
 
 ## Sound
 
 `lib/sfx.ts` synthesises the kit's chiptune cues with oscillators — no audio
 files. Two gates guard it: the visitor's own toggle in the About title bar
-(**off by default**, since the blob hops every couple of seconds), and a check
-that a user gesture has happened, because browsers refuse to start an
-AudioContext before one.
+(**off by default**, since the blob hops every second or so), and a check that a
+user gesture has happened, because browsers refuse to start an AudioContext
+before one.
 
 ## Contact form
 

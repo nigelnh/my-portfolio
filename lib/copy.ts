@@ -66,6 +66,8 @@ export interface Strings {
       no: string;
       accepted: string;
       refused: string;
+      poked: string;
+      woken: string;
     };
   };
   journey: {
@@ -144,6 +146,8 @@ const en: Strings = {
       no: "NO",
       accepted: "Yesss! Extra pearls, please. 🧋✨",
       refused: "Hmph. I'll remember this. 💢",
+      poked: "Boing! That tickles. 😂",
+      woken: "Hey! I was dreaming about a giant boba! 💢😴",
     },
   },
   journey: {
@@ -293,6 +297,8 @@ const vi: Strings = {
       no: "KHÔNG",
       accepted: "Yeahhh! Cho mình thêm trân châu nha! 🧋✨",
       refused: "Hứ. Mình nhớ đó nha. 💢",
+      poked: "Úi! Nhột tớ quá nè! Hehe 😂",
+      woken: "Oái! Đang mơ thấy ly boba khổng lồ mà phá đám à! 💢😴",
     },
   },
   journey: {
@@ -444,6 +450,8 @@ const zh: Strings = {
       no: "不行",
       accepted: "耶！珍珠多加一点！🧋✨",
       refused: "哼。我记住了。💢",
+      poked: "哎呀！好痒啊，嘿嘿 😂",
+      woken: "喂！我正梦到超大杯珍珠奶茶呢！💢😴",
     },
   },
   journey: {

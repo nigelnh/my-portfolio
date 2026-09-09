@@ -198,19 +198,49 @@ textarea:focus {
   }
 }
 
-@keyframes hopWalk {
-  0%,
+/* One complete jump: crouch, take off, apex, touchdown, squash, recover.
+   The takeoff and landing sounds fire at 20% and 85% to match. */
+@keyframes singleHop {
+  0% {
+    transform: scale(1, 1) translateY(0);
+  }
+  16% {
+    transform: scale(1.18, 0.82) translateY(3px);
+  }
+  26% {
+    transform: scale(0.88, 1.16) translateY(-4px);
+  }
+  52% {
+    transform: scale(0.95, 1.07) translateY(-16px);
+  }
+  82% {
+    transform: scale(1.05, 0.95) translateY(0);
+  }
+  90% {
+    transform: scale(1.24, 0.76) translateY(4px);
+  }
   100% {
     transform: scale(1, 1) translateY(0);
   }
-  30% {
-    transform: scale(1.15, 0.85) translateY(2px);
+}
+
+@keyframes typeTapL {
+  0%,
+  100% {
+    transform: translateY(0);
   }
   50% {
-    transform: scale(0.9, 1.15) translateY(-14px);
+    transform: translateY(-2px);
   }
-  75% {
-    transform: scale(1.05, 0.95) translateY(-2px);
+}
+
+@keyframes typeTapR {
+  0%,
+  100% {
+    transform: translateY(-2px);
+  }
+  50% {
+    transform: translateY(0);
   }
 }
 
@@ -230,9 +260,17 @@ textarea:focus {
   animation: angryShake 0.4s ease-in-out infinite;
   transform-origin: bottom center;
 }
-.anim-hop {
-  animation: hopWalk 0.65s cubic-bezier(0.28, 0.84, 0.42, 1) infinite;
+/* Duration comes from the hop parameters, so 1x / 1.4x / 2x all stay in sync. */
+.anim-single-hop {
+  animation: singleHop 420ms ease-in-out forwards;
   transform-origin: bottom center;
+}
+
+.paw-tap-left {
+  animation: typeTapL 0.26s ease-in-out infinite;
+}
+.paw-tap-right {
+  animation: typeTapR 0.26s ease-in-out infinite;
 }
 
 /* Particles inside the sprites. */
@@ -740,26 +778,25 @@ textarea:focus {
    Blob — the roaming mascot and its stage
    --------------------------------------------------------------------------- */
 
-/* The shelf under the laptop that the blob wanders along. It stops short of
-   the caption on wide screens so the two never collide. */
+/* The blob's arena: the whole laptop block, so it can roam in two dimensions
+   rather than shuffling along a shelf. Only the blob itself takes clicks. */
 .blob-stage {
   position: absolute;
-  left: 62px;
-  right: 8px;
-  bottom: 0;
-  height: 60px;
+  inset: 0;
   z-index: 2;
+  pointer-events: none;
 }
 
 .blob-actor {
   position: absolute;
-  bottom: 0;
   width: 72px;
+  pointer-events: auto;
 }
 
 .blob-flip {
   display: block;
 }
+
 
 .blob-flip--left {
   transform: scaleX(-1);
@@ -1189,9 +1226,6 @@ textarea:focus {
     text-align: right;
   }
 
-  .blob-stage {
-    right: 210px;
-  }
 
   .project {
     flex-direction: row;

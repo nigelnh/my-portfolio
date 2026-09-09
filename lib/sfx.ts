@@ -11,7 +11,20 @@
  *    so nothing is attempted until one has happened.
  */
 
-export type SfxName = "blip" | "squish" | "hop" | "slurp" | "snore" | "angry" | "success";
+/**
+ * `hopTakeoff` / `hopLand` are the two halves of one jump — the kit fires them
+ * at 20% and 85% of the hop so the sound lands with the squash and stretch.
+ */
+export type SfxName =
+  | "blip"
+  | "squish"
+  | "hopTakeoff"
+  | "hopLand"
+  | "slurp"
+  | "snore"
+  | "angry"
+  | "success"
+  | "zoom";
 
 let ctx: AudioContext | null = null;
 let enabled = false;
@@ -77,15 +90,23 @@ function envelope(
       to(0.001, now + 0.08);
       return 0.08;
 
+    // The kit maps "squish" onto the takeoff chirp.
     case "squish":
-    case "hop":
-      osc.type = "sine";
+    case "hopTakeoff":
+      osc.type = "triangle";
       f.setValueAtTime(260, now);
-      f.exponentialRampToValueAtTime(560, now + 0.07);
-      f.exponentialRampToValueAtTime(320, now + 0.14);
-      at(0.12, now);
-      to(0.001, now + 0.14);
-      return 0.14;
+      f.exponentialRampToValueAtTime(520, now + 0.055);
+      at(0.06, now);
+      to(0.001, now + 0.055);
+      return 0.055;
+
+    case "hopLand":
+      osc.type = "triangle";
+      f.setValueAtTime(320, now);
+      f.exponentialRampToValueAtTime(140, now + 0.07);
+      at(0.07, now);
+      to(0.001, now + 0.07);
+      return 0.07;
 
     case "slurp":
       osc.type = "triangle";
@@ -121,6 +142,14 @@ function envelope(
       at(0.09, now);
       to(0.001, now + 0.24);
       return 0.24;
+
+    case "zoom":
+      osc.type = "sawtooth";
+      f.setValueAtTime(440, now);
+      f.exponentialRampToValueAtTime(980, now + 0.09);
+      at(0.08, now);
+      to(0.001, now + 0.09);
+      return 0.09;
   }
 }
 

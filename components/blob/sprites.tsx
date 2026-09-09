@@ -1,10 +1,13 @@
 /**
  * Pixel Blue Blob avatar sprites.
  *
- * Ported verbatim from the "Pixel Blue Blob Avatar & Animation Studio" kit
- * (`pixel_blob_icon_kit_interactive_showcase (3).html`). All six share a
- * 32x26 viewBox; the inner elements carry the kit's own animation classes
- * (`.zzz-*`, `.pearl-anim-*`, `.smoke-*`), which live in globals.css.
+ * Ported from the Pixel Blue Blob Avatar & Animation Studio kit
+ * (`pixel_blob_icon_kit_interactive_showcase (5).html`). The inner elements
+ * carry the kit's own animation classes (`.zzz-*`, `.pearl-anim-*`,
+ * `.smoke-*`, `.paw-tap-*`), which live in globals.css.
+ *
+ * `wave` is carried over from the previous kit revision, which is the last one
+ * that shipped a waving pose; the Contact box still uses it.
  *
  * The fills are part of the artwork, so these do not follow `currentColor`.
  */
@@ -22,8 +25,6 @@ export type BlobState =
 
 interface Variant {
   sound: SfxName;
-  /** The kit's own line for this state, shown in the speech bubble. */
-  quote: string;
   art: React.ReactNode;
 }
 
@@ -31,7 +32,6 @@ export const BLOB_VARIANTS: Record<BlobState, Variant> = {
   /** Blob Uống Trà Sữa (Boba) */
   boba: {
     sound: "slurp",
-    quote: "Hút trân châu cái rột! Ly để thấp vừa vặn thấy rõ miệng xinh đang uống nè! 🧋✨",
     art: (
       <>
       <path d="M10 2H22V4H26V7H29V11H31V19H29V22H27V24H5V22H3V19H1V11H3V7H6V4H10V2Z" fill="#122c44"/>
@@ -67,7 +67,6 @@ export const BLOB_VARIANTS: Record<BlobState, Variant> = {
       <rect x="14" y="22" width="1" height="1" fill="#122c44"/>
       <rect x="16" y="22" width="1" height="1" fill="#122c44"/>
       <rect x="17" y="21" width="1" height="1" fill="#122c44"/>
-      <rect x="14" y="21" width="1" height="1" fill="#122c44"/>
       <rect x="10" y="18" width="2" height="3" fill="#122c44"/>
       <rect x="10" y="18" width="2" height="2" fill="#58b3ea"/>
       <rect x="20" y="18" width="2" height="3" fill="#122c44"/>
@@ -78,7 +77,6 @@ export const BLOB_VARIANTS: Record<BlobState, Variant> = {
   /** Blob Đi Ngủ (Sleeping Zzz) */
   sleep: {
     sound: "snore",
-    quote: "Khò khò... Đang sạc lại pin để mai viết thuật toán quant tiếp... Zzz 😴",
     art: (
       <>
       <path d="M8 8H24V10H28V14H31V21H29V24H3V21H1V14H4V10H8V8Z" fill="#122c44"/>
@@ -95,10 +93,10 @@ export const BLOB_VARIANTS: Record<BlobState, Variant> = {
       <rect x="20" y="5" width="4" height="4" fill="#2563eb"/>
       <rect x="24" y="7" width="3" height="3" fill="#fde047" stroke="#122c44" strokeWidth="0.5"/>
       <circle cx="16" cy="18" r="2.5" fill="#a5f3fc" stroke="#122c44" strokeWidth="0.8" opacity="0.85" style={{ animation: "snotBubble 3s infinite ease-in-out", transformOrigin: "16px 18px" }}/>
-      <g className="zzz-1 font-pixel" fill="#3b82f6">
+      <g className="zzz-1">
       <text x="21" y="6" fontSize="5" fontFamily="'Press Start 2P', monospace" fill="#1e40af">Z</text>
       </g>
-      <g className="zzz-2 font-pixel" fill="#60a5fa">
+      <g className="zzz-2">
       <text x="24" y="3" fontSize="4" fontFamily="'Press Start 2P', monospace" fill="#3b82f6">z</text>
       </g>
       </>
@@ -107,7 +105,6 @@ export const BLOB_VARIANTS: Record<BlobState, Variant> = {
   /** Blob Giận Dỗi (Pouting / Rage) */
   angry: {
     sound: "angry",
-    quote: "Hứ! Ai bảo debug cả buổi chiều mà quên lưu file cơ chứ?! Giận tím người luôn! 💢",
     art: (
       <>
       <g className="smoke-left">
@@ -141,36 +138,51 @@ export const BLOB_VARIANTS: Record<BlobState, Variant> = {
       </>
     ),
   },
-  /** Blob Gõ Phím (Coding M1) */
+  /** Blob Gõ MacBook (Apple M1) */
   code: {
     sound: "blip",
-    quote: "Đang build mô hình định giá chứng quyền Black-Scholes cực cháy! 💻📈",
     art: (
       <>
       <path d="M10 2H22V4H26V7H29V11H31V19H29V22H27V24H5V22H3V19H1V11H3V7H6V4H10V2Z" fill="#122c44"/>
       <path d="M10 4H22V6H25V8H27V11H29V19H27V21H25V23H7V21H5V19H3V11H5V8H7V6H10V4Z" fill="#58b3ea"/>
       <path d="M10 5H16V7H10V5Z" fill="#b9e7fc"/>
-      <rect x="9" y="10" width="2" height="3" fill="#122c44"/>
-      <rect x="9" y="11" width="1" height="1" fill="#ffffff"/>
-      <rect x="21" y="10" width="2" height="3" fill="#122c44"/>
-      <rect x="21" y="11" width="1" height="1" fill="#ffffff"/>
-      <rect x="6" y="13" width="2" height="2" fill="#ff8da1"/>
-      <rect x="24" y="13" width="2" height="2" fill="#ff8da1"/>
-      <rect x="7" y="14" width="18" height="8" fill="#122c44"/>
-      <rect x="8" y="15" width="16" height="6" fill="#0b1724"/>
-      <rect x="10" y="16" width="7" height="1" fill="#4ade80"/>
-      <rect x="10" y="18" width="12" height="1" fill="#60a5fa"/>
-      <rect x="8" y="21" width="3" height="2" fill="#58b3ea" stroke="#122c44" strokeWidth="0.5"/>
-      <rect x="21" y="21" width="3" height="2" fill="#58b3ea" stroke="#122c44" strokeWidth="0.5"/>
-      <rect x="5" y="22" width="22" height="2" fill="#122c44"/>
-      <rect x="6" y="22" width="20" height="1" fill="#cbd5e1"/>
+      <rect x="9" y="5" width="3" height="1" fill="#122c44"/>
+      <rect x="20" y="5" width="3" height="1" fill="#122c44"/>
+      <rect x="10" y="7" width="2" height="3" fill="#122c44"/>
+      <rect x="10" y="7" width="1" height="1" fill="#ffffff"/>
+      <rect x="20" y="7" width="2" height="3" fill="#122c44"/>
+      <rect x="20" y="7" width="1" height="1" fill="#ffffff"/>
+      <rect x="5" y="9" width="3" height="2" fill="#ff8da1"/>
+      <rect x="24" y="9" width="3" height="2" fill="#ff8da1"/>
+      <rect x="6" y="11" width="20" height="10" fill="#122c44"/>
+      <rect x="7" y="12" width="18" height="8" fill="#334155"/>
+      <rect x="7" y="12" width="18" height="1" fill="#64748b"/>
+      <rect x="7" y="13" width="1" height="7" fill="#475569"/>
+      <rect x="7" y="19" width="18" height="1" fill="#1e293b"/>
+      <rect x="16" y="13" width="1" height="1" fill="#ffffff"/>
+      <rect x="14" y="14" width="2" height="1" fill="#ffffff"/>
+      <rect x="17" y="14" width="1" height="1" fill="#ffffff"/>
+      <rect x="14" y="15" width="3" height="1" fill="#ffffff"/>
+      <rect x="14" y="16" width="3" height="1" fill="#ffffff"/>
+      <rect x="15" y="17" width="2" height="1" fill="#ffffff"/>
+      <rect x="4" y="21" width="24" height="3" fill="#122c44"/>
+      <rect x="5" y="21" width="22" height="2" fill="#94a3b8"/>
+      <rect x="14" y="21" width="4" height="1" fill="#122c44"/>
+      <rect x="6" y="23" width="20" height="1" fill="#0f172a"/>
+      <g className="paw-tap-left">
+      <rect x="4" y="18" width="3" height="3" fill="#122c44"/>
+      <rect x="4" y="18" width="2" height="2" fill="#58b3ea"/>
+      </g>
+      <g className="paw-tap-right">
+      <rect x="25" y="18" width="3" height="3" fill="#122c44"/>
+      <rect x="26" y="18" width="2" height="2" fill="#58b3ea"/>
+      </g>
       </>
     ),
   },
   /** Blob Mỉm Cười (Happy Idle) */
   idle: {
     sound: "squish",
-    quote: "Xin chào! Mình là Blob, chào mừng bạn ghé thăm portfolio của Nhan Nguyen! ✨",
     art: (
       <>
       <path d="M10 2H22V4H26V7H29V11H31V19H29V22H27V24H5V22H3V19H1V11H3V7H6V4H10V2Z" fill="#122c44"/>
@@ -190,10 +202,9 @@ export const BLOB_VARIANTS: Record<BlobState, Variant> = {
       </>
     ),
   },
-  /** Blob Vẫy Tay (Waving Hello) */
+  /** Blob Vẫy Tay (Waving Hello) — carried over from the previous kit */
   wave: {
     sound: "blip",
-    quote: "Gửi email hoặc kết nối LinkedIn với Nhan qua phần Liên hệ nhé! 👋💙",
     art: (
       <>
       <path d="M26 3H30V9H28V12H25V10H27V5H25V3H26Z" fill="#122c44"/>
@@ -212,27 +223,29 @@ export const BLOB_VARIANTS: Record<BlobState, Variant> = {
   },
 };
 
-/** Animation class the kit pairs with each state. */
+/** Resting animation the kit pairs with each state (`getRestAnimClass`). */
 export const BLOB_ANIM: Record<BlobState, string> = {
-  idle: "anim-idle",
-  code: "anim-idle",
-  wave: "anim-idle",
   boba: "anim-boba",
   sleep: "anim-sleep",
   angry: "anim-angry",
+  code: "anim-idle",
+  idle: "anim-idle",
+  wave: "anim-idle",
 };
+
+const VIEW_W = 32;
+const VIEW_H = 26;
 
 export function BlobSprite({
   state,
   size = 80,
   ...rest
 }: { state: BlobState; size?: number } & Omit<SVGProps<SVGSVGElement>, "state">) {
-  // The art is 32x26, so height follows the sprite's own aspect ratio.
   return (
     <svg
-      viewBox="0 0 32 26"
+      viewBox={`0 0 ${VIEW_W} ${VIEW_H}`}
       width={size}
-      height={Math.round((size * 26) / 32)}
+      height={Math.round((size * VIEW_H) / VIEW_W)}
       fill="none"
       shapeRendering="crispEdges"
       aria-hidden="true"
@@ -243,3 +256,5 @@ export function BlobSprite({
     </svg>
   );
 }
+
+export const BLOB_ASPECT = VIEW_H / VIEW_W;
