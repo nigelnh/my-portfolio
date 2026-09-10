@@ -38,14 +38,19 @@ export type IconName =
   | "logo-esmart"
   | "logo-fpt";
 
-type Sprite = (props: SVGProps<SVGSVGElement>) => React.ReactElement;
+type Sprite = ((props: SVGProps<SVGSVGElement>) => React.ReactElement) & {
+  /** width / height of the artwork, so `Icon` can size by height. */
+  ratio: number;
+};
 
-const sprite = (children: React.ReactNode): Sprite => {
+/** `viewBox` defaults to the kit's 24x24 grid; wordmark logos pass their own. */
+const sprite = (children: React.ReactNode, viewBox = "0 0 24 24"): Sprite => {
+  const [, , w, h] = viewBox.split(" ").map(Number);
   const Glyph = (props: SVGProps<SVGSVGElement>) => (
     <svg
-      viewBox="0 0 24 24"
-      width={24}
-      height={24}
+      viewBox={viewBox}
+      width={w}
+      height={h}
       fill="none"
       shapeRendering="crispEdges"
       aria-hidden="true"
@@ -56,7 +61,8 @@ const sprite = (children: React.ReactNode): Sprite => {
     </svg>
   );
   Glyph.displayName = "PixelIcon";
-  return Glyph;
+  Glyph.ratio = w / h;
+  return Glyph as Sprite;
 };
 
 export const ICONS: Record<IconName, Sprite> = {
@@ -414,19 +420,21 @@ export const ICONS: Record<IconName, Sprite> = {
       <rect x="18" y="12" width="1" height="3" fill="#122c44"/>
     </>,
   ),
-  /** Finbud AI — a stylised monogram tile, not the company's real logo. */
+  /** Finbud AI — supplied badge: clipped-corner square with the F mark. */
   "logo-finbud": sprite(
     <>
-      <rect x="2" y="4" width="20" height="16" fill="#122c44"/>
-      <rect x="3" y="5" width="18" height="14" fill="#1f7a5a"/>
-      <rect x="6" y="8" width="6" height="2" fill="#ffffff"/>
-      <rect x="6" y="10" width="2" height="6" fill="#ffffff"/>
-      <rect x="8" y="11" width="3" height="2" fill="#ffffff"/>
-      <rect x="14" y="14" width="2" height="2" fill="#7fd6b0"/>
-      <rect x="16" y="11" width="2" height="5" fill="#7fd6b0"/>
-      <rect x="14" y="9" width="4" height="1" fill="#7fd6b0"/>
-      <rect x="17" y="8" width="1" height="2" fill="#7fd6b0"/>
+      <path d="M4 2h18l8 8v18a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z" fill="#09090b"/>
+      <polygon points="22,2 30,10 30,2" fill="#ffffff"/>
+      <rect x="8" y="8" width="14" height="2" fill="#ffffff"/>
+      <rect x="7" y="9" width="16" height="2" fill="#ffffff"/>
+      <rect x="10" y="11" width="4" height="10" fill="#ffffff"/>
+      <rect x="14" y="13" width="6" height="2" fill="#ffffff"/>
+      <rect x="14" y="14" width="7" height="2" fill="#ffffff"/>
+      <rect x="7" y="21" width="10" height="2" fill="#ffffff"/>
+      <rect x="8" y="22" width="8" height="1" fill="#ffffff"/>
+      <rect x="21" y="21" width="3" height="3" fill="#ffffff"/>
     </>,
+    "0 0 32 32",
   ),
   /** eSmart Solutions Agency — a stylised monogram tile, not the company's real logo. */
   "logo-esmart": sprite(
@@ -446,20 +454,30 @@ export const ICONS: Record<IconName, Sprite> = {
       <rect x="13" y="12" width="4" height="1" fill="#bcd9ff"/>
     </>,
   ),
-  /** FPT IS — a stylised monogram tile, not the company's real logo. */
+  /** FPT IS — supplied wordmark: the three FPT parallelograms plus ".IS". */
   "logo-fpt": sprite(
     <>
-      <rect x="2" y="4" width="20" height="16" fill="#122c44"/>
-      <rect x="3" y="5" width="18" height="14" fill="#f1f5f9"/>
-      <rect x="5" y="8" width="4" height="2" fill="#f47b20"/>
-      <rect x="5" y="10" width="2" height="6" fill="#f47b20"/>
-      <rect x="7" y="11" width="2" height="2" fill="#f47b20"/>
-      <rect x="10" y="8" width="4" height="2" fill="#1f9d55"/>
-      <rect x="10" y="10" width="2" height="6" fill="#1f9d55"/>
-      <rect x="12" y="10" width="2" height="2" fill="#1f9d55"/>
-      <rect x="15" y="8" width="5" height="2" fill="#2f6fd0"/>
-      <rect x="17" y="10" width="2" height="6" fill="#2f6fd0"/>
+      <path d="M4 3h7l-4 18H0z" fill="#0072bc"/>
+      <rect x="4" y="6" width="5" height="2" fill="#ffffff"/>
+      <rect x="3" y="8" width="2" height="8" fill="#ffffff"/>
+      <rect x="3" y="11" width="4" height="2" fill="#ffffff"/>
+      <path d="M13 3h7l-4 18h-7z" fill="#f37021"/>
+      <rect x="13" y="6" width="5" height="2" fill="#ffffff"/>
+      <rect x="12" y="8" width="2" height="8" fill="#ffffff"/>
+      <rect x="16" y="8" width="2" height="4" fill="#ffffff"/>
+      <rect x="13" y="11" width="4" height="2" fill="#ffffff"/>
+      <path d="M22 3h7l-4 18h-7z" fill="#00a859"/>
+      <rect x="21" y="6" width="7" height="2" fill="#ffffff"/>
+      <rect x="23" y="8" width="2" height="8" fill="#ffffff"/>
+      <rect x="31" y="16" width="2" height="2" fill="#1e293b"/>
+      <rect x="34" y="7" width="2" height="11" fill="#1e293b"/>
+      <rect x="38" y="7" width="6" height="2" fill="#1e293b"/>
+      <rect x="38" y="9" width="2" height="2" fill="#1e293b"/>
+      <rect x="38" y="11" width="6" height="2" fill="#1e293b"/>
+      <rect x="42" y="13" width="2" height="3" fill="#1e293b"/>
+      <rect x="38" y="16" width="6" height="2" fill="#1e293b"/>
     </>,
+    "0 0 48 24",
   ),
 };
 
@@ -489,11 +507,13 @@ export const ICON_META: Record<IconName, { name: string; category: string }> = {
   "touch-id-power": { name: "Nút Nguồn Touch ID", category: "apple" },
 };
 
+/** `size` is the rendered height; the width follows the artwork's own ratio,
+ *  so square kit icons and wide wordmarks sit on the same baseline. */
 export function Icon({
   name,
   size = 24,
   ...rest
 }: { name: IconName; size?: number } & Omit<SVGProps<SVGSVGElement>, "name">) {
   const Glyph = ICONS[name];
-  return <Glyph width={size} height={size} {...rest} />;
+  return <Glyph width={Math.round(size * Glyph.ratio)} height={size} {...rest} />;
 }

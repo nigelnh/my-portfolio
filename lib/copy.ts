@@ -231,9 +231,9 @@ const en: Strings = {
           "Built a multi-model LLM content platform on Vue and FastAPI that parses intent and tone into platform-specific output, and an exemplar-based workflow that produced 100+ SEO-scored articles.",
       },
       {
-        role: "Backend Intern",
+        role: "Frontend Engineer Intern",
         blurb:
-          "Worked on enterprise integration services for banking clients. Wrote the test harness that caught schema drift between two internal APIs before release.",
+          "Front-end engineering on enterprise systems for banking clients.",
       },
     ],
   },
@@ -407,9 +407,9 @@ const vi: Strings = {
           "Xây nền tảng nội dung dùng nhiều mô hình LLM trên Vue và FastAPI, bóc tách ý định và giọng văn thành đầu ra riêng cho từng nền tảng; quy trình theo mẫu tạo ra hơn 100 bài đạt ngưỡng SEO.",
       },
       {
-        role: "Thực tập sinh Backend",
+        role: "Thực tập sinh Kỹ thuật Front-end",
         blurb:
-          "Làm dịch vụ tích hợp doanh nghiệp cho khách hàng ngân hàng. Viết bộ kiểm thử phát hiện lệch schema giữa hai API nội bộ trước khi phát hành.",
+          "Kỹ thuật front-end cho các hệ thống doanh nghiệp phục vụ khách hàng ngân hàng.",
       },
     ],
   },
@@ -579,9 +579,9 @@ const zh: Strings = {
           "在 Vue 与 FastAPI 上搭建多模型 LLM 内容平台，将意图与语气解析为各平台专属输出；范例驱动的流程产出 100+ 篇达标 SEO 文章。",
       },
       {
-        role: "后端实习生",
+        role: "前端工程实习生",
         blurb:
-          "为银行客户开发企业集成服务。编写的测试框架在发布前发现了两个内部 API 之间的结构漂移。",
+          "为银行客户的企业系统做前端开发。",
       },
     ],
   },
