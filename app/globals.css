@@ -1194,38 +1194,26 @@ textarea:focus {
   gap: 22px;
 }
 
-/* The two schools share one panel, so a tab row picks which is on show. */
-.journey__tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.journey__tab {
-  padding: 10px 14px;
-  cursor: pointer;
-  font-size: 11.5px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  border: 3px solid var(--ink);
-  background: var(--panel-2);
-  color: var(--ink);
-}
-
-.journey__tab[aria-selected="true"] {
-  background: var(--paper);
-  box-shadow: 5px 5px 0 var(--ink);
-}
-
 .journey__intro {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 22px;
-  align-items: start;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
   padding: 20px;
   background: var(--panel-2);
   border: 4px solid var(--ink);
   box-shadow: var(--shadow-hard);
+}
+
+.journey__school-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
+  gap: 22px;
+  align-items: start;
+}
+
+.journey__school-row + .journey__school-row {
+  padding-top: 20px;
+  border-top: 3px solid var(--ink);
 }
 
 .journey__text {
@@ -1257,7 +1245,8 @@ textarea:focus {
 }
 
 .frame {
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 16 / 10;
+  max-height: 230px;
   background: var(--panel-3);
   border: 3px solid var(--ink);
   display: grid;
