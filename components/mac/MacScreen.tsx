@@ -122,18 +122,32 @@ export function MacScreen() {
     if (el) el.scrollTop = el.scrollHeight;
   }, [term.lines]);
 
+  /** The echo line mirrors the input, so keep both in step. */
+  const setLine = (value: string) => {
+    if (inputRef.current) inputRef.current.value = value;
+    setDraft(value);
+  };
+
   const onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    // Never act on a keystroke that is still part of an IME composition.
+    if (e.nativeEvent.isComposing) return;
+
     if (e.key === "Enter") {
+      e.preventDefault();
+      // Read and clear the field itself: relying on the echo state alone let a
+      // late input event put the command back, so a second Enter re-ran it.
+      const value = e.currentTarget.value;
+      setLine("");
       armAudio();
       playSfx("blip", 0.5);
-      term.submit(draft);
-      setDraft("");
+      term.submit(value);
       return;
     }
+
     if (e.key === "ArrowUp" || e.key === "ArrowDown") {
       e.preventDefault();
       const next = term.recall(e.key === "ArrowUp" ? -1 : 1);
-      if (next !== null) setDraft(next);
+      if (next !== null) setLine(next);
     }
   };
 
@@ -203,11 +217,13 @@ export function MacScreen() {
           <label className="visually-hidden" htmlFor="mac-input">
             {t.mac.screenLabel}
           </label>
+          {/* Uncontrolled on purpose: the visible line is the echo above, and
+              the field is cleared directly so nothing can restore it. */}
           <input
             id="mac-input"
             ref={inputRef}
             className="mac__input"
-            value={draft}
+            defaultValue=""
             onChange={(e) => setDraft(e.target.value)}
             onKeyDown={onKeyDown}
             autoComplete="off"

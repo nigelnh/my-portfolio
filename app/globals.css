@@ -745,14 +745,11 @@ textarea:focus {
   );
 }
 
-/* Chin: just the Space Gray Apple logo, cut out of the aluminium. */
+/* Chin: the Space Gray Apple logo on its own, no bar around it. */
 .mac__chin {
-  height: 22px;
   margin-top: 8px;
   display: grid;
   place-items: center;
-  background: var(--panel-4);
-  border: 2px solid var(--ink);
 }
 
 /* ---- power ---- */
