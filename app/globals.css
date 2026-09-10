@@ -1322,9 +1322,10 @@ textarea:focus {
    --------------------------------------------------------------------------- */
 .work {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
   gap: 24px;
-  align-items: start;
+  /* The detail card matches the height of the employer list beside it. */
+  align-items: stretch;
 }
 
 .work__list {
@@ -1376,6 +1377,7 @@ textarea:focus {
 
 .work__detail {
   min-width: 0;
+  height: 100%;
   padding: 20px;
   background: var(--paper);
   border: 4px solid var(--ink);

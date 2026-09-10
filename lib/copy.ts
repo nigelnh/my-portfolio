@@ -208,8 +208,8 @@ const en: Strings = {
     ms: [
       { year: "2022", text: "Arrived from Ho Chi Minh City. First CS course, first snow." },
       { year: "2024", text: "First engineering internship. Learned pipelines break at 3am." },
-      { year: "2025", text: "Covered warrants desk work at KB Securities, HCMC." },
-      { year: "2026 →", text: "Quant research and real-time systems. Open to summer 2027 roles." },
+      { year: "2025", text: "Covered warrants SWE Intern at KB Securities." },
+      { year: "2026 →", text: "Open to summer 2027 roles." },
     ],
   },
   work: {
@@ -218,22 +218,22 @@ const en: Strings = {
       {
         role: "Software Engineer Intern",
         blurb:
-          "Built real-time market data ingestion and an LLM-backed research assistant for retail investors. Cut median query latency from 2.1s to 380ms by moving aggregation into a streaming layer.",
+          "Built a real-time terminal tracking 30 stocks and 300+ covered warrants for KB Financial Group traders, modelling 54 pricing, risk and P&L metrics. Launched the CW Portal across a two-VM architecture and cut WebSocket payloads by 84% and upstream requests by 98%.",
       },
       {
-        role: "Full-stack Developer",
+        role: "Software Engineer Intern",
         blurb:
-          "Shipped client web platforms end to end — auth, dashboards, payments — and automated onboarding with n8n workflows so the team stopped copying data by hand.",
+          "Co-built a financial analytics platform on LangChain and pgvector over a 500+ document corpus. Cut end-to-end latency roughly in half with async I/O, prompt compression and retrieval caching, and containerised the backend behind GitHub Actions.",
+      },
+      {
+        role: "Software Engineer Intern",
+        blurb:
+          "Built a multi-model LLM content platform on Vue and FastAPI that parses intent and tone into platform-specific output, and an exemplar-based workflow that produced 100+ SEO-scored articles.",
       },
       {
         role: "Backend Intern",
         blurb:
           "Worked on enterprise integration services for banking clients. Wrote the test harness that caught schema drift between two internal APIs before release.",
-      },
-      {
-        role: "Quantitative Analyst Intern",
-        blurb:
-          "Priced and hedged covered warrants on the Vietnamese market. Rebuilt the desk's Black-Scholes and Greeks pipeline to refresh on live ticks instead of end-of-day files.",
       },
     ],
   },
@@ -396,35 +396,32 @@ const vi: Strings = {
         year: "2024",
         text: "Kỳ thực tập kỹ thuật đầu tiên. Học được rằng pipeline hay sập lúc 3 giờ sáng.",
       },
-      { year: "2025", text: "Làm việc tại bộ phận chứng quyền, KB Securities, TP.HCM." },
-      {
-        year: "2026 →",
-        text: "Nghiên cứu định lượng và hệ thống thời gian thực. Đang tìm vị trí hè 2027.",
-      },
+      { year: "2025", text: "Thực tập sinh SWE mảng chứng quyền tại KB Securities." },
+      { year: "2026 →", text: "Đang tìm vị trí hè 2027." },
     ],
   },
   work: {
     label: "TRẢI NGHIỆM KỸ THUẬT",
     jobs: [
       {
-        role: "Thực tập sinh Kỹ thuật",
+        role: "Thực tập sinh Kỹ thuật phần mềm",
         blurb:
-          "Xây pipeline thu nhận dữ liệu thị trường thời gian thực và trợ lý nghiên cứu dùng LLM cho nhà đầu tư cá nhân. Giảm độ trễ truy vấn trung vị từ 2,1s xuống 380ms.",
+          "Xây terminal thời gian thực theo dõi 30 mã cổ phiếu và hơn 300 chứng quyền cho trader của KB Financial Group, mô hình hoá 54 chỉ số định giá, rủi ro và P&L. Ra mắt CW Portal trên kiến trúc hai máy ảo, giảm 84% dung lượng WebSocket và 98% số request upstream.",
       },
       {
-        role: "Lập trình viên Full-stack",
+        role: "Thực tập sinh Kỹ thuật phần mềm",
         blurb:
-          "Phát triển nền tảng web cho khách hàng từ đầu đến cuối — xác thực, dashboard, thanh toán — và tự động hóa quy trình onboarding bằng n8n.",
+          "Đồng phát triển nền tảng phân tích tài chính trên LangChain và pgvector với kho hơn 500 tài liệu. Giảm khoảng một nửa độ trễ end-to-end nhờ async I/O, nén prompt và cache truy hồi; đóng gói backend bằng Docker và GitHub Actions.",
+      },
+      {
+        role: "Thực tập sinh Kỹ thuật phần mềm",
+        blurb:
+          "Xây nền tảng nội dung dùng nhiều mô hình LLM trên Vue và FastAPI, bóc tách ý định và giọng văn thành đầu ra riêng cho từng nền tảng; quy trình theo mẫu tạo ra hơn 100 bài đạt ngưỡng SEO.",
       },
       {
         role: "Thực tập sinh Backend",
         blurb:
           "Làm dịch vụ tích hợp doanh nghiệp cho khách hàng ngân hàng. Viết bộ kiểm thử phát hiện lệch schema giữa hai API nội bộ trước khi phát hành.",
-      },
-      {
-        role: "Thực tập sinh Phân tích định lượng",
-        blurb:
-          "Định giá và phòng hộ chứng quyền có bảo đảm trên thị trường Việt Nam. Xây lại pipeline Black-Scholes và Greeks để cập nhật theo tick thay vì file cuối ngày.",
       },
     ],
   },
@@ -579,8 +576,8 @@ const zh: Strings = {
     ms: [
       { year: "2022", text: "从胡志明市来到美国。第一门计算机课，第一场雪。" },
       { year: "2024", text: "第一份工程实习。明白了数据管道总在凌晨三点崩。" },
-      { year: "2025", text: "在胡志明市 KB 证券的权证交易台工作。" },
-      { year: "2026 →", text: "量化研究与实时系统。正在寻找 2027 年暑期机会。" },
+      { year: "2025", text: "在 KB 证券担任备兑权证软件工程实习生。" },
+      { year: "2026 →", text: "正在寻找 2027 年暑期机会。" },
     ],
   },
   work: {
@@ -589,22 +586,22 @@ const zh: Strings = {
       {
         role: "软件工程实习生",
         blurb:
-          "搭建实时行情数据接入管道，以及面向散户的 LLM 研究助手。通过把聚合下移到流式层，把查询延迟中位数从 2.1 秒降到 380 毫秒。",
+          "为 KB 金融集团交易员搭建实时终端，跟踪 30 只股票与 300+ 备兑权证，建模 54 项定价、风险与损益指标。在双虚拟机架构上上线 CW Portal，WebSocket 负载减少 84%，上游请求减少 98%。",
       },
       {
-        role: "全栈开发",
+        role: "软件工程实习生",
         blurb:
-          "从零交付客户网站平台 — 认证、看板、支付 — 并用 n8n 工作流自动化客户入驻，团队不再手动搬数据。",
+          "基于 LangChain 与 pgvector 共同搭建金融分析平台，覆盖 500+ 份文档语料。通过异步 I/O、提示压缩与检索缓存，将端到端延迟降低约一半，并用 Docker 与 GitHub Actions 容器化后端。",
+      },
+      {
+        role: "软件工程实习生",
+        blurb:
+          "在 Vue 与 FastAPI 上搭建多模型 LLM 内容平台，将意图与语气解析为各平台专属输出；范例驱动的流程产出 100+ 篇达标 SEO 文章。",
       },
       {
         role: "后端实习生",
         blurb:
           "为银行客户开发企业集成服务。编写的测试框架在发布前发现了两个内部 API 之间的结构漂移。",
-      },
-      {
-        role: "量化分析实习生",
-        blurb:
-          "为越南市场的备兑权证定价与对冲。重写交易台的 Black-Scholes 与希腊字母管道，使其按实时行情刷新，而不是收盘文件。",
       },
     ],
   },
@@ -696,36 +693,36 @@ export const STRINGS: Record<LangId, Strings> = { en, vi, zh };
 /** Language-independent data. */
 export const jobsMeta = [
   {
+    id: "kb",
+    name: "KB Securities",
+    place: "Ho Chi Minh City, Vietnam",
+    icon: "logo-kb",
+    term: "Nov 2025 – Aug 2026",
+    stack: ["TYPESCRIPT", "NODE.JS", "FASTAPI", "KAFKA", "REDIS", "POSTGRES"],
+  },
+  {
     id: "finbud",
     name: "Finbud AI",
     place: "Chicago, IL",
-    icon: "ai-brain-chip",
-    term: "2025",
-    stack: ["PYTHON", "KAFKA", "REDIS", "NEXT.JS"],
+    icon: "logo-finbud",
+    term: "Apr – Jul 2025",
+    stack: ["PYTHON", "LANGCHAIN", "PGVECTOR", "DOCKER", "GITHUB ACTIONS"],
   },
   {
     id: "esmart",
     name: "eSmart Solutions Agency",
     place: "Saint Paul, MN",
-    icon: "rocket-launch",
-    term: "2024–2025",
-    stack: ["TYPESCRIPT", "REACT", "POSTGRES", "N8N"],
+    icon: "logo-esmart",
+    term: "Feb – Apr 2025",
+    stack: ["VUE.JS", "NODE.JS", "FASTAPI", "GPT-4", "PINIA"],
   },
   {
     id: "fptis",
     name: "FPT IS",
     place: "Ho Chi Minh City",
-    icon: "scooter-vespa",
+    icon: "logo-fpt",
     term: "2024",
     stack: ["JAVA", "SPRING", "ORACLE", "DOCKER"],
-  },
-  {
-    id: "kb",
-    name: "KB Securities",
-    place: "Ho Chi Minh City",
-    icon: "bull-finance",
-    term: "2025–2026",
-    stack: ["BLACK-SCHOLES", "GREEKS", "PANDAS", "NUMPY"],
   },
 ] as const satisfies readonly {
   id: string;

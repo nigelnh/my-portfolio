@@ -32,7 +32,11 @@ export type IconName =
   | "apple-silver"
   | "m1-pro-chip"
   | "touch-id-power"
-  | "apple-chin";
+  | "apple-chin"
+  | "logo-kb"
+  | "logo-finbud"
+  | "logo-esmart"
+  | "logo-fpt";
 
 type Sprite = (props: SVGProps<SVGSVGElement>) => React.ReactElement;
 
@@ -391,6 +395,72 @@ export const ICONS: Record<IconName, Sprite> = {
       <rect x="11" y="5" width="2" height="1" fill="#52657a"/>
     </>,
   ),
+  /** KB Securities — a stylised monogram tile, not the company's real logo. */
+  "logo-kb": sprite(
+    <>
+      <rect x="2" y="4" width="20" height="16" fill="#122c44"/>
+      <rect x="3" y="5" width="18" height="14" fill="#f5b32d"/>
+      <rect x="5" y="8" width="2" height="8" fill="#122c44"/>
+      <rect x="7" y="11" width="1" height="2" fill="#122c44"/>
+      <rect x="8" y="9" width="1" height="2" fill="#122c44"/>
+      <rect x="8" y="13" width="1" height="2" fill="#122c44"/>
+      <rect x="9" y="8" width="1" height="1" fill="#122c44"/>
+      <rect x="9" y="15" width="1" height="1" fill="#122c44"/>
+      <rect x="13" y="8" width="2" height="8" fill="#122c44"/>
+      <rect x="15" y="8" width="3" height="1" fill="#122c44"/>
+      <rect x="15" y="11" width="3" height="1" fill="#122c44"/>
+      <rect x="15" y="15" width="3" height="1" fill="#122c44"/>
+      <rect x="18" y="9" width="1" height="2" fill="#122c44"/>
+      <rect x="18" y="12" width="1" height="3" fill="#122c44"/>
+    </>,
+  ),
+  /** Finbud AI — a stylised monogram tile, not the company's real logo. */
+  "logo-finbud": sprite(
+    <>
+      <rect x="2" y="4" width="20" height="16" fill="#122c44"/>
+      <rect x="3" y="5" width="18" height="14" fill="#1f7a5a"/>
+      <rect x="6" y="8" width="6" height="2" fill="#ffffff"/>
+      <rect x="6" y="10" width="2" height="6" fill="#ffffff"/>
+      <rect x="8" y="11" width="3" height="2" fill="#ffffff"/>
+      <rect x="14" y="14" width="2" height="2" fill="#7fd6b0"/>
+      <rect x="16" y="11" width="2" height="5" fill="#7fd6b0"/>
+      <rect x="14" y="9" width="4" height="1" fill="#7fd6b0"/>
+      <rect x="17" y="8" width="1" height="2" fill="#7fd6b0"/>
+    </>,
+  ),
+  /** eSmart Solutions Agency — a stylised monogram tile, not the company's real logo. */
+  "logo-esmart": sprite(
+    <>
+      <rect x="2" y="4" width="20" height="16" fill="#122c44"/>
+      <rect x="3" y="5" width="18" height="14" fill="#2f6fd0"/>
+      <rect x="7" y="9" width="4" height="1" fill="#ffffff"/>
+      <rect x="6" y="10" width="1" height="1" fill="#ffffff"/>
+      <rect x="10" y="10" width="1" height="1" fill="#ffffff"/>
+      <rect x="6" y="11" width="5" height="1" fill="#ffffff"/>
+      <rect x="6" y="12" width="1" height="1" fill="#ffffff"/>
+      <rect x="7" y="13" width="4" height="1" fill="#ffffff"/>
+      <rect x="14" y="8" width="4" height="1" fill="#bcd9ff"/>
+      <rect x="13" y="9" width="1" height="1" fill="#bcd9ff"/>
+      <rect x="14" y="10" width="3" height="1" fill="#bcd9ff"/>
+      <rect x="17" y="11" width="1" height="1" fill="#bcd9ff"/>
+      <rect x="13" y="12" width="4" height="1" fill="#bcd9ff"/>
+    </>,
+  ),
+  /** FPT IS — a stylised monogram tile, not the company's real logo. */
+  "logo-fpt": sprite(
+    <>
+      <rect x="2" y="4" width="20" height="16" fill="#122c44"/>
+      <rect x="3" y="5" width="18" height="14" fill="#f1f5f9"/>
+      <rect x="5" y="8" width="4" height="2" fill="#f47b20"/>
+      <rect x="5" y="10" width="2" height="6" fill="#f47b20"/>
+      <rect x="7" y="11" width="2" height="2" fill="#f47b20"/>
+      <rect x="10" y="8" width="4" height="2" fill="#1f9d55"/>
+      <rect x="10" y="10" width="2" height="6" fill="#1f9d55"/>
+      <rect x="12" y="10" width="2" height="2" fill="#1f9d55"/>
+      <rect x="15" y="8" width="5" height="2" fill="#2f6fd0"/>
+      <rect x="17" y="10" width="2" height="6" fill="#2f6fd0"/>
+    </>,
+  ),
 };
 
 /** Kit metadata, kept for reference and for any future icon browser. */
@@ -411,6 +481,10 @@ export const ICON_META: Record<IconName, { name: string; category: string }> = {
   "apple-glow": { name: "Apple Logo (Lid Glow)", category: "apple" },
   "apple-silver": { name: "Apple Space Gray", category: "apple" },
   "apple-chin": { name: "Apple Space Gray (light surface)", category: "apple" },
+  "logo-kb": { name: "KB Securities", category: "logo" },
+  "logo-finbud": { name: "Finbud AI", category: "logo" },
+  "logo-esmart": { name: "eSmart Solutions Agency", category: "logo" },
+  "logo-fpt": { name: "FPT IS", category: "logo" },
   "m1-pro-chip": { name: "Chip Apple M1 Pro", category: "apple" },
   "touch-id-power": { name: "Nút Nguồn Touch ID", category: "apple" },
 };

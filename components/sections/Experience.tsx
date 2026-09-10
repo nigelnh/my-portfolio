@@ -6,7 +6,8 @@ import { useLang } from "@/lib/i18n";
 import { Icon } from "../icons";
 import { Panel } from "../Panel";
 
-const DEFAULT_JOB: JobId = jobsMeta[3].id;
+/** The list runs newest first, so open on the current role. */
+const DEFAULT_JOB: JobId = jobsMeta[0].id;
 
 export function Experience() {
   const { t } = useLang();
