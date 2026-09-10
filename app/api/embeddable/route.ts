@@ -41,20 +41,19 @@ export async function GET(request: Request) {
   try {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 6000);
-    let res = await fetch(url, {
-      method: "HEAD",
-      redirect: "follow",
-      cache: "no-store",
+    // Some hosts reject a bare HEAD (cw.kbsec.com.vn answers 400), so fall back
+    // to a browser-shaped GET before deciding the deployment is unreachable.
+    const common = {
+      redirect: "follow" as const,
+      cache: "no-store" as const,
       signal: controller.signal,
-    });
-    // Some hosts do not answer HEAD; retry once with a GET.
-    if (res.status === 405 || res.status === 501) {
-      res = await fetch(url, {
-        redirect: "follow",
-        cache: "no-store",
-        signal: controller.signal,
-      });
-    }
+      headers: {
+        "User-Agent":
+          "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0 Safari/537.36",
+      },
+    };
+    let res = await fetch(url, { ...common, method: "HEAD" });
+    if (!res.ok) res = await fetch(url, common);
     clearTimeout(timeout);
 
     if (!res.ok) {

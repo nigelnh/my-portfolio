@@ -242,38 +242,26 @@ const en: Strings = {
     items: [
       {
         kicker: "PROJECT 01",
-        title: "Covered Warrants Real-time Dashboard",
-        thumb: "ARCHITECTURE DIAGRAM\nkafka → python → redis → next.js",
+        title: "CW Research Terminal",
+        thumb: "RESEARCH TERMINAL\nquotes → greeks → llm",
         blurb:
-          "A live pricing desk for Vietnamese covered warrants: quotes stream in, Greeks recompute per tick, and the desk sees exposure instead of yesterday's spreadsheet.",
+          "A research terminal for 100+ Vietnamese covered warrants, streaming FiinQuant market data over FastAPI and WebSockets.",
         bullets: [
-          "Black-Scholes pricing with Δ, Γ, Θ, Vega, Rho",
-          "Sub-second ingestion through Kafka and Redis",
-          "Next.js front end, FastAPI service layer",
+          "Black-Scholes-Merton pricing, implied and historical volatility, Greeks",
+          "Tool-calling LLM assistant grounded in live quotes and price history",
+          "Visible tool traces and non-advisory guardrails",
         ],
       },
       {
         kicker: "PROJECT 02",
-        title: "AI Coding Assistant with MCP",
-        thumb: "EDITOR SCREENSHOT\nmcp tool panel",
+        title: "KB Securities CW Portal",
+        thumb: "cw.kbsec.com.vn\nnext.js · fastapi · kafka",
         blurb:
-          "An MCP server that gives an editor agent real project context — repository memory, codebase search, and tool calls that run against the actual build.",
+          "The covered warrants portal I built and launched at KB Securities, live for traders and retail investors.",
         bullets: [
-          "Codebase memory index over embeddings",
-          "Tool server for tests, lint, and git",
-          "Works in any MCP-capable editor",
-        ],
-      },
-      {
-        kicker: "PROJECT 03",
-        title: "Portfolio Automation Workflow",
-        thumb: "WORKFLOW SCREENSHOT\nn8n canvas",
-        blurb:
-          "The contact form on this site routes through n8n: validation, spam scoring, a Notion row, and a templated reply — with no server to maintain.",
-        bullets: [
-          "Mailto fallback when the webhook is down",
-          "Notion CRM sync",
-          "Deployed on a small VPS",
+          "Two-VM architecture splitting Next.js/Nginx from containerised services",
+          "16 REST endpoints covered by pytest unit and integration tests",
+          "Kafka and PostgreSQL behind a Redis-cached market data layer",
         ],
       },
     ],
@@ -430,35 +418,27 @@ const vi: Strings = {
     items: [
       {
         kicker: "DỰ ÁN 01",
-        title: "Dashboard chứng quyền thời gian thực",
-        thumb: "SƠ ĐỒ KIẾN TRÚC\nkafka → python → redis → next.js",
+        title: "CW Research Terminal",
+        thumb: "RESEARCH TERMINAL\nquotes → greeks → llm",
         blurb:
-          "Bàn định giá trực tiếp cho chứng quyền Việt Nam: giá chảy vào, Greeks tính lại theo từng tick, và bàn thấy được rủi ro thay vì bảng tính của hôm qua.",
+          "Terminal nghiên cứu cho hơn 100 chứng quyền Việt Nam, truyền dữ liệu thị trường FiinQuant qua FastAPI và WebSockets.",
         bullets: [
-          "Định giá Black-Scholes với Δ, Γ, Θ, Vega, Rho",
-          "Thu nhận dữ liệu dưới một giây qua Kafka và Redis",
-          "Front end Next.js, tầng dịch vụ FastAPI",
+          "Định giá Black-Scholes-Merton, biến động ngụ ý và lịch sử, các Greeks",
+          "Trợ lý LLM gọi công cụ, bám theo giá trực tiếp và lịch sử giá",
+          "Hiển thị dấu vết công cụ và rào chắn không tư vấn đầu tư",
         ],
       },
       {
         kicker: "DỰ ÁN 02",
-        title: "Trợ lý lập trình AI dùng MCP",
-        thumb: "ẢNH MÀN HÌNH EDITOR\nbảng công cụ mcp",
+        title: "Cổng chứng quyền KB Securities",
+        thumb: "cw.kbsec.com.vn\nnext.js · fastapi · kafka",
         blurb:
-          "Một MCP server cấp cho agent trong editor bối cảnh thật của dự án — bộ nhớ repository, tìm kiếm codebase, và gọi công cụ chạy trên bản build thật.",
+          "Cổng chứng quyền mình xây và đưa lên production tại KB Securities, đang phục vụ trader và nhà đầu tư cá nhân.",
         bullets: [
-          "Chỉ mục bộ nhớ codebase trên embeddings",
-          "Máy chủ công cụ cho test, lint và git",
-          "Chạy trên mọi editor hỗ trợ MCP",
+          "Kiến trúc hai máy ảo, tách Next.js/Nginx khỏi các dịch vụ container hoá",
+          "16 REST endpoint kèm unit test và integration test bằng pytest",
+          "Kafka và PostgreSQL sau tầng dữ liệu thị trường cache bằng Redis",
         ],
-      },
-      {
-        kicker: "DỰ ÁN 03",
-        title: "Quy trình tự động cho portfolio",
-        thumb: "ẢNH MÀN HÌNH WORKFLOW\nn8n canvas",
-        blurb:
-          "Form liên hệ của trang này đi qua n8n: kiểm tra dữ liệu, chấm điểm spam, ghi vào Notion và trả lời theo mẫu — không cần server để bảo trì.",
-        bullets: ["Dự phòng mailto khi webhook lỗi", "Đồng bộ CRM Notion", "Chạy trên một VPS nhỏ"],
       },
     ],
   },
@@ -610,35 +590,27 @@ const zh: Strings = {
     items: [
       {
         kicker: "项目 01",
-        title: "备兑权证实时看板",
-        thumb: "架构图\nkafka → python → redis → next.js",
+        title: "CW Research Terminal",
+        thumb: "RESEARCH TERMINAL\nquotes → greeks → llm",
         blurb:
-          "面向越南备兑权证的实时定价台：行情持续流入，希腊字母按 tick 重算，交易台看到的是当下的风险敞口，而不是昨天的表格。",
+          "面向 100+ 越南备兑权证的研究终端，通过 FastAPI 与 WebSockets 推送 FiinQuant 行情数据。",
         bullets: [
-          "Black-Scholes 定价，含 Δ、Γ、Θ、Vega、Rho",
-          "经 Kafka 与 Redis 的亚秒级数据接入",
-          "Next.js 前端，FastAPI 服务层",
+          "Black-Scholes-Merton 定价、隐含与历史波动率、希腊字母",
+          "可调用工具的 LLM 助手，基于实时报价与历史价格",
+          "工具调用过程可见，并设有非投资建议护栏",
         ],
       },
       {
         kicker: "项目 02",
-        title: "基于 MCP 的 AI 编程助手",
-        thumb: "编辑器截图\nmcp 工具面板",
+        title: "KB 证券备兑权证门户",
+        thumb: "cw.kbsec.com.vn\nnext.js · fastapi · kafka",
         blurb:
-          "一个 MCP 服务器，为编辑器里的 agent 提供真实的项目上下文 — 仓库记忆、代码检索，以及在真实构建上运行的工具调用。",
+          "我在 KB 证券搭建并上线的备兑权证门户，正服务于交易员与散户投资者。",
         bullets: [
-          "基于向量的代码库记忆索引",
-          "测试、lint 与 git 的工具服务",
-          "适用于任何支持 MCP 的编辑器",
+          "双虚拟机架构，将 Next.js/Nginx 与容器化服务分离",
+          "16 个 REST 接口，配有 pytest 单元与集成测试",
+          "Kafka 与 PostgreSQL 位于 Redis 缓存的行情数据层之后",
         ],
-      },
-      {
-        kicker: "项目 03",
-        title: "个人站自动化工作流",
-        thumb: "工作流截图\nn8n 画布",
-        blurb:
-          "本站的联系表单经过 n8n：校验、垃圾信息评分、写入 Notion、按模板回复 — 不需要维护服务器。",
-        bullets: ["Webhook 故障时回落到 mailto", "同步到 Notion CRM", "部署在一台小型 VPS 上"],
       },
     ],
   },
@@ -721,7 +693,7 @@ export const jobsMeta = [
     name: "FPT IS",
     place: "Ho Chi Minh City",
     icon: "logo-fpt",
-    term: "2024",
+    term: "May – Jul 2024",
     stack: ["JAVA", "SPRING", "ORACLE", "DOCKER"],
   },
 ] as const satisfies readonly {
@@ -742,11 +714,14 @@ export type JobId = (typeof jobsMeta)[number]["id"];
 export const projectsMeta = [
   {
     id: "cw",
-    stack: ["PYTHON", "KAFKA", "REDIS", "NEXT.JS", "FASTAPI"],
+    stack: ["REACT", "TYPESCRIPT", "FASTAPI", "POSTGRES", "REDIS", "OPENROUTER"],
     url: "https://cw-research-terminal.vercel.app/",
   },
-  { id: "mcp", stack: ["TYPESCRIPT", "MCP", "NODE", "SQLITE"], url: null },
-  { id: "n8n", stack: ["N8N", "NOTION API", "WEBHOOKS"], url: null },
+  {
+    id: "portal",
+    stack: ["NEXT.JS", "NGINX", "FASTAPI", "KAFKA", "POSTGRES", "PYTEST"],
+    url: "https://cw.kbsec.com.vn/",
+  },
 ] as const;
 
 export type ProjectId = (typeof projectsMeta)[number]["id"];

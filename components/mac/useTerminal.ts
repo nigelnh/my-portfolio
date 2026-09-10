@@ -72,7 +72,7 @@ export function useTerminal({
     push(
       projectsMeta.map((p) => {
         const flag = p.url ? "" : `  (${t.mac.notDeployed})`;
-        return [`${p.id.padEnd(6)}${titles[p.id] ?? p.id}${flag}`, p.url ? undefined : "dim"] as [
+        return [`${p.id.padEnd(8)}${titles[p.id] ?? p.id}${flag}`, p.url ? undefined : "dim"] as [
           string,
           Line["kind"],
         ];
@@ -147,12 +147,14 @@ export function useTerminal({
             push([[`run: no such project: ${id}`, "err"]]);
             return;
           }
-          if (!found.url) {
+          // Widened so the guard survives every project currently having a URL.
+          const url: string | null = found.url;
+          if (!url) {
             push([[`run: ${found.id}: ${t.mac.notDeployed}`, "err"]]);
             return;
           }
           setCwd(found.id);
-          push([[`booting ${found.url} ...`, "ok"]]);
+          push([[`booting ${url} ...`, "ok"]]);
           setRunning(found.id);
           return;
         }
