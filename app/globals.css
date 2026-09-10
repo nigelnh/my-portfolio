@@ -619,7 +619,7 @@ textarea:focus {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
   gap: 32px;
-  padding: 64px 30px 16px;
+  padding: 40px 30px 16px;
 }
 
 .hero__col {
@@ -719,14 +719,14 @@ textarea:focus {
 .mac-wrap {
   position: relative;
   width: 100%;
-  /* The band under the laptop, shared by the cup, the blob's stage and (on
-     wide screens) the spec caption. */
-  padding-bottom: 48px;
+  /* Standing room under the laptop for the blob when it is not roaming the
+     whole page. Kept tight so the panel does not trail off into empty space. */
+  padding-bottom: 30px;
 }
 
 .mac {
   width: 100%;
-  padding: 18px;
+  padding: 14px;
   background: var(--panel-2);
   border: 4px solid var(--ink);
   box-shadow: var(--shadow-hard);
@@ -734,7 +734,9 @@ textarea:focus {
 
 .mac__screen {
   position: relative;
-  aspect-ratio: 16 / 10;
+  /* Taller than a real 16:10 lid on purpose: it pushes the display down into
+     what was empty chin space, and gives the terminal a few more rows. */
+  aspect-ratio: 16 / 11;
   overflow: hidden;
   background: #050b14;
   border: 3px solid var(--ink-darkest);
@@ -747,7 +749,7 @@ textarea:focus {
 
 /* Chin: the Space Gray Apple logo on its own, no bar around it. */
 .mac__chin {
-  margin-top: 8px;
+  margin-top: 6px;
   display: grid;
   place-items: center;
 }

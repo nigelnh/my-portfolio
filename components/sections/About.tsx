@@ -68,7 +68,7 @@ export function About() {
               <div className="mac">
                 <MacScreen />
                 <div className="mac__chin">
-                  <Icon name="apple-silver" size={18} />
+                  <Icon name="apple-chin" size={24} />
                 </div>
               </div>
 

@@ -31,7 +31,8 @@ export type IconName =
   | "apple-glow"
   | "apple-silver"
   | "m1-pro-chip"
-  | "touch-id-power";
+  | "touch-id-power"
+  | "apple-chin";
 
 type Sprite = (props: SVGProps<SVGSVGElement>) => React.ReactElement;
 
@@ -350,6 +351,46 @@ export const ICONS: Record<IconName, Sprite> = {
       <rect x="10" y="13" width="4" height="1" fill="#94a3b8"/>
     </>,
   ),
+  /**
+   * Apple Space Gray for a light surface. The kit's own logos paint the bite
+   * cutout with a solid colour rather than leaving it transparent, so on the
+   * laptop's chin the dark version showed up as a black notch. This one takes
+   * the bite from the chin's background token instead.
+   */
+  "apple-chin": sprite(
+    <>
+      <rect x="8" y="6" width="3" height="1" fill="#6b7f96"/>
+      <rect x="12" y="6" width="4" height="1" fill="#6b7f96"/>
+      <rect x="6" y="7" width="12" height="1" fill="#6b7f96"/>
+      <rect x="5" y="8" width="14" height="1" fill="#6b7f96"/>
+      <rect x="4" y="9" width="14" height="1" fill="#6b7f96"/>
+      <rect x="4" y="10" width="12" height="1" fill="#6b7f96"/>
+      <rect x="4" y="11" width="11" height="1" fill="#6b7f96"/>
+      <rect x="4" y="12" width="11" height="1" fill="#6b7f96"/>
+      <rect x="4" y="13" width="12" height="1" fill="#6b7f96"/>
+      <rect x="4" y="14" width="14" height="1" fill="#6b7f96"/>
+      <rect x="4" y="15" width="15" height="1" fill="#6b7f96"/>
+      <rect x="5" y="16" width="14" height="1" fill="#6b7f96"/>
+      <rect x="6" y="17" width="12" height="1" fill="#6b7f96"/>
+      <rect x="7" y="18" width="4" height="1" fill="#6b7f96"/>
+      <rect x="13" y="18" width="4" height="1" fill="#6b7f96"/>
+      <rect x="8" y="19" width="3" height="1" fill="#6b7f96"/>
+      <rect x="13" y="19" width="3" height="1" fill="#6b7f96"/>
+      <rect x="6" y="16" width="12" height="1" fill="#52657a"/>
+      <rect x="7" y="17" width="10" height="1" fill="#52657a"/>
+      <rect x="7" y="18" width="4" height="1" fill="#52657a"/>
+      <rect x="13" y="18" width="4" height="1" fill="#52657a"/>
+      <rect x="8" y="19" width="3" height="1" fill="#52657a"/>
+      <rect x="13" y="19" width="3" height="1" fill="#52657a"/>
+      <rect x="6" y="9" width="3" height="1" fill="#93a6b9"/>
+      <rect x="5" y="10" width="2" height="1" fill="#93a6b9"/>
+      <rect x="5" y="11" width="1" height="1" fill="#93a6b9"/>
+      <rect x="14" y="2" width="3" height="1" fill="#5f7386"/>
+      <rect x="13" y="3" width="4" height="1" fill="#5f7386"/>
+      <rect x="13" y="4" width="3" height="1" fill="#5f7386"/>
+      <rect x="11" y="5" width="2" height="1" fill="#52657a"/>
+    </>,
+  ),
 };
 
 /** Kit metadata, kept for reference and for any future icon browser. */
@@ -369,6 +410,7 @@ export const ICON_META: Record<IconName, { name: string; category: string }> = {
   "pixel-star": { name: "Ngôi Sao (Pixel Star)", category: "items" },
   "apple-glow": { name: "Apple Logo (Lid Glow)", category: "apple" },
   "apple-silver": { name: "Apple Space Gray", category: "apple" },
+  "apple-chin": { name: "Apple Space Gray (light surface)", category: "apple" },
   "m1-pro-chip": { name: "Chip Apple M1 Pro", category: "apple" },
   "touch-id-power": { name: "Nút Nguồn Touch ID", category: "apple" },
 };
