@@ -16,7 +16,7 @@ export function Stack() {
 
   return (
     <section id="skills" className="section">
-      <Panel title={t.skills.label} led="var(--sky)">
+      <Panel title={t.skills.label}>
         <div className="stack">
           {groups.map((g) => (
             <div key={g.title} className="stack__card">

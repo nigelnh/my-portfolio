@@ -64,7 +64,7 @@ export function Contact() {
 
   return (
     <section id="contact" className="section">
-      <Panel title={t.contact.label} led="var(--amber)">
+      <Panel title={t.contact.label}>
         <div className="contact">
           <form className="contact__form" onSubmit={submit} noValidate>
             <div className="contact__head">

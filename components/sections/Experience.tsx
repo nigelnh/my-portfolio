@@ -21,7 +21,7 @@ export function Experience() {
 
   return (
     <section id="experience" className="section">
-      <Panel title={t.work.label} led="var(--mint)">
+      <Panel title={t.work.label}>
         <div className="work">
           <div className="work__list" role="tablist" aria-label={t.work.label}>
             {jobsMeta.map((m, i) => (

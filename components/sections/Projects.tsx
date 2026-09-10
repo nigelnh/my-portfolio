@@ -9,7 +9,7 @@ export function Projects() {
 
   return (
     <section id="projects" className="section">
-      <Panel title={t.projects.label} led="var(--rose)">
+      <Panel title={t.projects.label}>
         <div className="projects">
           {t.projects.items.map((p, i) => (
             <article key={projectsMeta[i].id} className="project">

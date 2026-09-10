@@ -28,6 +28,17 @@ export interface Milestone {
   text: string;
 }
 
+export interface School {
+  /** Matches a key in `SCHOOL_PHOTOS`; the frame falls back to a placeholder. */
+  id: string;
+  /** Short label for the selector button. */
+  tab: string;
+  title: string;
+  name: string;
+  blurb: string;
+  photo: string;
+}
+
 export interface JobCopy {
   role: string;
   blurb: string;
@@ -76,12 +87,8 @@ export interface Strings {
   };
   journey: {
     label: string;
-    title: string;
-    school: string;
-    blurb: string;
-    photo: string;
-    drop: string;
     milestones: string;
+    schools: School[];
     ms: Milestone[];
   };
   work: { label: string; jobs: JobCopy[] };
@@ -177,15 +184,29 @@ const en: Strings = {
   },
   journey: {
     label: "JOURNEY",
-    title: "University years",
-    school: "GETTYSBURG COLLEGE · 2023–2027",
-    blurb:
-      "B.S. Computer Science with a Mathematical Economics minor. A liberal arts foundation that keeps the writing and the modeling in the same head.",
-    photo: "CAMPUS PHOTO",
-    drop: "drop image here",
     milestones: "MILESTONES",
+    schools: [
+      {
+        id: "hcmc",
+        tab: "HIGH SCHOOL",
+        title: "High school years",
+        name: "HCMC HIGHSCHOOL FOR THE GIFTED · 2019–2022",
+        blurb:
+          "The specialised high school in Ho Chi Minh City, and the last three years at home before the move to the US.",
+        photo: "CLASSROOM PHOTO",
+      },
+      {
+        id: "gettysburg",
+        tab: "UNIVERSITY",
+        title: "University years",
+        name: "GETTYSBURG COLLEGE · 2022–2027",
+        blurb:
+          "B.S. Computer Science with a Business minor. A liberal arts foundation that keeps the writing and the modeling in the same head.",
+        photo: "CAMPUS PHOTO",
+      },
+    ],
     ms: [
-      { year: "2023", text: "Arrived from Ho Chi Minh City. First CS course, first snow." },
+      { year: "2022", text: "Arrived from Ho Chi Minh City. First CS course, first snow." },
       { year: "2024", text: "First engineering internship. Learned pipelines break at 3am." },
       { year: "2025", text: "Covered warrants desk work at KB Securities, HCMC." },
       { year: "2026 →", text: "Quant research and real-time systems. Open to summer 2027 roles." },
@@ -348,15 +369,29 @@ const vi: Strings = {
   },
   journey: {
     label: "HÀNH TRÌNH",
-    title: "Hành trình đại học",
-    school: "GETTYSBURG COLLEGE · 2023–2027",
-    blurb:
-      "Cử nhân Khoa học Máy tính, phụ chuyên ngành Kinh tế Toán. Nền giáo dục khai phóng giúp mình vừa viết vừa mô hình hóa được.",
-    photo: "ẢNH CAMPUS",
-    drop: "kéo ảnh vào đây",
     milestones: "CỘT MỐC",
+    schools: [
+      {
+        id: "hcmc",
+        tab: "PHỔ THÔNG",
+        title: "Thời phổ thông",
+        name: "TRƯỜNG PHỔ THÔNG NĂNG KHIẾU TP.HCM · 2019–2022",
+        blurb:
+          "Ngôi trường chuyên ở TP.HCM, ba năm cuối ở nhà trước khi sang Mỹ.",
+        photo: "ẢNH LỚP HỌC",
+      },
+      {
+        id: "gettysburg",
+        tab: "ĐẠI HỌC",
+        title: "Hành trình đại học",
+        name: "GETTYSBURG COLLEGE · 2022–2027",
+        blurb:
+          "Cử nhân Khoa học Máy tính, phụ chuyên ngành Kinh doanh. Nền giáo dục khai phóng giúp mình vừa viết vừa mô hình hóa được.",
+        photo: "ẢNH CAMPUS",
+      },
+    ],
     ms: [
-      { year: "2023", text: "Từ Sài Gòn sang. Môn CS đầu tiên, mùa tuyết đầu tiên." },
+      { year: "2022", text: "Từ Sài Gòn sang. Môn CS đầu tiên, mùa tuyết đầu tiên." },
       {
         year: "2024",
         text: "Kỳ thực tập kỹ thuật đầu tiên. Học được rằng pipeline hay sập lúc 3 giờ sáng.",
@@ -521,15 +556,28 @@ const zh: Strings = {
   },
   journey: {
     label: "求学历程",
-    title: "大学四年",
-    school: "葛底斯堡学院 · 2023–2027",
-    blurb:
-      "计算机科学学士，辅修数理经济学。文理学院的训练让写作和建模留在同一个脑子里。",
-    photo: "校园照片",
-    drop: "把图片拖到这里",
     milestones: "时间线",
+    schools: [
+      {
+        id: "hcmc",
+        tab: "高中",
+        title: "高中时期",
+        name: "胡志明市英才高中 · 2019–2022",
+        blurb: "胡志明市的重点高中，也是去美国之前在家的最后三年。",
+        photo: "教室照片",
+      },
+      {
+        id: "gettysburg",
+        tab: "大学",
+        title: "大学四年",
+        name: "葛底斯堡学院 · 2022–2027",
+        blurb:
+          "计算机科学学士，辅修商科。文理学院的训练让写作和建模留在同一个脑子里。",
+        photo: "校园照片",
+      },
+    ],
     ms: [
-      { year: "2023", text: "从胡志明市来到美国。第一门计算机课，第一场雪。" },
+      { year: "2022", text: "从胡志明市来到美国。第一门计算机课，第一场雪。" },
       { year: "2024", text: "第一份工程实习。明白了数据管道总在凌晨三点崩。" },
       { year: "2025", text: "在胡志明市 KB 证券的权证交易台工作。" },
       { year: "2026 →", text: "量化研究与实时系统。正在寻找 2027 年暑期机会。" },
