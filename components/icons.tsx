@@ -436,23 +436,22 @@ export const ICONS: Record<IconName, Sprite> = {
     </>,
     "0 0 32 32",
   ),
-  /** eSmart Solutions Agency — a stylised monogram tile, not the company's real logo. */
+  /** eSmart Solutions Agency — supplied badge: rounded tile with an E/S monogram. */
   "logo-esmart": sprite(
     <>
-      <rect x="2" y="4" width="20" height="16" fill="#122c44"/>
-      <rect x="3" y="5" width="18" height="14" fill="#2f6fd0"/>
-      <rect x="7" y="9" width="4" height="1" fill="#ffffff"/>
-      <rect x="6" y="10" width="1" height="1" fill="#ffffff"/>
-      <rect x="10" y="10" width="1" height="1" fill="#ffffff"/>
-      <rect x="6" y="11" width="5" height="1" fill="#ffffff"/>
-      <rect x="6" y="12" width="1" height="1" fill="#ffffff"/>
-      <rect x="7" y="13" width="4" height="1" fill="#ffffff"/>
-      <rect x="14" y="8" width="4" height="1" fill="#bcd9ff"/>
-      <rect x="13" y="9" width="1" height="1" fill="#bcd9ff"/>
-      <rect x="14" y="10" width="3" height="1" fill="#bcd9ff"/>
-      <rect x="17" y="11" width="1" height="1" fill="#bcd9ff"/>
-      <rect x="13" y="12" width="4" height="1" fill="#bcd9ff"/>
+      <rect x="7" y="2" width="18" height="28" fill="#1e293b" rx="14"/>
+      <rect x="2" y="7" width="28" height="18" fill="#1e293b" rx="9"/>
+      <rect x="8" y="4" width="16" height="24" fill="#f8fafc" rx="8"/>
+      <rect x="4" y="8" width="24" height="16" fill="#f8fafc" rx="8"/>
+      <rect x="8" y="9" width="15" height="2" fill="#0f172a"/>
+      <rect x="8" y="11" width="2" height="4" fill="#0f172a"/>
+      <rect x="12" y="13" width="11" height="2" fill="#0f172a"/>
+      <rect x="21" y="15" width="2" height="3" fill="#0f172a"/>
+      <rect x="12" y="17" width="10" height="2" fill="#0f172a"/>
+      <polygon points="8,15 12,19 14,19 10,15" fill="#0f172a"/>
+      <rect x="8" y="21" width="15" height="2" fill="#0f172a"/>
     </>,
+    "0 0 32 32",
   ),
   /** FPT IS — supplied wordmark: the three FPT parallelograms plus ".IS". */
   "logo-fpt": sprite(

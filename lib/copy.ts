@@ -156,6 +156,7 @@ const en: Strings = {
       "Prev. SWE Intern @KBSecuritiesVietnam",
       "Prev. SWE Intern @FinbudAI",
       "Prev. SWE Intern @eSmartSolutionsAgency",
+      "Prev. FE Intern @FPTIS",
     ],
     ctaA: "VIEW PROJECTS",
     ctaB: "SAY HELLO",
@@ -218,22 +219,22 @@ const en: Strings = {
       {
         role: "Software Engineer Intern",
         blurb:
-          "Built a real-time terminal tracking 30 stocks and 300+ covered warrants for KB Financial Group traders, modelling 54 pricing, risk and P&L metrics. Launched the CW Portal across a two-VM architecture and cut WebSocket payloads by 84% and upstream requests by 98%.",
+          "Engineered a real-time terminal tracking 30 stocks and 300+ covered warrants for KB Financial Group traders, modelling 54 pricing, risk and P&L metrics from Black-Scholes outputs, Greeks and inventory exposure. Cut WebSocket payloads 84% by sending differential patches instead of whole snapshots, and upstream requests 98% by batching 50 symbols per call; historical series moved into Redis in front of indexed Postgres queries over 100,000+ records. Shipped the CW Portal on a two-VM split — Next.js behind Nginx, containerised FastAPI, Kafka and Postgres — with 16 REST endpoints under pytest, and n8n pipelines handling deduplication, normalisation and adjusted-price snapshots.",
       },
       {
         role: "Software Engineer Intern",
         blurb:
-          "Co-built a financial analytics platform on LangChain and pgvector over a 500+ document corpus. Cut end-to-end latency roughly in half with async I/O, prompt compression and retrieval caching, and containerised the backend behind GitHub Actions.",
+          "Co-built a financial analytics platform on LangChain and pgvector, indexing a 500+ document corpus for vector search and LLM context assembly. Halved production end-to-end latency by moving request flows onto asynchronous I/O, compressing prompts before dispatch and caching retrieval results so a repeated question never reaches the model twice. Containerised the backend with Docker and wired GitHub Actions to run the test suite on every push, standardising development and QA environments.",
       },
       {
         role: "Software Engineer Intern",
         blurb:
-          "Built a multi-model LLM content platform on Vue and FastAPI that parses intent and tone into platform-specific output, and an exemplar-based workflow that produced 100+ SEO-scored articles.",
+          "Built a multi-model content pipeline on Vue and FastAPI that parses a brief into keywords, tone, intent and metadata, then routes each platform's output to whichever model handles it best — extraction on DeepSeek V3, drafting on GPT-4. Added an exemplar-driven loop that scores every draft against external SEO signals and re-prompts until it clears the threshold, which produced 100+ published articles. Centralised shared dashboard state so navigation and edits stay in sync across views.",
       },
       {
         role: "Frontend Engineer Intern",
         blurb:
-          "Front-end engineering on enterprise systems for banking clients.",
+          "Front-end engineering on enterprise systems for banking clients, building interface work against internal service APIs.",
       },
     ],
   },
@@ -329,6 +330,7 @@ const vi: Strings = {
       "Cựu Thực tập sinh SWE @KBSecuritiesVietnam",
       "Cựu Thực tập sinh SWE @FinbudAI",
       "Cựu Thực tập sinh SWE @eSmartSolutionsAgency",
+      "Cựu Thực tập sinh FE @FPTIS",
     ],
     ctaA: "XEM DỰ ÁN",
     ctaB: "GỬI EMAIL",
@@ -394,22 +396,22 @@ const vi: Strings = {
       {
         role: "Thực tập sinh Kỹ thuật phần mềm",
         blurb:
-          "Xây terminal thời gian thực theo dõi 30 mã cổ phiếu và hơn 300 chứng quyền cho trader của KB Financial Group, mô hình hoá 54 chỉ số định giá, rủi ro và P&L. Ra mắt CW Portal trên kiến trúc hai máy ảo, giảm 84% dung lượng WebSocket và 98% số request upstream.",
+          "Xây terminal thời gian thực theo dõi 30 mã cổ phiếu và hơn 300 chứng quyền cho trader KB Financial Group, mô hình hoá 54 chỉ số định giá, rủi ro và P&L từ Black-Scholes, các Greeks và trạng thái tồn kho. Giảm 84% dung lượng WebSocket nhờ gửi bản vá sai khác thay vì toàn bộ snapshot, và 98% số request upstream nhờ gộp 50 mã mỗi lần gọi; dữ liệu lịch sử đưa vào Redis đặt trước các truy vấn Postgres có index trên hơn 100.000 bản ghi. Đưa CW Portal lên kiến trúc hai máy ảo — Next.js sau Nginx, FastAPI, Kafka và Postgres chạy container — với 16 REST endpoint có pytest, cùng pipeline n8n lo khử trùng lặp, chuẩn hoá và snapshot giá điều chỉnh.",
       },
       {
         role: "Thực tập sinh Kỹ thuật phần mềm",
         blurb:
-          "Đồng phát triển nền tảng phân tích tài chính trên LangChain và pgvector với kho hơn 500 tài liệu. Giảm khoảng một nửa độ trễ end-to-end nhờ async I/O, nén prompt và cache truy hồi; đóng gói backend bằng Docker và GitHub Actions.",
+          "Đồng phát triển nền tảng phân tích tài chính trên LangChain và pgvector, lập chỉ mục kho hơn 500 tài liệu cho tìm kiếm vector và dựng ngữ cảnh cho LLM. Giảm một nửa độ trễ end-to-end nhờ chuyển luồng request sang I/O bất đồng bộ, nén prompt trước khi gửi và cache kết quả truy hồi để câu hỏi lặp lại không phải gọi mô hình lần nữa. Đóng gói backend bằng Docker và cấu hình GitHub Actions chạy bộ test mỗi lần push, chuẩn hoá môi trường phát triển và QA.",
       },
       {
         role: "Thực tập sinh Kỹ thuật phần mềm",
         blurb:
-          "Xây nền tảng nội dung dùng nhiều mô hình LLM trên Vue và FastAPI, bóc tách ý định và giọng văn thành đầu ra riêng cho từng nền tảng; quy trình theo mẫu tạo ra hơn 100 bài đạt ngưỡng SEO.",
+          "Xây pipeline nội dung đa mô hình trên Vue và FastAPI, bóc tách đề bài thành từ khoá, giọng văn, ý định và metadata, rồi định tuyến đầu ra của từng nền tảng tới mô hình phù hợp nhất — DeepSeek V3 để trích xuất, GPT-4 để viết. Thêm vòng lặp theo mẫu chấm điểm từng bản nháp bằng tín hiệu SEO bên ngoài và prompt lại đến khi đạt ngưỡng, tạo ra hơn 100 bài đã xuất bản. Gom trạng thái dùng chung của dashboard để điều hướng và chỉnh sửa luôn đồng bộ giữa các màn hình.",
       },
       {
         role: "Thực tập sinh Kỹ thuật Front-end",
         blurb:
-          "Kỹ thuật front-end cho các hệ thống doanh nghiệp phục vụ khách hàng ngân hàng.",
+          "Kỹ thuật front-end cho các hệ thống doanh nghiệp phục vụ khách hàng ngân hàng, dựng giao diện làm việc với các API dịch vụ nội bộ.",
       },
     ],
   },
@@ -505,6 +507,7 @@ const zh: Strings = {
       "前软件工程实习生 @KBSecuritiesVietnam",
       "前软件工程实习生 @FinbudAI",
       "前软件工程实习生 @eSmartSolutionsAgency",
+      "前前端实习生 @FPTIS",
     ],
     ctaA: "查看项目",
     ctaB: "写信给我",
@@ -566,22 +569,22 @@ const zh: Strings = {
       {
         role: "软件工程实习生",
         blurb:
-          "为 KB 金融集团交易员搭建实时终端，跟踪 30 只股票与 300+ 备兑权证，建模 54 项定价、风险与损益指标。在双虚拟机架构上上线 CW Portal，WebSocket 负载减少 84%，上游请求减少 98%。",
+          "为 KB 金融集团交易员搭建实时终端，跟踪 30 只股票与 300+ 备兑权证，基于 Black-Scholes 输出、希腊字母与库存敞口建模 54 项定价、风险与损益指标。改为发送差分补丁而非完整快照，WebSocket 负载降低 84%；每次请求批量 50 个标的，上游请求减少 98%；历史序列放入 Redis，前置于 100,000+ 条记录的带索引 Postgres 查询。在双虚拟机架构上交付 CW Portal——Nginx 后的 Next.js，容器化的 FastAPI、Kafka 与 Postgres——16 个 REST 接口配有 pytest，并用 n8n 管道处理去重、归一化与复权快照。",
       },
       {
         role: "软件工程实习生",
         blurb:
-          "基于 LangChain 与 pgvector 共同搭建金融分析平台，覆盖 500+ 份文档语料。通过异步 I/O、提示压缩与检索缓存，将端到端延迟降低约一半，并用 Docker 与 GitHub Actions 容器化后端。",
+          "基于 LangChain 与 pgvector 共同搭建金融分析平台，为 500+ 份文档语料建立索引，用于向量检索与 LLM 上下文组装。将请求流程改为异步 I/O、发送前压缩提示词、缓存检索结果，使重复问题不再二次调用模型，生产端到端延迟降低约一半。用 Docker 容器化后端，并配置 GitHub Actions 在每次推送时运行测试，统一开发与 QA 环境。",
       },
       {
         role: "软件工程实习生",
         blurb:
-          "在 Vue 与 FastAPI 上搭建多模型 LLM 内容平台，将意图与语气解析为各平台专属输出；范例驱动的流程产出 100+ 篇达标 SEO 文章。",
+          "在 Vue 与 FastAPI 上搭建多模型内容流水线，把需求解析为关键词、语气、意图与元数据，再将各平台的输出路由到最合适的模型——DeepSeek V3 负责抽取，GPT-4 负责撰写。加入范例驱动的循环，用外部 SEO 信号为每份草稿评分并反复重写直至达标，产出 100+ 篇已发布文章。集中管理仪表盘共享状态，使导航与编辑在各视图间保持同步。",
       },
       {
         role: "前端工程实习生",
         blurb:
-          "为银行客户的企业系统做前端开发。",
+          "为银行客户的企业系统做前端开发，围绕内部服务 API 构建界面。",
       },
     ],
   },
@@ -670,7 +673,7 @@ export const jobsMeta = [
     place: "Ho Chi Minh City, Vietnam",
     icon: "logo-kb",
     term: "Nov 2025 – Aug 2026",
-    stack: ["TYPESCRIPT", "NODE.JS", "FASTAPI", "KAFKA", "REDIS", "POSTGRES"],
+    stack: ["TYPESCRIPT", "NEXT.JS", "FASTAPI", "WEBSOCKETS", "KAFKA", "REDIS", "POSTGRES", "DOCKER"],
   },
   {
     id: "finbud",
@@ -678,7 +681,7 @@ export const jobsMeta = [
     place: "Chicago, IL",
     icon: "logo-finbud",
     term: "Apr – Jul 2025",
-    stack: ["PYTHON", "LANGCHAIN", "PGVECTOR", "DOCKER", "GITHUB ACTIONS"],
+    stack: ["PYTHON", "LANGCHAIN", "PGVECTOR", "POSTGRES", "ASYNCIO", "DOCKER", "GITHUB ACTIONS"],
   },
   {
     id: "esmart",
@@ -686,7 +689,7 @@ export const jobsMeta = [
     place: "Saint Paul, MN",
     icon: "logo-esmart",
     term: "Feb – Apr 2025",
-    stack: ["VUE.JS", "NODE.JS", "FASTAPI", "GPT-4", "PINIA"],
+    stack: ["VUE 3", "TYPESCRIPT", "NODE.JS", "FASTAPI", "GPT-4", "DEEPSEEK V3", "REST"],
   },
   {
     id: "fptis",
@@ -694,7 +697,7 @@ export const jobsMeta = [
     place: "Ho Chi Minh City",
     icon: "logo-fpt",
     term: "May – Jul 2024",
-    stack: ["JAVA", "SPRING", "ORACLE", "DOCKER"],
+    stack: ["REACT", "TYPESCRIPT", "REST APIS", "GIT"],
   },
 ] as const satisfies readonly {
   id: string;

@@ -1336,6 +1336,9 @@ textarea:focus {
 }
 
 .work__item {
+  /* Grow to share the column height, so neither side is left with a gap
+     whichever of the two is taller. */
+  flex: 1 1 auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
