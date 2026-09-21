@@ -24,7 +24,14 @@ export type SfxName =
   | "snore"
   | "angry"
   | "success"
-  | "zoom";
+  | "zoom"
+  // Feed The Blob minigame.
+  | "drop"
+  | "coin"
+  | "bite"
+  | "ouch"
+  | "win"
+  | "lose";
 
 let ctx: AudioContext | null = null;
 let enabled = false;
@@ -150,6 +157,62 @@ function envelope(
       at(0.08, now);
       to(0.001, now + 0.09);
       return 0.09;
+
+    /** A food item leaving your cursor. Quiet: it fires on every click. */
+    case "drop":
+      osc.type = "sine";
+      f.setValueAtTime(440, now);
+      f.exponentialRampToValueAtTime(320, now + 0.05);
+      at(0.06, now);
+      to(0.001, now + 0.05);
+      return 0.05;
+
+    /** Boba caught (+2) — the bright one. */
+    case "coin":
+      osc.type = "square";
+      f.setValueAtTime(987.77, now);
+      f.setValueAtTime(1318.51, now + 0.08);
+      at(0.1, now);
+      to(0.001, now + 0.26);
+      return 0.26;
+
+    /** Donut caught (+1). */
+    case "bite":
+      osc.type = "triangle";
+      f.setValueAtTime(520, now);
+      f.exponentialRampToValueAtTime(840, now + 0.07);
+      at(0.11, now);
+      to(0.001, now + 0.16);
+      return 0.16;
+
+    /** Coffee caught (-1). */
+    case "ouch":
+      osc.type = "sawtooth";
+      f.setValueAtTime(220, now);
+      f.linearRampToValueAtTime(110, now + 0.22);
+      at(0.13, now);
+      to(0.001, now + 0.24);
+      return 0.24;
+
+    case "win":
+      osc.type = "square";
+      f.setValueAtTime(523.25, now);
+      f.setValueAtTime(659.25, now + 0.1);
+      f.setValueAtTime(783.99, now + 0.2);
+      f.setValueAtTime(1046.5, now + 0.3);
+      at(0.09, now);
+      to(0.001, now + 0.52);
+      return 0.52;
+
+    case "lose":
+      osc.type = "sawtooth";
+      f.setValueAtTime(440, now);
+      f.setValueAtTime(392, now + 0.14);
+      f.setValueAtTime(349.23, now + 0.28);
+      f.setValueAtTime(293.66, now + 0.42);
+      at(0.1, now);
+      to(0.001, now + 0.72);
+      return 0.72;
   }
 }
 

@@ -9,6 +9,7 @@ import { Journey } from "./sections/Journey";
 import { Experience } from "./sections/Experience";
 import { Projects } from "./sections/Projects";
 import { Stack } from "./sections/Stack";
+import { Arcade } from "./sections/Arcade";
 import { Contact } from "./sections/Contact";
 
 export function Portfolio() {
@@ -23,6 +24,7 @@ export function Portfolio() {
             <Experience />
             <Projects />
             <Stack />
+            <Arcade />
             <Contact />
           </main>
         </div>

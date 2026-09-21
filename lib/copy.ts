@@ -1,3 +1,4 @@
+import type { FoodType } from "@/components/game/sprites";
 import type { IconName } from "@/components/icons";
 
 /**
@@ -21,6 +22,7 @@ export type SectionId =
   | "experience"
   | "projects"
   | "skills"
+  | "arcade"
   | "contact";
 
 export interface Milestone {
@@ -118,6 +120,32 @@ export interface Strings {
     setup: string;
     setupText: string;
   };
+  game: {
+    label: string;
+    kicker: string;
+    title: string;
+    rules: string;
+    /** Explains why the coffee rains as hard as it does. */
+    warn: string;
+    start: string;
+    stop: string;
+    again: string;
+    score: string;
+    time: string;
+    goal: string;
+    pts: string;
+    dropHint: string;
+    tooLow: string;
+    greeting: string;
+    food: Record<FoodType, string>;
+    introTitle: string;
+    introText: string;
+    wonTitle: string;
+    wonLine: string;
+    lostTitle: string;
+    lostLine: string;
+    finalScore: string;
+  };
   contact: {
     label: string;
     title: string;
@@ -133,8 +161,6 @@ export interface Strings {
     note: string;
     errAll: string;
     errEmail: string;
-    elsewhere: string;
-    resume: string;
     reply: string;
   };
 }
@@ -292,6 +318,34 @@ const en: Strings = {
     setupText:
       "14-inch MacBook Pro (M1 Pro), Sofle v2.1 split mechanical keyboard, Neovim and a lot of tmux.",
   },
+  game: {
+    label: "ARCADE",
+    kicker: "MINI CHALLENGE",
+    title: "Feed the hungry blob",
+    rules:
+      "Click anywhere in the top half of the arena to drop a snack. The blob hops around on its own — land the food on it.",
+    warn:
+      "Bitter coffee falls as often as the treats, and hammering the arena only makes it worse. Aim, don't flood.",
+    start: "START",
+    stop: "STOP",
+    again: "PLAY AGAIN",
+    score: "SCORE",
+    time: "TIME",
+    goal: "TARGET",
+    pts: "PTS",
+    dropHint: "CLICK THE TOP HALF TO DROP A SNACK",
+    tooLow: "Too low! Drop it from the top half.",
+    greeting: "I'm starving — drop me some boba!",
+    food: { boba: "BOBA", donut: "DONUT", coffee: "BITTER COFFEE" },
+    introTitle: "FEED THE HUNGRY BLOB",
+    introText:
+      "Drop snacks from the top half into the blob's mouth. Bitter coffee is just as likely to fall, so aim instead of spamming.",
+    wonTitle: "WELL FED!",
+    wonLine: "Yum! Thanks for the boba.",
+    lostTitle: "THE BLOB FAINTED",
+    lostLine: "Too little food, too much bitter coffee.",
+    finalScore: "FINAL SCORE",
+  },
   contact: {
     label: "CONTACT",
     title: "Send me an email",
@@ -307,8 +361,6 @@ const en: Strings = {
     note: "Wired to an n8n automation workflow with a mailto fallback.",
     errAll: "All fields are required.",
     errEmail: "That email doesn't look right.",
-    elsewhere: "ELSEWHERE",
-    resume: "Résumé (PDF)",
     reply: "I usually reply within a day.",
   },
 };
@@ -469,6 +521,38 @@ const vi: Strings = {
     setupText:
       "MacBook Pro 14-inch (M1 Pro), bàn phím cơ chia đôi Sofle v2.1, Neovim và rất nhiều tmux.",
   },
+  game: {
+    label: "GAME",
+    kicker: "THỬ THÁCH NHỎ",
+    title: "Cho blob đói ăn",
+    rules:
+      "Bấm vào nửa trên của sân chơi để thả đồ ăn xuống. Blob tự nhảy qua lại — canh sao cho đồ ăn rơi trúng nó.",
+    warn:
+      "Cà phê đắng rơi nhiều ngang đồ ngọt, bấm càng dồn dập thì càng nhiều. Canh chuẩn, đừng spam.",
+    start: "BẮT ĐẦU",
+    stop: "DỪNG",
+    again: "CHƠI LẠI",
+    score: "ĐIỂM",
+    time: "THỜI GIAN",
+    goal: "MỤC TIÊU",
+    pts: "ĐIỂM",
+    dropHint: "BẤM NỬA TRÊN ĐỂ THẢ ĐỒ ĂN",
+    tooLow: "Thấp quá! Thả từ nửa trên nhé.",
+    greeting: "Đói quá, thả trà sữa cho tớ đi!",
+    food: {
+      boba: "TRÀ SỮA",
+      donut: "DONUT",
+      coffee: "CÀ PHÊ ĐẮNG",
+    },
+    introTitle: "CHO BLOB ĐÓI ĂN",
+    introText:
+      "Thả đồ ăn từ nửa trên xuống miệng blob. Cà phê đắng rơi cũng thường xuyên không kém, nên canh chứ đừng spam.",
+    wonTitle: "NO NÊ RỒI!",
+    wonLine: "Ngon quá! Cảm ơn trà sữa nha.",
+    lostTitle: "BLOB XỈU RỒI",
+    lostLine: "Ăn thì ít, mà cà phê đắng thì nhiều.",
+    finalScore: "ĐIỂM CUỐI",
+  },
   contact: {
     label: "LIÊN HỆ",
     title: "Gửi email cho mình",
@@ -484,8 +568,6 @@ const vi: Strings = {
     note: "Kết nối với quy trình tự động n8n và có dự phòng mailto.",
     errAll: "Vui lòng điền hết các ô.",
     errEmail: "Email này chưa đúng định dạng.",
-    elsewhere: "KÊNH KHÁC",
-    resume: "Hồ sơ (PDF)",
     reply: "Mình thường trả lời trong vòng 24 giờ.",
   },
 };
@@ -642,6 +724,38 @@ const zh: Strings = {
     setupText:
       "14 英寸 MacBook Pro（M1 Pro）、Sofle v2.1 分体机械键盘、Neovim 和大量 tmux。",
   },
+  game: {
+    label: "游戏",
+    kicker: "小挑战",
+    title: "喂饱小蓝团",
+    rules:
+      "点击场地上半部分投下食物。小蓝团会自己跳来跳去，瞄准它再投。",
+    warn:
+      "苦咖啡出现的概率和点心一样高，连点得越快苦咖啡越多。瞄准投，别乱点。",
+    start: "开始",
+    stop: "停止",
+    again: "再来一局",
+    score: "得分",
+    time: "时间",
+    goal: "目标",
+    pts: "分",
+    dropHint: "点击上半部分投下食物",
+    tooLow: "太低了！请从上半部分投下。",
+    greeting: "我好饿，快投奶茶给我！",
+    food: {
+      boba: "珍珠奶茶",
+      donut: "甜甜圈",
+      coffee: "苦咖啡",
+    },
+    introTitle: "喂饱饥饿的小蓝团",
+    introText:
+      "从上半部分投下食物喂给小蓝团。苦咖啡同样常见，所以要瞄准，别狂点。",
+    wonTitle: "吃饱啦！",
+    wonLine: "真好吃！谢谢你的奶茶。",
+    lostTitle: "小蓝团晕倒了",
+    lostLine: "吃得太少，苦咖啡又太多。",
+    finalScore: "最终得分",
+  },
   contact: {
     label: "联系",
     title: "写信给我",
@@ -657,8 +771,6 @@ const zh: Strings = {
     note: "接入 n8n 自动化工作流，并保留 mailto 兜底。",
     errAll: "请填写所有字段。",
     errEmail: "这个邮箱格式不太对。",
-    elsewhere: "其他平台",
-    resume: "简历（PDF）",
     reply: "我通常一天内回复。",
   },
 };
@@ -734,11 +846,6 @@ export const skillTags = {
   infra: ["KAFKA", "REDIS", "POSTGRES", "DOCKER", "FASTAPI"],
   quant: ["BLACK-SCHOLES", "GREEKS", "HEDGING", "TIME SERIES"],
 } as const;
-
-export const links = [
-  { label: "GitHub — /nhannguyen", href: "#contact" },
-  { label: "LinkedIn — /in/nhannguyen", href: "#contact" },
-];
 
 /** Section order drives both nav rails and scroll-spy. */
 export const SECTIONS: {

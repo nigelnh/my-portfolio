@@ -23,6 +23,8 @@
   --rose: #e0899b;
   --sky: #9fc6e8;
   --danger: #a33b52;
+  /* Minigame arena floor. The food sprites cut their holes out with it. */
+  --arena: #c9e4f8;
 
   /* Latin faces are self-hosted through next/font; CJK falls back to whatever
      the device ships (the design's Noto Sans SC is used when installed). */
@@ -271,6 +273,52 @@ textarea:focus {
 }
 .paw-tap-right {
   animation: typeTapR 0.26s ease-in-out infinite;
+}
+
+/* Knocked-out blob: a flattened pancake still twitching, soul on its way out. */
+@keyframes faintShake {
+  0%,
+  100% {
+    transform: scale(1.28, 0.7) translateY(4px);
+  }
+  50% {
+    transform: scale(1.22, 0.76) translateY(2px);
+  }
+}
+
+@keyframes soulFloat {
+  0% {
+    transform: translate(0, 0) scale(0.6);
+    opacity: 0.85;
+  }
+  100% {
+    transform: translate(14px, -36px) scale(1.2);
+    opacity: 0;
+  }
+}
+
+@keyframes scoreRise {
+  0% {
+    transform: translateY(0) scale(0.8);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(-16px) scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-32px) scale(1);
+    opacity: 0;
+  }
+}
+
+.anim-faint {
+  animation: faintShake 2s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+.soul-ghost {
+  animation: soulFloat 1.8s ease-out infinite;
 }
 
 /* Particles inside the sprites. */
@@ -1547,7 +1595,8 @@ textarea:focus {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 26px;
-  align-items: start;
+  /* The aside holds one box, so let it match the form's height. */
+  align-items: stretch;
   padding-bottom: 2px;
 }
 
@@ -1661,10 +1710,14 @@ textarea:focus {
 }
 
 .contact__reply {
+  flex: 1;
   display: flex;
-  align-items: flex-end;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   gap: 14px;
-  padding: 18px;
+  padding: 26px 18px;
+  text-align: center;
   background: var(--panel-3);
   border: 3px solid var(--ink);
   box-shadow: var(--shadow-hard);
@@ -1672,8 +1725,321 @@ textarea:focus {
 
 .contact__reply p {
   margin: 0;
+  max-width: 24ch;
   font-size: 12.5px;
   line-height: 1.6;
+}
+
+
+/* ---------------------------------------------------------------------------
+   Arcade — "Feed The Blob" cabinet
+   --------------------------------------------------------------------------- */
+.arcade {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.arcade__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 16px;
+  border-bottom: 3px solid var(--ink);
+}
+
+.arcade__intro {
+  min-width: 0;
+  flex: 1 1 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.arcade__kicker {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--accent);
+}
+
+.arcade__warn {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.6;
+  font-weight: 600;
+  color: var(--danger);
+}
+
+.arcade__start {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  padding: 12px 20px;
+  cursor: pointer;
+  color: var(--ink-deep);
+  background: var(--mint);
+  border: 3px solid var(--ink);
+  box-shadow: var(--shadow-hard);
+}
+
+.arcade__start:hover {
+  translate: -1px -1px;
+  box-shadow: 5px 5px 0 var(--ink);
+}
+
+.arcade__start:active {
+  translate: 2px 2px;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+
+.arcade__start[data-stop="true"] {
+  background: var(--rose);
+}
+
+.arcade__legend {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.arcade__legend-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  background: var(--panel-2);
+  border: 3px solid var(--ink);
+}
+
+.arcade__legend-item[data-kind="coffee"] {
+  background: #f6dde2;
+}
+
+.arcade__legend-name {
+  flex: 1;
+  min-width: 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+}
+
+.arcade__legend-pts {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 6px;
+  white-space: nowrap;
+  background: var(--paper);
+  border: 2px solid var(--ink);
+}
+
+.arcade__cabinet {
+  border: 4px solid var(--ink);
+  box-shadow: var(--shadow-hard);
+}
+
+.arcade__hud {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--ink);
+  color: var(--on-bar);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.6px;
+}
+
+.arcade__stat {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.arcade__score {
+  font-family: var(--font-display);
+  font-size: 18px;
+  color: var(--amber);
+}
+
+.arcade__target {
+  font-size: 10.5px;
+  color: var(--mint);
+}
+
+.arcade__clock {
+  font-family: var(--font-display);
+  font-size: 16px;
+  padding: 1px 7px;
+  color: var(--paper);
+  background: var(--accent);
+  border: 2px solid var(--accent-soft);
+}
+
+.arcade__clock[data-low="true"] {
+  background: var(--danger);
+  border-color: var(--paper);
+}
+
+.arcade__arena {
+  position: relative;
+  overflow: hidden;
+  height: clamp(300px, 42vw, 360px);
+  background-color: var(--arena);
+  background-image:
+    linear-gradient(to right, rgba(18, 44, 68, 0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(18, 44, 68, 0.08) 1px, transparent 1px);
+  background-size: 16px 16px;
+  border-top: 4px solid var(--ink);
+  user-select: none;
+  touch-action: manipulation;
+}
+
+.arcade__arena[data-playing="true"] {
+  cursor: crosshair;
+}
+
+/* The upper 62% is the only fair place to drop from. */
+.arcade__zone {
+  position: absolute;
+  inset: 0 0 38% 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 12px;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(75, 136, 199, 0.05),
+    rgba(75, 136, 199, 0.05) 10px,
+    rgba(255, 255, 255, 0.1) 10px,
+    rgba(255, 255, 255, 0.1) 20px
+  );
+  border-bottom: 2px dashed var(--accent);
+}
+
+.arcade__zone-hint {
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  padding: 5px 9px;
+  text-align: center;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid var(--ink);
+}
+
+.arcade__food {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 3;
+  line-height: 0;
+  pointer-events: none;
+  filter: drop-shadow(0 3px 2px rgba(18, 44, 68, 0.3));
+}
+
+.arcade__float {
+  position: absolute;
+  z-index: 5;
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  pointer-events: none;
+  text-shadow: 1px 1px 0 var(--ink);
+  animation: scoreRise 0.75s ease-out forwards;
+}
+
+.arcade__blob {
+  position: absolute;
+  z-index: 2;
+  width: 76px;
+  height: 62px;
+  pointer-events: none;
+}
+
+.arcade__bubble {
+  position: absolute;
+  left: -14px;
+  bottom: calc(100% + 10px);
+  z-index: 4;
+  margin: 0;
+  width: max-content;
+  max-width: 220px;
+  padding: 7px 10px;
+  font-size: 11.5px;
+  line-height: 1.45;
+  font-weight: 600;
+  color: var(--ink);
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  box-shadow: 2px 2px 0 var(--ink);
+}
+
+.arcade__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 18px;
+  text-align: center;
+  color: var(--panel);
+  background: rgba(13, 43, 71, 0.82);
+}
+
+.arcade__overlay[data-tone="lose"] {
+  background: rgba(30, 27, 75, 0.88);
+}
+
+.arcade__overlay-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--amber);
+}
+
+.arcade__overlay-title[data-tone="win"] {
+  color: var(--mint);
+}
+
+.arcade__overlay-title[data-tone="lose"] {
+  color: var(--rose);
+}
+
+.arcade__overlay-text {
+  margin: 0;
+  max-width: 44ch;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--panel-3);
+}
+
+.arcade__overlay-quote {
+  margin: 0;
+  padding: 6px 10px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--ink);
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  box-shadow: 2px 2px 0 var(--ink);
 }
 
 .visually-hidden {
