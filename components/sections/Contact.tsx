@@ -8,11 +8,6 @@ import { Panel } from "../Panel";
 
 const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 
-/** Set NEXT_PUBLIC_CONTACT_WEBHOOK to the n8n endpoint; without it the form
- *  falls back to opening the visitor's mail client. */
-const WEBHOOK = process.env.NEXT_PUBLIC_CONTACT_WEBHOOK;
-const FALLBACK_EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? CONTACT_EMAIL;
-
 export function Contact() {
   const { t } = useLang();
   const [form, setForm] = useState({ name: "", email: "", msg: "" });
@@ -26,27 +21,20 @@ export function Contact() {
     setError("");
   };
 
-  const mailto = () => {
-    const subject = encodeURIComponent(`Portfolio — ${form.name}`);
-    const body = encodeURIComponent(`${form.msg}\n\n— ${form.name} <${form.email}>`);
-    window.location.href = `mailto:${FALLBACK_EMAIL}?subject=${subject}&body=${body}`;
-  };
-
+  /**
+   * Posts to our own route, which holds the provider key server-side. The
+   * button only ever says "sent" when the server actually accepted it — the
+   * previous version claimed success while merely opening a mail client.
+   */
   const submit = async (e: FormEvent) => {
     e.preventDefault();
     if (!form.name || !form.email || !form.msg) return setError(t.contact.errAll);
     if (!EMAIL_RE.test(form.email)) return setError(t.contact.errEmail);
 
     setError("");
-    if (!WEBHOOK) {
-      mailto();
-      setSent(true);
-      return;
-    }
-
     setBusy(true);
     try {
-      const res = await fetch(WEBHOOK, {
+      const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
@@ -54,8 +42,7 @@ export function Contact() {
       if (!res.ok) throw new Error(String(res.status));
       setSent(true);
     } catch {
-      mailto();
-      setSent(true);
+      setError(t.contact.errSend);
     } finally {
       setBusy(false);
     }
@@ -137,7 +124,7 @@ export function Contact() {
 
             <p className="contact__note">
               {t.contact.note}{" "}
-              <a href={`mailto:${FALLBACK_EMAIL}`}>{FALLBACK_EMAIL}</a>
+              <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
             </p>
           </form>
 

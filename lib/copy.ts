@@ -156,6 +156,8 @@ export interface Strings {
     note: string;
     errAll: string;
     errEmail: string;
+    /** Shown when the server could not accept the message. */
+    errSend: string;
     resume: string;
   };
 }
@@ -384,6 +386,7 @@ const en: Strings = {
     resume: "RESUME",
     errAll: "All fields are required.",
     errEmail: "That email doesn't look right.",
+    errSend: "That didn't go through. Please email me directly instead.",
   },
 };
 
@@ -614,6 +617,7 @@ const zh: Strings = {
     resume: "简历",
     errAll: "请填写所有字段。",
     errEmail: "这个邮箱格式不太对。",
+    errSend: "没能发送成功，请直接写信给我。",
   },
 };
 
@@ -710,7 +714,7 @@ export const links = [
 /** Served straight from `public/`, so it opens in the browser's PDF viewer. */
 export const RESUME_HREF = "/Nhan_Nguyen_Resume.pdf";
 
-/** Public contact address. `NEXT_PUBLIC_CONTACT_EMAIL` overrides it. */
+/** Public contact address. The API route uses it unless CONTACT_TO_EMAIL is set. */
 export const CONTACT_EMAIL = "xuannhan.nguyen2001@gmail.com";
 
 /** Section order drives both nav rails and scroll-spy. */

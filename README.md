@@ -210,16 +210,26 @@ before one.
 
 ## Contact form
 
-The form validates locally, then:
+The form validates locally, then POSTs to `app/api/contact/route.ts`, which
+sends the mail through Resend. The key stays on the server: a `NEXT_PUBLIC_`
+variable would ship it to every visitor.
 
-- POSTs JSON to `NEXT_PUBLIC_CONTACT_WEBHOOK` (an n8n workflow) when that is set;
-- falls back to a `mailto:` to `NEXT_PUBLIC_CONTACT_EMAIL` when the webhook is
-  unset or the request fails.
+The route also rate-limits to three submissions per IP per minute, sets
+`reply_to` to the visitor so a reply reaches them rather than the site, and
+returns 503 when `RESEND_API_KEY` is missing — in which case the form says so
+instead of claiming the message was sent.
 
-Copy `.env.example` to `.env.local` to configure both.
+Resend is provisioned through the Vercel Marketplace:
+
+```bash
+vercel integration add resend/resend-email --plan free -m domain=<your-domain>
+vercel env pull          # writes RESEND_API_KEY into .env.local
+```
+
+See `.env.example` for the optional overrides.
 
 ## Content
 
-All prose lives in `lib/copy.ts` under `STRINGS.en` / `.vi` / `.zh`. Stack tags,
+All prose lives in `lib/copy.ts` under `STRINGS.en` / `.zh`. Stack tags,
 employers and project metadata are language-independent and sit alongside it, so
 a translation change never touches structure.
