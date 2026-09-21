@@ -1453,13 +1453,24 @@ textarea:focus {
   color: var(--muted);
 }
 
+/* One cell, four stacked panels: its height is the tallest of them, at any
+   viewport width, with no magic minimum to keep in sync with the copy. */
+.work__panels {
+  min-width: 0;
+  display: grid;
+}
+
+.work__panels > .work__detail {
+  grid-area: 1 / 1;
+}
+
+.work__detail[data-active="false"] {
+  visibility: hidden;
+}
+
 .work__detail {
   min-width: 0;
   height: 100%;
-  /* Every card is lead + three bullets + tags, so they land within a few
-     pixels of each other; the floor absorbs the rest so switching employers
-     never resizes the panel. */
-  min-height: 430px;
   padding: 20px;
   background: var(--paper);
   border: 4px solid var(--ink);

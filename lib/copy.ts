@@ -247,41 +247,41 @@ const en: Strings = {
       {
         role: "Software Engineer Intern",
         blurb:
-          "Two products off one market-data spine: a live terminal for the covered-warrant desk, and KBSV's public CW portal. The maths was never the hard part \u2014 keeping a firehose of quotes correct and current enough that a trader trusts the number on screen was.",
+          "Two products off one market-data spine: a live terminal for the covered-warrant desk, and KBSV's public CW portal. The hard part was never the pricing maths \u2014 it was keeping the quote firehose correct enough that a trader trusts the screen.",
         bullets: [
-          "Pushes differential patches over the socket instead of whole snapshots: the client carries the reconciliation logic in exchange for a fraction of the bandwidth.",
-          "Desk terminal and public portal sit on separate VMs \u2014 Next.js behind Nginx on one, containerised FastAPI, Kafka and Postgres on the other \u2014 so public traffic and the trading feed never share a box.",
-          "The data layer is its own pipeline rather than app code, so deduplication, normalisation and adjusted prices are solved once and both products read the same history.",
+          "Sends differential patches over the socket rather than whole snapshots. The client has to reconcile state, which is the price paid for a fraction of the bandwidth.",
+          "Desk terminal and public portal sit on separate VMs, so a spike in public traffic and the traders' live feed never contend for the same box.",
+          "The data layer is its own pipeline instead of app code, so deduplication, normalisation and adjusted prices are solved once and both products read one history.",
         ],
       },
       {
         role: "Software Engineer Intern",
         blurb:
-          "A financial analytics platform that answers questions against a document corpus. Almost all of the wall-clock cost turned out to be waiting on I/O rather than on the model, which changed what was worth optimising.",
+          "A financial analytics platform that answers questions against a document corpus. Almost all of the wall-clock cost turned out to be waiting on I/O rather than on the model, which changed what was worth optimising \u2014 the fix was in the plumbing, not the prompt.",
         bullets: [
-          "Latency came down through async request flows and cached retrieval, not by reaching for a larger model.",
-          "Compressed prompts before dispatch, then checked the answers held up \u2014 cheaper and faster only counts if the output survives it.",
-          "Containerised the backend and ran the suite on every push, so \u201cworks on my machine\u201d stopped being a category of bug.",
+          "Latency came down through async request flows and cached retrieval rather than a larger model \u2014 the time was going on waiting for I/O, not on inference.",
+          "Compressed prompts before dispatch, then checked that answer quality held: cheaper and faster is only a win if the output survives the squeeze.",
+          "Containerised the backend and ran the test suite on every push, so the gap between my laptop and QA stopped being somewhere bugs could hide.",
         ],
       },
       {
         role: "Software Engineer Intern",
         blurb:
-          "A content platform where one brief fans out into drafts for several platforms. Handing the whole job to a single model gave bland output, so the pipeline was broken into stages that could each be judged on its own.",
+          "A content platform where one brief fans out into drafts for several platforms. Handing the whole job to a single model gave bland, samey output, so the pipeline was split into stages that could each be judged, and fixed, on their own.",
         bullets: [
-          "Routes by task rather than standardising on one model: a cheap model for extraction, a strong one for drafting.",
-          "Makes quality a loop instead of a prompt \u2014 score each draft against external SEO signals, re-prompt until it clears the bar.",
-          "Centralised the shared dashboard state so an edit in one view never leaves another view stale.",
+          "Routes by task rather than standardising on one model: a cheap model for extraction and classification, a strong one for the actual drafting.",
+          "Makes quality a loop instead of a prompt \u2014 every draft is scored against external SEO signals and re-prompted until it clears the bar.",
+          "Centralised the shared dashboard state so an edit made in one view never leaves another showing something stale, which was the bug class users actually reported.",
         ],
       },
       {
         role: "Frontend Engineer Intern",
         blurb:
-          "My first internship: a B2B procurement system for Rang Dong, built for procurement staff rather than engineers. The expensive failure there is not a crash \u2014 it is a typo that quietly propagates into a budget.",
+          "My first internship: a B2B procurement system for Rang Dong, built for procurement staff rather than engineers. The expensive failure there is not a crash \u2014 it is a typo that quietly propagates into a budget and surfaces months later.",
         bullets: [
           "Put validation inside plan creation and editing, because catching a wrong figure at entry is worth more than any amount of reporting downstream.",
-          "With 200,000+ plans in the system, navigation was the feature \u2014 finding the right plan mattered more than drawing it.",
-          "Ran the weekly budget analysis across 16 IT categories myself, which is how I learned what the interface actually had to surface.",
+          "With 200,000+ plans in the system, navigation was the feature \u2014 getting to the right plan mattered more than how fast it drew once you had.",
+          "Ran the weekly budget analysis across 16 IT categories myself, which is how I learned which numbers the interface actually had to put in front of people.",
         ],
       },
     ],
@@ -485,8 +485,8 @@ const vi: Strings = {
         blurb:
           "Hai s\u1ea3n ph\u1ea9m d\u1ef1a tr\u00ean c\u00f9ng m\u1ed9t l\u1ed5i d\u1eef li\u1ec7u th\u1ecb tr\u01b0\u1eddng: terminal th\u1eddi gian th\u1ef1c cho b\u00e0n ch\u1ee9ng quy\u1ec1n, v\u00e0 CW Portal c\u00f4ng khai c\u1ee7a KBSV. Ph\u1ea7n kh\u00f3 kh\u00f4ng n\u1eb1m \u1edf c\u00f4ng th\u1ee9c, m\u00e0 \u1edf vi\u1ec7c gi\u1eef d\u00f2ng gi\u00e1 lu\u00f4n \u0111\u00fang v\u00e0 \u0111\u1ee7 m\u1edbi \u0111\u1ec3 trader tin con s\u1ed1 tr\u00ean m\u00e0n h\u00ecnh.",
         bullets: [
-          "G\u1eedi b\u1ea3n v\u00e1 sai kh\u00e1c qua socket thay v\u00ec nguy\u00ean snapshot: client ph\u1ea3i t\u1ef1 gh\u00e9p l\u1ea1i tr\u1ea1ng th\u00e1i, \u0111\u1ed5i l\u1ea1i b\u0103ng th\u00f4ng ch\u1ec9 c\u00f2n m\u1ed9t ph\u1ea7n nh\u1ecf.",
-          "Terminal c\u1ee7a b\u00e0n giao d\u1ecbch v\u00e0 portal c\u00f4ng khai n\u1eb1m tr\u00ean hai VM ri\u00eang \u2014 Next.js sau Nginx m\u1ed9t b\u00ean, FastAPI/Kafka/Postgres \u0111\u00f3ng container b\u00ean c\u00f2n l\u1ea1i \u2014 n\u00ean traffic c\u00f4ng khai kh\u00f4ng bao gi\u1edd d\u00f9ng chung m\u00e1y v\u1edbi lu\u1ed3ng giao d\u1ecbch.",
+          "G\u1eedi b\u1ea3n v\u00e1 sai kh\u00e1c qua socket thay v\u00ec nguy\u00ean snapshot. Client ph\u1ea3i t\u1ef1 gh\u00e9p l\u1ea1i tr\u1ea1ng th\u00e1i \u2014 \u0111\u00f3 l\u00e0 c\u00e1i gi\u00e1 \u0111\u1ec3 b\u0103ng th\u00f4ng ch\u1ec9 c\u00f2n m\u1ed9t ph\u1ea7n nh\u1ecf.",
+          "Terminal c\u1ee7a b\u00e0n giao d\u1ecbch v\u00e0 portal c\u00f4ng khai n\u1eb1m tr\u00ean hai VM ri\u00eang, n\u00ean traffic c\u00f4ng khai t\u0103ng \u0111\u1ed9t bi\u1ebfn kh\u00f4ng bao gi\u1edd tranh t\u00e0i nguy\u00ean v\u1edbi lu\u1ed3ng giao d\u1ecbch.",
           "T\u1ea7ng d\u1eef li\u1ec7u l\u00e0 pipeline ri\u00eang ch\u1ee9 kh\u00f4ng n\u1eb1m trong code \u1ee9ng d\u1ee5ng, n\u00ean kh\u1eed tr\u00f9ng, chu\u1ea9n ho\u00e1 v\u00e0 gi\u00e1 \u0111i\u1ec1u ch\u1ec9nh ch\u1ec9 x\u1eed l\u00fd m\u1ed9t l\u1ea7n, c\u1ea3 hai s\u1ea3n ph\u1ea9m \u0111\u1ecdc c\u00f9ng m\u1ed9t l\u1ecbch s\u1eed.",
         ],
       },
@@ -495,9 +495,9 @@ const vi: Strings = {
         blurb:
           "N\u1ec1n t\u1ea3ng ph\u00e2n t\u00edch t\u00e0i ch\u00ednh tr\u1ea3 l\u1eddi c\u00e2u h\u1ecfi d\u1ef1a tr\u00ean kho t\u00e0i li\u1ec7u. H\u1ea7u h\u1ebft th\u1eddi gian ch\u1edd h\u00f3a ra l\u00e0 I/O ch\u1ee9 kh\u00f4ng ph\u1ea3i m\u00f4 h\u00ecnh, v\u00e0 \u0111i\u1ec1u \u0111\u00f3 thay \u0111\u1ed5i vi\u1ec7c g\u00ec \u0111\u00e1ng t\u1ed1i \u01b0u.",
         bullets: [
-          "\u0110\u1ed9 tr\u1ec5 gi\u1ea3m nh\u1edd lu\u1ed3ng b\u1ea5t \u0111\u1ed3ng b\u1ed9 v\u00e0 cache truy h\u1ed3i, kh\u00f4ng ph\u1ea3i nh\u1edd \u0111\u1ed5i sang m\u00f4 h\u00ecnh l\u1edbn h\u01a1n.",
-          "N\u00e9n prompt tr\u01b0\u1edbc khi g\u1eedi, r\u1ed3i ki\u1ec3m l\u1ea1i ch\u1ea5t l\u01b0\u1ee3ng c\u00e2u tr\u1ea3 l\u1eddi \u2014 r\u1ebb v\u00e0 nhanh ch\u1ec9 c\u00f3 ngh\u0129a n\u1ebfu \u0111\u1ea7u ra kh\u00f4ng t\u1ec7 \u0111i.",
-          "\u0110\u00f3ng container backend v\u00e0 ch\u1ea1y test m\u1ed7i l\u1ea7n push, \u0111\u1ec3 \u201cm\u00e1y t\u00f4i ch\u1ea1y \u0111\u01b0\u1ee3c\u201d kh\u00f4ng c\u00f2n l\u00e0 m\u1ed9t lo\u1ea1i bug.",
+          "\u0110\u1ed9 tr\u1ec5 gi\u1ea3m nh\u1edd lu\u1ed3ng b\u1ea5t \u0111\u1ed3ng b\u1ed9 v\u00e0 cache truy h\u1ed3i ch\u1ee9 kh\u00f4ng ph\u1ea3i nh\u1edd m\u00f4 h\u00ecnh l\u1edbn h\u01a1n \u2014 th\u1eddi gian tr\u00f4i \u1edf ch\u1ed7 ch\u1edd I/O, kh\u00f4ng ph\u1ea3i \u1edf suy lu\u1eadn.",
+          "N\u00e9n prompt tr\u01b0\u1edbc khi g\u1eedi, r\u1ed3i ki\u1ec3m l\u1ea1i ch\u1ea5t l\u01b0\u1ee3ng c\u00e2u tr\u1ea3 l\u1eddi: r\u1ebb h\u01a1n v\u00e0 nhanh h\u01a1n ch\u1ec9 c\u00f3 ngh\u0129a n\u1ebfu \u0111\u1ea7u ra ch\u1ecbu \u0111\u01b0\u1ee3c vi\u1ec7c b\u1ecb n\u00e9n.",
+          "\u0110\u00f3ng container backend v\u00e0 ch\u1ea1y to\u00e0n b\u1ed9 test m\u1ed7i l\u1ea7n push, \u0111\u1ec3 kho\u1ea3ng c\u00e1ch gi\u1eefa m\u00e1y c\u00e1 nh\u00e2n v\u00e0 QA kh\u00f4ng c\u00f2n l\u00e0 ch\u1ed7 cho bug \u1ea9n n\u00e1u.",
         ],
       },
       {
@@ -505,9 +505,9 @@ const vi: Strings = {
         blurb:
           "N\u1ec1n t\u1ea3ng n\u1ed9i dung bi\u1ebfn m\u1ed9t \u0111\u1ec1 b\u00e0i th\u00e0nh nhi\u1ec1u b\u1ea3n nh\u00e1p cho t\u1eebng k\u00eanh. Giao tr\u1ecdn cho m\u1ed9t m\u00f4 h\u00ecnh th\u00ec \u0111\u1ea7u ra nh\u1ea1t, n\u00ean pipeline \u0111\u01b0\u1ee3c ch\u1ebb th\u00e0nh c\u00e1c ch\u1eb7ng c\u00f3 th\u1ec3 ch\u1ea5m \u0111i\u1ec3m ri\u00eang.",
         bullets: [
-          "\u0110\u1ecbnh tuy\u1ebfn theo lo\u1ea1i vi\u1ec7c thay v\u00ec d\u00f9ng chung m\u1ed9t m\u00f4 h\u00ecnh: m\u00f4 h\u00ecnh r\u1ebb \u0111\u1ec3 tr\u00edch xu\u1ea5t, m\u00f4 h\u00ecnh m\u1ea1nh \u0111\u1ec3 vi\u1ebft.",
+          "\u0110\u1ecbnh tuy\u1ebfn theo lo\u1ea1i vi\u1ec7c thay v\u00ec d\u00f9ng chung m\u1ed9t m\u00f4 h\u00ecnh: m\u00f4 h\u00ecnh r\u1ebb lo tr\u00edch xu\u1ea5t v\u00e0 ph\u00e2n lo\u1ea1i, m\u00f4 h\u00ecnh m\u1ea1nh lo ph\u1ea7n vi\u1ebft th\u1ef1c s\u1ef1.",
           "Bi\u1ebfn ch\u1ea5t l\u01b0\u1ee3ng th\u00e0nh v\u00f2ng l\u1eb7p ch\u1ee9 kh\u00f4ng ph\u1ea3i m\u1ed9t c\u00e2u prompt \u2014 ch\u1ea5m t\u1eebng b\u1ea3n nh\u00e1p theo t\u00edn hi\u1ec7u SEO b\u00ean ngo\u00e0i r\u1ed3i prompt l\u1ea1i \u0111\u1ebfn khi \u0111\u1ea1t ng\u01b0\u1ee1ng.",
-          "Gom tr\u1ea1ng th\u00e1i dashboard v\u1ec1 m\u1ed9t ch\u1ed7 \u0111\u1ec3 s\u1eeda \u1edf m\u00e0n n\u00e0y kh\u00f4ng l\u00e0m m\u00e0n kia l\u1ec7ch d\u1eef li\u1ec7u.",
+          "Gom tr\u1ea1ng th\u00e1i dashboard v\u1ec1 m\u1ed9t ch\u1ed7 \u0111\u1ec3 s\u1eeda \u1edf m\u00e0n n\u00e0y kh\u00f4ng l\u00e0m m\u00e0n kia hi\u1ec7n d\u1eef li\u1ec7u c\u0169 \u2014 \u0111\u00f3 l\u00e0 lo\u1ea1i l\u1ed7i ng\u01b0\u1eddi d\u00f9ng b\u00e1o nhi\u1ec1u nh\u1ea5t.",
         ],
       },
       {
@@ -516,8 +516,8 @@ const vi: Strings = {
           "K\u1ef3 th\u1ef1c t\u1eadp \u0111\u1ea7u ti\u00ean: h\u1ec7 th\u1ed1ng mua s\u1eafm B2B cho R\u1ea1ng \u0110\u00f4ng, ng\u01b0\u1eddi d\u00f9ng l\u00e0 nh\u00e2n vi\u00ean mua h\u00e0ng ch\u1ee9 kh\u00f4ng ph\u1ea3i k\u1ef9 s\u01b0. L\u1ed7i \u0111\u1eaft nh\u1ea5t \u1edf \u0111\u00f3 kh\u00f4ng ph\u1ea3i crash, m\u00e0 l\u00e0 m\u1ed9t con s\u1ed1 g\u00f5 sai l\u1eb7ng l\u1ebd ch\u1ea1y v\u00e0o ng\u00e2n s\u00e1ch.",
         bullets: [
           "\u0110\u01b0a ki\u1ec3m tra h\u1ee3p l\u1ec7 v\u00e0o ngay b\u01b0\u1edbc t\u1ea1o v\u00e0 s\u1eeda k\u1ebf ho\u1ea1ch, v\u00ec b\u1eaft \u0111\u01b0\u1ee3c con s\u1ed1 sai l\u00fac nh\u1eadp \u0111\u00e1ng gi\u00e1 h\u01a1n m\u1ecdi b\u00e1o c\u00e1o v\u1ec1 sau.",
-          "V\u1edbi h\u01a1n 200.000 k\u1ebf ho\u1ea1ch trong h\u1ec7 th\u1ed1ng, \u0111i\u1ec1u h\u01b0\u1edbng ch\u00ednh l\u00e0 t\u00ednh n\u0103ng \u2014 t\u00ecm \u0111\u00fang k\u1ebf ho\u1ea1ch quan tr\u1ecdng h\u01a1n v\u1ebd n\u00f3 ra.",
-          "T\u1ef1 l\u00e0m ph\u00e2n t\u00edch ng\u00e2n s\u00e1ch h\u00e0ng tu\u1ea7n cho 16 h\u1ea1ng m\u1ee5c CNTT, nh\u1edd v\u1eady m\u1edbi hi\u1ec3u giao di\u1ec7n th\u1ef1c s\u1ef1 c\u1ea7n hi\u1ec3n th\u1ecb g\u00ec.",
+          "V\u1edbi h\u01a1n 200.000 k\u1ebf ho\u1ea1ch trong h\u1ec7 th\u1ed1ng, \u0111i\u1ec1u h\u01b0\u1edbng ch\u00ednh l\u00e0 t\u00ednh n\u0103ng \u2014 t\u00ecm \u0111\u01b0\u1ee3c \u0111\u00fang k\u1ebf ho\u1ea1ch quan tr\u1ecdng h\u01a1n vi\u1ec7c n\u00f3 v\u1ebd ra nhanh c\u1ee1 n\u00e0o.",
+          "T\u1ef1 l\u00e0m ph\u00e2n t\u00edch ng\u00e2n s\u00e1ch h\u00e0ng tu\u1ea7n cho 16 h\u1ea1ng m\u1ee5c CNTT, nh\u1edd v\u1eady m\u1edbi bi\u1ebft giao di\u1ec7n th\u1ef1c s\u1ef1 c\u1ea7n \u0111\u01b0a con s\u1ed1 n\u00e0o ra tr\u01b0\u1edbc m\u1eaft ng\u01b0\u1eddi d\u00f9ng.",
         ],
       },
     ],
@@ -722,7 +722,7 @@ const zh: Strings = {
           "\u540c\u4e00\u6761\u884c\u60c5\u6570\u636e\u4e3b\u5e72\u4e0a\u7684\u4e24\u4e2a\u4ea7\u54c1\uff1a\u7ed9\u6743\u8bc1\u4ea4\u6613\u53f0\u7684\u5b9e\u65f6\u7ec8\u7aef\uff0c\u4ee5\u53ca KBSV \u5bf9\u5916\u7684 CW \u95e8\u6237\u3002\u96be\u70b9\u4e0d\u5728\u516c\u5f0f\uff0c\u800c\u5728\u4e8e\u8ba9\u6d77\u91cf\u884c\u60c5\u65e2\u51c6\u786e\u53c8\u8db3\u591f\u65b0\uff0c\u4ea4\u6613\u5458\u624d\u4f1a\u4fe1\u4efb\u5c4f\u4e0a\u7684\u6570\u5b57\u3002",
         bullets: [
           "\u901a\u8fc7 socket \u53d1\u9001\u5dee\u5f02\u8865\u4e01\u800c\u975e\u5b8c\u6574\u5feb\u7167\uff1a\u5ba2\u6237\u7aef\u627f\u62c5\u72b6\u6001\u5408\u5e76\u903b\u8f91\uff0c\u6362\u6765\u5e26\u5bbd\u53ea\u5269\u4e00\u5c0f\u90e8\u5206\u3002",
-          "\u4ea4\u6613\u53f0\u7ec8\u7aef\u548c\u5bf9\u5916\u95e8\u6237\u5206\u5728\u4e24\u53f0 VM \u4e0a \u2014\u2014 \u4e00\u53f0\u662f Nginx \u540e\u7684 Next.js\uff0c\u53e6\u4e00\u53f0\u662f\u5bb9\u5668\u5316\u7684 FastAPI\u3001Kafka \u548c Postgres \u2014\u2014 \u5bf9\u5916\u6d41\u91cf\u6c38\u8fdc\u4e0d\u4f1a\u548c\u4ea4\u6613\u6570\u636e\u6d41\u5171\u7528\u4e00\u53f0\u673a\u5668\u3002",
+          "\u4ea4\u6613\u53f0\u7ec8\u7aef\u548c\u5bf9\u5916\u95e8\u6237\u5206\u5728\u4e24\u53f0 VM \u4e0a\uff0c\u5bf9\u5916\u6d41\u91cf\u7a81\u589e\u6c38\u8fdc\u4e0d\u4f1a\u548c\u4ea4\u6613\u6570\u636e\u6d41\u4e89\u62a2\u540c\u4e00\u53f0\u673a\u5668\u3002",
           "\u6570\u636e\u5c42\u662f\u72ec\u7acb\u7ba1\u9053\u800c\u975e\u5e94\u7528\u4ee3\u7801\uff0c\u53bb\u91cd\u3001\u5f52\u4e00\u5316\u548c\u590d\u6743\u4ef7\u683c\u53ea\u5904\u7406\u4e00\u6b21\uff0c\u4e24\u4e2a\u4ea7\u54c1\u8bfb\u5230\u540c\u4e00\u4efd\u5386\u53f2\u3002",
         ],
       },
@@ -731,9 +731,9 @@ const zh: Strings = {
         blurb:
           "\u4e00\u4e2a\u57fa\u4e8e\u6587\u6863\u8bed\u6599\u56de\u7b54\u95ee\u9898\u7684\u91d1\u878d\u5206\u6790\u5e73\u53f0\u3002\u7edd\u5927\u90e8\u5206\u8017\u65f6\u5176\u5b9e\u82b1\u5728\u7b49 I/O \u800c\u4e0d\u662f\u6a21\u578b\u63a8\u7406\uff0c\u8fd9\u6539\u53d8\u4e86\u4ec0\u4e48\u503c\u5f97\u4f18\u5316\u3002",
         bullets: [
-          "\u5ef6\u8fdf\u7684\u4e0b\u964d\u6765\u81ea\u5f02\u6b65\u8bf7\u6c42\u6d41\u548c\u68c0\u7d22\u7f13\u5b58\uff0c\u800c\u4e0d\u662f\u6362\u4e00\u4e2a\u66f4\u5927\u7684\u6a21\u578b\u3002",
+          "\u5ef6\u8fdf\u7684\u4e0b\u964d\u6765\u81ea\u5f02\u6b65\u8bf7\u6c42\u6d41\u548c\u68c0\u7d22\u7f13\u5b58\uff0c\u800c\u4e0d\u662f\u6362\u4e00\u4e2a\u66f4\u5927\u7684\u6a21\u578b \u2014\u2014 \u65f6\u95f4\u82b1\u5728\u7b49 I/O\uff0c\u4e0d\u662f\u82b1\u5728\u63a8\u7406\u4e0a\u3002",
           "\u53d1\u9001\u524d\u538b\u7f29\u63d0\u793a\u8bcd\uff0c\u518d\u56de\u5934\u9a8c\u8bc1\u7b54\u6848\u8d28\u91cf \u2014\u2014 \u66f4\u4fbf\u5b9c\u66f4\u5feb\uff0c\u524d\u63d0\u662f\u8f93\u51fa\u6ca1\u53d8\u5dee\u3002",
-          "\u540e\u7aef\u5bb9\u5668\u5316\u5e76\u5728\u6bcf\u6b21\u63a8\u9001\u65f6\u8dd1\u6d4b\u8bd5\uff0c\u8ba9\u201c\u6211\u673a\u5668\u4e0a\u6ca1\u95ee\u9898\u201d\u4e0d\u518d\u662f\u4e00\u7c7b bug\u3002",
+          "\u540e\u7aef\u5bb9\u5668\u5316\u5e76\u5728\u6bcf\u6b21\u63a8\u9001\u65f6\u8dd1\u5168\u90e8\u6d4b\u8bd5\uff0c\u8ba9\u672c\u673a\u4e0e QA \u4e4b\u95f4\u7684\u5dee\u5f02\u4e0d\u518d\u662f bug \u7684\u85cf\u8eab\u4e4b\u5904\u3002",
         ],
       },
       {
@@ -741,9 +741,9 @@ const zh: Strings = {
         blurb:
           "\u4e00\u4e2a\u628a\u5355\u4e00\u9700\u6c42\u5c55\u5f00\u6210\u591a\u5e73\u53f0\u8349\u7a3f\u7684\u5185\u5bb9\u5e73\u53f0\u3002\u6574\u4ef6\u4e8b\u4ea4\u7ed9\u4e00\u4e2a\u6a21\u578b\u4f1a\u5f97\u5230\u5e73\u5ead\u7684\u8f93\u51fa\uff0c\u6240\u4ee5\u7ba1\u9053\u88ab\u62c6\u6210\u53ef\u4ee5\u5355\u72ec\u8bc4\u5206\u7684\u51e0\u6bb5\u3002",
         bullets: [
-          "\u6309\u4efb\u52a1\u8def\u7531\u800c\u4e0d\u662f\u7edf\u4e00\u7528\u4e00\u4e2a\u6a21\u578b\uff1a\u4fbf\u5b9c\u6a21\u578b\u505a\u62bd\u53d6\uff0c\u5f3a\u6a21\u578b\u505a\u6539\u5199\u3002",
+          "\u6309\u4efb\u52a1\u8def\u7531\u800c\u4e0d\u662f\u7edf\u4e00\u7528\u4e00\u4e2a\u6a21\u578b\uff1a\u4fbf\u5b9c\u6a21\u578b\u8d1f\u8d23\u62bd\u53d6\u548c\u5206\u7c7b\uff0c\u5f3a\u6a21\u578b\u8d1f\u8d23\u771f\u6b63\u7684\u6539\u5199\u3002",
           "\u628a\u8d28\u91cf\u505a\u6210\u5faa\u73af\u800c\u4e0d\u662f\u4e00\u53e5\u63d0\u793a\u8bcd \u2014\u2014 \u7528\u5916\u90e8 SEO \u4fe1\u53f7\u7ed9\u6bcf\u7248\u8349\u7a3f\u6253\u5206\uff0c\u4e0d\u8fbe\u6807\u5c31\u91cd\u65b0\u751f\u6210\u3002",
-          "\u5c06\u5171\u4eab\u7684\u4eea\u8868\u76d8\u72b6\u6001\u96c6\u4e2d\u7ba1\u7406\uff0c\u4e00\u4e2a\u89c6\u56fe\u7684\u7f16\u8f91\u4e0d\u4f1a\u8ba9\u53e6\u4e00\u4e2a\u89c6\u56fe\u7684\u6570\u636e\u8fc7\u671f\u3002",
+          "\u5c06\u5171\u4eab\u7684\u4eea\u8868\u76d8\u72b6\u6001\u96c6\u4e2d\u7ba1\u7406\uff0c\u4e00\u4e2a\u89c6\u56fe\u7684\u7f16\u8f91\u4e0d\u4f1a\u8ba9\u53e6\u4e00\u4e2a\u89c6\u56fe\u663e\u793a\u9648\u65e7\u6570\u636e \u2014\u2014 \u90a3\u6b63\u662f\u7528\u6237\u62a5\u5f97\u6700\u591a\u7684\u4e00\u7c7b\u95ee\u9898\u3002",
         ],
       },
       {
@@ -752,8 +752,8 @@ const zh: Strings = {
           "\u6211\u7684\u7b2c\u4e00\u4efd\u5b9e\u4e60\uff1a\u4e3a Rang Dong \u505a\u7684 B2B \u91c7\u8d2d\u7ba1\u7406\u7cfb\u7edf\uff0c\u7528\u6237\u662f\u91c7\u8d2d\u4eba\u5458\u800c\u4e0d\u662f\u5de5\u7a0b\u5e08\u3002\u90a3\u91cc\u6700\u6602\u8d35\u7684\u6545\u969c\u4e0d\u662f\u5d29\u6e83\uff0c\u800c\u662f\u4e00\u4e2a\u6572\u9519\u7684\u6570\u5b57\u60c4\u65e0\u58f0\u606f\u5730\u8fdb\u4e86\u9884\u7b97\u3002",
         bullets: [
           "\u628a\u6821\u9a8c\u653e\u8fdb\u8ba1\u5212\u7684\u521b\u5efa\u548c\u7f16\u8f91\u73af\u8282\uff0c\u56e0\u4e3a\u5f55\u5165\u65f6\u62e6\u4e0b\u9519\u8bef\u6570\u5b57\uff0c\u6bd4\u4e8b\u540e\u4efb\u4f55\u62a5\u8868\u90fd\u503c\u94b1\u3002",
-          "\u7cfb\u7edf\u91cc\u6709\u8d85\u8fc7 20 \u4e07\u4efd\u8ba1\u5212\uff0c\u5bfc\u822a\u672c\u8eab\u5c31\u662f\u529f\u80fd \u2014\u2014 \u627e\u5230\u5bf9\u7684\u90a3\u4efd\u6bd4\u628a\u5b83\u753b\u51fa\u6765\u66f4\u91cd\u8981\u3002",
-          "\u6bcf\u5468 16 \u4e2a IT \u9884\u7b97\u7c7b\u76ee\u7684\u5206\u6790\u662f\u6211\u81ea\u5df1\u505a\u7684\uff0c\u90a3\u624d\u77e5\u9053\u754c\u9762\u771f\u6b63\u8981\u5448\u73b0\u4ec0\u4e48\u3002",
+          "\u7cfb\u7edf\u91cc\u6709\u8d85\u8fc7 20 \u4e07\u4efd\u8ba1\u5212\uff0c\u5bfc\u822a\u672c\u8eab\u5c31\u662f\u529f\u80fd \u2014\u2014 \u80fd\u4e0d\u80fd\u627e\u5230\u5bf9\u7684\u90a3\u4efd\uff0c\u6bd4\u627e\u5230\u540e\u753b\u5f97\u591a\u5feb\u66f4\u91cd\u8981\u3002",
+          "\u6bcf\u5468 16 \u4e2a IT \u9884\u7b97\u7c7b\u76ee\u7684\u5206\u6790\u662f\u6211\u81ea\u5df1\u505a\u7684\uff0c\u90a3\u624d\u77e5\u9053\u754c\u9762\u5230\u5e95\u8981\u628a\u54ea\u4e9b\u6570\u5b57\u653e\u5230\u7528\u6237\u773c\u524d\u3002",
         ],
       },
     ],

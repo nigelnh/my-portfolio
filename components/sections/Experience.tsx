@@ -13,13 +13,6 @@ export function Experience() {
   const { t } = useLang();
   const [selected, setSelected] = useState<JobId>(DEFAULT_JOB);
 
-  const index = Math.max(
-    0,
-    jobsMeta.findIndex((m) => m.id === selected),
-  );
-  const meta = jobsMeta[index];
-  const copy = t.work.jobs[index];
-
   return (
     <section id="experience" className="section">
       <Panel title={t.work.label}>
@@ -32,7 +25,7 @@ export function Experience() {
                 role="tab"
                 id={`job-tab-${m.id}`}
                 aria-selected={m.id === selected}
-                aria-controls="job-panel"
+                aria-controls={`job-panel-${m.id}`}
                 tabIndex={m.id === selected ? 0 : -1}
                 className="work__item"
                 onClick={() => setSelected(m.id)}
@@ -54,30 +47,45 @@ export function Experience() {
             ))}
           </div>
 
-          <div
-            className="work__detail"
-            role="tabpanel"
-            id="job-panel"
-            aria-labelledby={`job-tab-${meta.id}`}
-          >
-            <div className="work__head">
-              <h3 className="h3">{meta.name}</h3>
-              <span className="work__term">{meta.term}</span>
-            </div>
-            <p className="muted">{copy.role}</p>
-            <p className="work__blurb">{copy.blurb}</p>
-            <ul className="work__points">
-              {copy.bullets.map((b) => (
-                <li key={b}>{b}</li>
-              ))}
-            </ul>
-            <div className="tags work__tags">
-              {meta.stack.map((tag) => (
-                <span key={tag} className="tag">
-                  {tag}
-                </span>
-              ))}
-            </div>
+          {/* All four panels share one grid cell, so the cell is always as tall
+              as the longest of them and switching employers never resizes the
+              section. The inactive ones stay laid out but are hidden from both
+              the screen and the accessibility tree. */}
+          <div className="work__panels">
+            {jobsMeta.map((m, i) => {
+              const copy = t.work.jobs[i];
+              const active = m.id === selected;
+              return (
+                <div
+                  key={m.id}
+                  className="work__detail"
+                  data-active={active}
+                  role="tabpanel"
+                  id={`job-panel-${m.id}`}
+                  aria-labelledby={`job-tab-${m.id}`}
+                  aria-hidden={!active}
+                >
+                  <div className="work__head">
+                    <h3 className="h3">{m.name}</h3>
+                    <span className="work__term">{m.term}</span>
+                  </div>
+                  <p className="muted">{copy.role}</p>
+                  <p className="work__blurb">{copy.blurb}</p>
+                  <ul className="work__points">
+                    {copy.bullets.map((b) => (
+                      <li key={b}>{b}</li>
+                    ))}
+                  </ul>
+                  <div className="tags work__tags">
+                    {m.stack.map((tag) => (
+                      <span key={tag} className="tag">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </Panel>
