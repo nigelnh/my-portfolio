@@ -2,15 +2,9 @@
 
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useLang } from "@/lib/i18n";
-import { armAudio, playSfx } from "@/lib/sfx";
+import { subscribeTyping } from "@/lib/typing";
 import { BLOB_ANIM, BlobSprite } from "./sprites";
-import {
-  BLOB_SIZE,
-  HOP_PARAMS,
-  useBlobBrain,
-  type Arena,
-  type Pointer,
-} from "./useBlobBrain";
+import { BLOB_SIZE, HOP_PARAMS, useBlobBrain, type Arena } from "./useBlobBrain";
 
 function usePrefersReducedMotion() {
   const [reduced, setReduced] = useState(false);
@@ -24,39 +18,19 @@ function usePrefersReducedMotion() {
   return reduced;
 }
 
-/** Coarse pointers (touch) have nothing to chase. */
-function useHasFinePointer() {
-  const [fine, setFine] = useState(false);
-  useEffect(() => {
-    const mq = window.matchMedia("(pointer: fine)");
-    const sync = () => setFine(mq.matches);
-    sync();
-    mq.addEventListener("change", sync);
-    return () => mq.removeEventListener("change", sync);
-  }, []);
-  return fine;
-}
-
-/**
- * The blob's arena. Contained in the laptop block by default; in screen-pet
- * mode the arena is the whole viewport and the blob chases the cursor.
- */
-export function BlobStage({ pet }: { pet: boolean }) {
+/** The blob's arena: the block beside the laptop in the About panel. */
+export function BlobStage() {
   const { t } = useLang();
   const reduced = usePrefersReducedMotion();
-  const finePointer = useHasFinePointer();
   const b = t.hero.blob;
 
   const stageRef = useRef<HTMLDivElement>(null);
   const arena = useRef<Arena>({ w: 400, h: 300 });
-  const pointer = useRef<Pointer | null>(null);
 
-  const brain = useBlobBrain({
-    enabled: !reduced,
-    arena,
-    pointer,
-    chase: pet && finePointer && !reduced,
-  });
+  const [typing, setTypingState] = useState(false);
+  useEffect(() => subscribeTyping(setTypingState), []);
+
+  const brain = useBlobBrain({ enabled: !reduced, arena, typing });
 
   const [flash, setFlash] = useState<string | null>(null);
   const flashTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -86,52 +60,15 @@ export function BlobStage({ pet }: { pet: boolean }) {
     };
   }, [measure]);
 
-  // Track the cursor in arena coordinates. In pet mode the arena is the
-  // viewport, so client coordinates are already arena coordinates.
-  useEffect(() => {
-    if (!pet || !finePointer) {
-      pointer.current = null;
-      return;
-    }
-    const onMove = (e: PointerEvent) => {
-      pointer.current = { x: e.clientX, y: e.clientY, at: Date.now() };
-    };
-    window.addEventListener("pointermove", onMove, { passive: true });
-    return () => window.removeEventListener("pointermove", onMove);
-  }, [finePointer, pet]);
-
-  // Moving between the desk and the whole screen: re-measure, then re-place.
   const firstRun = useRef(true);
   useEffect(() => {
+    if (!firstRun.current) return;
+    firstRun.current = false;
     measure();
-    if (firstRun.current) {
-      firstRun.current = false;
-      brain.placeAt(40, arena.current.h - BLOB_SIZE.h - 8);
-      return;
-    }
-    if (pet) {
-      brain.placeAt(
-        window.innerWidth / 2 - BLOB_SIZE.w / 2,
-        window.innerHeight / 2 - BLOB_SIZE.h / 2,
-      );
-      armAudio();
-      playSfx("success");
-      say(b.freed, 3200);
-    } else {
-      brain.placeAt(40, arena.current.h - BLOB_SIZE.h - 8);
-      armAudio();
-      playSfx("blip");
-      say(b.home, 2600);
-    }
-    // Only react to the mode switch itself.
+    brain.placeAt(40, arena.current.h - BLOB_SIZE.h - 8);
+    // Placing once, on mount.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pet]);
-
-  // "Caught your cursor" line, thrown occasionally by the chase.
-  useEffect(() => {
-    if (brain.caughtAt) say(b.caught, 2000);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [brain.caughtAt]);
+  }, []);
 
   const line = flash ?? (brain.asking ? b.ask : b[brain.state]);
 
@@ -149,7 +86,7 @@ export function BlobStage({ pet }: { pet: boolean }) {
   const bubbleBelow = brain.y < 90;
 
   return (
-    <div ref={stageRef} className={`blob-stage${pet ? " blob-stage--pet" : ""}`}>
+    <div ref={stageRef} className="blob-stage">
       <div
         className="blob-actor"
         data-state={brain.state}
@@ -209,4 +146,3 @@ export function BlobStage({ pet }: { pet: boolean }) {
     </div>
   );
 }
-

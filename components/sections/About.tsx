@@ -2,7 +2,7 @@
 
 import { useLang } from "@/lib/i18n";
 import { BlobStage } from "../blob/BlobStage";
-import { BlobToggles, useBlobSettings } from "../blob/BlobSettings";
+import { BlobToggles } from "../blob/BlobSettings";
 import { MacScreen } from "../mac/MacScreen";
 import { Icon } from "../icons";
 import { LangSwitcher } from "../LangSwitcher";
@@ -11,7 +11,6 @@ import { scrollToSection } from "../Nav";
 
 export function About() {
   const { t } = useLang();
-  const { pet } = useBlobSettings();
 
   return (
     <section id="about" className="section section--first">
@@ -75,7 +74,7 @@ export function About() {
                 </div>
               </div>
 
-              <BlobStage pet={pet} />
+              <BlobStage />
             </div>
           </div>
         </div>

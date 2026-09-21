@@ -60,7 +60,6 @@ export function useTerminal({
       nextId.current = 0;
       push([
         ["Last login: today on ttys001", "dim"],
-        ["macOS 14 · Apple M1 Pro · zsh", "dim"],
         "",
         [strings.mac.hintBoot, "ok"],
       ]);

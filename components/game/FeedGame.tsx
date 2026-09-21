@@ -1,8 +1,7 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useRef } from "react";
 import { useLang } from "@/lib/i18n";
-import { armAudio } from "@/lib/sfx";
 import { BLOB_ANIM, BlobSprite } from "../blob/sprites";
 import { FaintBlob, FOODS, FoodSprite, type FoodType } from "./sprites";
 import { BLOB, useFeedGame, WIN_SCORE } from "./useFeedGame";
@@ -13,11 +12,9 @@ const pad = (n: number) => (n >= 0 && n < 10 ? `0${n}` : `${n}`);
 const signed = (n: number) => (n > 0 ? `+${n}` : `${n}`);
 
 /**
- * "Feed The Blob" — the kit's arcade cabinet, sized for the Contact panel's
- * right-hand column.
- *
- * Nothing moves until the visitor presses START, so the page stays still for
- * anyone who scrolls past.
+ * "Feed The Blob" — snacks rain down the arena and you drag Blob along the
+ * floor to catch the good ones. Nothing moves until START is pressed, so the
+ * page stays still for anyone scrolling past.
  */
 export function FeedGame() {
   const { t } = useLang();
@@ -25,27 +22,7 @@ export function FeedGame() {
   const arenaRef = useRef<HTMLDivElement>(null);
   const game = useFeedGame(arenaRef);
 
-  const [flash, setFlash] = useState<string | null>(null);
-  const flashTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const say = useCallback((text: string, ms: number) => {
-    setFlash(text);
-    if (flashTimer.current) clearTimeout(flashTimer.current);
-    flashTimer.current = setTimeout(() => setFlash(null), ms);
-  }, []);
-
   const playing = game.phase === "playing";
-
-  const begin = () => {
-    armAudio();
-    game.start();
-    say(g.greeting, 2800);
-  };
-
-  const onArenaDown = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (!playing) return;
-    if (game.drop(e.clientX, e.clientY) === "too-low") say(g.tooLow, 1600);
-  };
 
   return (
     <div className="arcade">
@@ -79,21 +56,14 @@ export function FeedGame() {
           </span>
           <span className="arcade__stat">
             {g.time}
-            <b className="arcade__clock" data-low={game.timeLeft <= 5}>
+            <b className="arcade__clock" data-low={game.timeLeft <= 10}>
               {game.timeLeft}s
             </b>
           </span>
         </div>
 
-        <div
-          ref={arenaRef}
-          className="arcade__arena"
-          data-playing={playing}
-          onPointerDown={onArenaDown}
-        >
-          <div className="arcade__zone" aria-hidden="true">
-            {playing ? <span className="arcade__zone-hint">{g.dropHint}</span> : null}
-          </div>
+        <div ref={arenaRef} className="arcade__arena" data-playing={playing}>
+          {playing ? <span className="arcade__zone-hint">{g.dragHint}</span> : null}
 
           {game.items.map((item) => (
             <div key={item.id} ref={game.bindItem(item.id)} className="arcade__food">
@@ -115,30 +85,28 @@ export function FeedGame() {
           <div
             className="fg-blob arcade__blob"
             hidden={!playing}
-            style={{
-              left: `${Math.round(game.blob.x)}px`,
-              bottom: `${BLOB.floor}px`,
-              transition: `left ${game.hopDuration}ms cubic-bezier(0.28, 0.84, 0.42, 1)`,
-            }}
+            data-held={game.held}
+            style={{ left: `${Math.round(game.blobX)}px`, bottom: `${BLOB.floor}px` }}
+            onPointerDown={game.onGrab}
+            onPointerMove={game.onDrag}
+            onPointerUp={game.onRelease}
+            onPointerCancel={game.onRelease}
+            role="slider"
+            aria-label={g.dragHint}
+            aria-valuemin={0}
+            aria-valuenow={Math.round(game.blobX)}
+            aria-valuemax={arenaRef.current ? arenaRef.current.clientWidth - BLOB.w : 0}
+            tabIndex={playing ? 0 : -1}
           >
-            {flash && playing ? <p className="arcade__bubble">{flash}</p> : null}
-            <span
-              className={`blob-flip${game.blob.facingLeft ? " blob-flip--left" : ""}`}
-            >
-              <BlobSprite
-                key={game.blob.hopping ? `hop-${game.blob.hopId}` : `rest-${game.mood}`}
-                state={game.mood}
-                size={BLOB.w}
-                className={`pixel-blob ${
-                  game.blob.hopping ? "anim-single-hop" : BLOB_ANIM[game.mood]
-                }`}
-                style={
-                  game.blob.hopping
-                    ? { animationDuration: `${game.hopDuration}ms` }
-                    : undefined
-                }
-              />
-            </span>
+            <BlobSprite
+              // Re-keying on the landing counter replays the impact squash.
+              key={`land-${game.landing}-${game.mood}`}
+              state={game.mood}
+              size={BLOB.w}
+              className={`pixel-blob ${
+                game.held ? "anim-dangle" : game.landing ? "anim-impact" : BLOB_ANIM[game.mood]
+              }`}
+            />
           </div>
 
           {game.phase === "intro" ? (
@@ -146,7 +114,7 @@ export function FeedGame() {
               <BlobSprite state="idle" size={64} className="pixel-blob anim-idle" />
               <h4 className="arcade__overlay-title">{g.introTitle}</h4>
               <p className="arcade__overlay-text">{g.introText}</p>
-              <button type="button" className="arcade__start" onClick={begin}>
+              <button type="button" className="arcade__start" onClick={game.start}>
                 {g.start}
               </button>
             </div>
@@ -162,7 +130,7 @@ export function FeedGame() {
               <p className="arcade__overlay-text">
                 {g.finalScore}: {game.score} {g.pts}
               </p>
-              <button type="button" className="arcade__start" onClick={begin}>
+              <button type="button" className="arcade__start" onClick={game.start}>
                 {g.again}
               </button>
             </div>
@@ -178,7 +146,7 @@ export function FeedGame() {
               <p className="arcade__overlay-text">
                 {g.finalScore}: {game.score} {g.pts}
               </p>
-              <button type="button" className="arcade__start" onClick={begin}>
+              <button type="button" className="arcade__start" onClick={game.start}>
                 {g.again}
               </button>
             </div>

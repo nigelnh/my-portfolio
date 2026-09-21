@@ -312,6 +312,38 @@ textarea:focus {
   }
 }
 
+/* Held in the cursor: stretched and swinging, from the kit's drag styles. */
+@keyframes blobDangle {
+  0% {
+    transform: scale(0.85, 1.22) rotate(-5deg);
+  }
+  100% {
+    transform: scale(0.85, 1.22) rotate(5deg);
+  }
+}
+
+@keyframes blobImpact {
+  0% {
+    transform: scale(1.4, 0.62) translateY(5px);
+  }
+  40% {
+    transform: scale(0.88, 1.15) translateY(-4px);
+  }
+  100% {
+    transform: scale(1, 1) translateY(0);
+  }
+}
+
+.anim-dangle {
+  animation: blobDangle 0.28s steps(3) infinite alternate;
+  transform-origin: top center;
+}
+
+.anim-impact {
+  animation: blobImpact 0.38s steps(4) forwards;
+  transform-origin: bottom center;
+}
+
 .anim-faint {
   animation: faintShake 2s ease-in-out infinite;
   transform-origin: bottom center;
@@ -1079,26 +1111,6 @@ textarea:focus {
   inset: 0;
   z-index: 2;
   pointer-events: none;
-}
-
-/* Screen-pet mode: the arena becomes the viewport and the blob roams the whole
-   page, chasing the cursor. It floats above everything but stays click-through
-   apart from the blob itself. */
-.blob-stage--pet {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-}
-
-.blob-stage--pet .blob-actor {
-  filter: drop-shadow(0 8px 16px rgba(18, 44, 68, 0.4));
-}
-
-/* Below 880px the bottom tab bar owns the last 60px, so keep the blob off it. */
-@media (max-width: 879px) {
-  .blob-stage--pet {
-    inset: 0 0 60px 0;
-  }
 }
 
 .blob-actor {
@@ -1880,8 +1892,8 @@ a.project__thumb:focus-visible {
 
 .arcade__legend {
   display: grid;
-  /* Three across at every width — vertical space belongs to the arena. */
-  grid-template-columns: repeat(3, 1fr);
+  /* Three across while a row still fits, then two, then one. */
+  grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr));
   gap: 8px;
   margin: 0;
   padding: 0;
@@ -1890,12 +1902,9 @@ a.project__thumb:focus-visible {
 
 .arcade__legend-item {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
-  gap: 5px;
-  padding: 7px 5px;
-  text-align: center;
+  gap: 7px;
+  padding: 6px 8px;
   background: var(--panel-2);
   border: 3px solid var(--ink);
 }
@@ -1905,16 +1914,16 @@ a.project__thumb:focus-visible {
 }
 
 .arcade__legend-name {
+  flex: 1;
   min-width: 0;
   font-size: 9.5px;
   font-weight: 700;
-  line-height: 1.3;
+  line-height: 1.25;
   letter-spacing: 0.3px;
 }
 
 /* Body font, not the pixel one: at this size its 2 reads as an 8. */
 .arcade__legend-pts {
-  margin-top: auto;
   font-size: 10px;
   font-weight: 700;
   padding: 3px 6px;
@@ -1987,30 +1996,25 @@ a.project__thumb:focus-visible {
   touch-action: manipulation;
 }
 
-.arcade__arena[data-playing="true"] {
-  cursor: crosshair;
+.arcade__arena[data-playing="true"] .arcade__blob {
+  cursor: grab;
 }
 
-/* The upper 62% is the only fair place to drop from. */
-.arcade__zone {
-  position: absolute;
-  inset: 0 0 38% 0;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  padding-top: 12px;
-  pointer-events: none;
-  background: repeating-linear-gradient(
-    45deg,
-    rgba(75, 136, 199, 0.05),
-    rgba(75, 136, 199, 0.05) 10px,
-    rgba(255, 255, 255, 0.1) 10px,
-    rgba(255, 255, 255, 0.1) 20px
-  );
-  border-bottom: 2px dashed var(--accent);
+.arcade__blob[data-held="true"] {
+  cursor: grabbing;
+  z-index: 4;
+  filter: drop-shadow(0 14px 10px rgba(18, 44, 68, 0.45));
 }
 
+
+/* Floats over the arena while a round runs. */
 .arcade__zone-hint {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  translate: -50% 0;
+  z-index: 1;
+  pointer-events: none;
   font-family: var(--font-display);
   font-size: 10px;
   font-weight: 700;
@@ -2048,26 +2052,17 @@ a.project__thumb:focus-visible {
   z-index: 2;
   width: 76px;
   height: 62px;
-  pointer-events: none;
+  /* Dragged, so it must receive pointer events; touch-action keeps a drag
+     from scrolling the page on a phone. */
+  touch-action: none;
+  user-select: none;
 }
 
-.arcade__bubble {
-  position: absolute;
-  left: -14px;
-  bottom: calc(100% + 10px);
-  z-index: 4;
-  margin: 0;
-  width: max-content;
-  max-width: 220px;
-  padding: 7px 10px;
-  font-size: 11.5px;
-  line-height: 1.45;
-  font-weight: 600;
-  color: var(--ink);
-  background: var(--paper);
-  border: 2px solid var(--ink);
-  box-shadow: 2px 2px 0 var(--ink);
+.arcade__blob:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
 }
+
 
 .arcade__overlay {
   position: absolute;

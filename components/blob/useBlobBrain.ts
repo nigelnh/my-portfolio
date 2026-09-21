@@ -53,12 +53,8 @@ export const RULES = {
   rageLockMs: 4500,
   /** Boba request (kept from the earlier brief; the kit itself just drinks). */
   askTimeoutMs: 14_000,
-  /** Cursor chasing. */
-  pointerIdleMs: 2500,
-  /** Close enough to the cursor to stop hopping, per the kit. */
+  /** Close enough to the destination to stop hopping, per the kit. */
   catchDistPx: 28,
-  /** The kit aims this far up-left of the pointer so the blob's face lands on it. */
-  pointerOffsetPx: 45,
   edgePad: 8,
 } as const;
 
@@ -81,20 +77,13 @@ export interface Arena {
   h: number;
 }
 
-export interface Pointer {
-  x: number;
-  y: number;
-  at: number;
-}
 
 export interface BlobBrainOptions {
   enabled: boolean;
   /** Live arena size; read on every hop so a resize is picked up. */
   arena: React.RefObject<Arena>;
-  /** Live pointer position in arena coordinates, or null when unavailable. */
-  pointer: React.RefObject<Pointer | null>;
-  /** Whether the blob is allowed to chase the cursor. */
-  chase: boolean;
+  /** True while the visitor is typing in the MacBook terminal. */
+  typing: boolean;
 }
 
 export interface BlobBrain {
@@ -114,13 +103,11 @@ export interface BlobBrain {
   onHover: () => void;
   /** Drop the blob at a spot in arena pixels (used when the arena changes). */
   placeAt: (x: number, y: number) => void;
-  /** True the first time the blob reaches the cursor after a chase. */
-  caughtAt: number;
 }
 
 export const BLOB_SIZE = { w: 72, h: 59 };
 
-export function useBlobBrain({ enabled, arena, pointer, chase }: BlobBrainOptions): BlobBrain {
+export function useBlobBrain({ enabled, arena, typing }: BlobBrainOptions): BlobBrain {
   const [state, setState] = useState<BlobState>("idle");
   const [moveMode, setMoveMode] = useState<MoveMode>("idle");
   const [pos, setPos] = useState({ x: 40, y: 200 });
@@ -128,7 +115,6 @@ export function useBlobBrain({ enabled, arena, pointer, chase }: BlobBrainOption
   const [hop, setHop] = useState({ id: 0, active: false });
   const [asking, setAsking] = useState(false);
   const [vitals, setVitals] = useState<Vitals>(START);
-  const [caughtAt, setCaughtAt] = useState(0);
 
   // Mirrors of the reactive values the loops read, so neither loop has to be
   // rebuilt when they change.
@@ -137,16 +123,15 @@ export function useBlobBrain({ enabled, arena, pointer, chase }: BlobBrainOption
   const modeRef = useRef<MoveMode>("idle");
   const posRef = useRef(pos);
   const askingRef = useRef(false);
-  const chaseRef = useRef(chase);
+  const typingRef = useRef(typing);
   const lockUntil = useRef(0);
   const pokes = useRef<number[]>([]);
   const dest = useRef<{ x: number; y: number } | null>(null);
-  const wasChasing = useRef(false);
   const askTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hopTimers = useRef<ReturnType<typeof setTimeout>[]>([]);
   const wanderTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  chaseRef.current = chase;
+  typingRef.current = typing;
 
   const setBlobState = useCallback((next: BlobState) => {
     stateRef.current = next;
@@ -202,19 +187,11 @@ export function useBlobBrain({ enabled, arena, pointer, chase }: BlobBrainOption
     };
   }, [bounds]);
 
-  /** The cursor when it is fresh and chasing is on, otherwise the wander goal. */
+  /** Where the blob is hopping to next. */
   const currentTarget = useCallback(() => {
-    const p = pointer.current;
-    if (chaseRef.current && p && Date.now() - p.at < RULES.pointerIdleMs) {
-      return {
-        x: p.x - RULES.pointerOffsetPx,
-        y: p.y - RULES.pointerOffsetPx,
-        chasing: true,
-      };
-    }
     if (!dest.current) pickDestination();
     return { ...dest.current!, chasing: false };
-  }, [pickDestination, pointer]);
+  }, [pickDestination]);
 
   /**
    * One hop toward the target, with the takeoff and landing sounds fired at 20%
@@ -235,19 +212,7 @@ export function useBlobBrain({ enabled, arena, pointer, chase }: BlobBrainOption
 
     if (Math.abs(dx) > 8) setFacingLeft(dx < 0);
 
-    if (target.chasing) {
-      // Caught up: idle next to the cursor and poll for it to move again.
-      if (dist <= RULES.catchDistPx) {
-        setHop((h) => ({ id: h.id, active: false }));
-        if (wasChasing.current) {
-          wasChasing.current = false;
-          if (Math.random() < 0.25) setCaughtAt(Date.now());
-        }
-        wanderTimer.current = setTimeout(stepHop, 120);
-        return;
-      }
-      wasChasing.current = true;
-    } else if (dist < RULES.catchDistPx) {
+    if (dist < RULES.catchDistPx) {
       // Arrived: stand and look around before choosing somewhere new.
       setHop((h) => ({ id: h.id, active: false }));
       const pause = Math.round((1000 + Math.random() * 1200) / Number(SPEED));
@@ -299,7 +264,6 @@ export function useBlobBrain({ enabled, arena, pointer, chase }: BlobBrainOption
   const stopWander = useCallback(() => {
     clearHopTimers();
     setMode("idle");
-    wasChasing.current = false;
     setHop((h) => ({ id: h.id, active: false }));
   }, [clearHopTimers, setMode]);
 
@@ -358,6 +322,12 @@ export function useBlobBrain({ enabled, arena, pointer, chase }: BlobBrainOption
     }
     if (v.anger > 0 && s !== "angry") v.anger = clamp100(v.anger - 15);
     setVitals({ ...v });
+
+    // The visitor is at the terminal: keep typing alongside them.
+    if (typingRef.current) {
+      lockUntil.current = now + 5000;
+      return;
+    }
 
     if (askingRef.current || now < lockUntil.current) return;
 
@@ -487,21 +457,21 @@ export function useBlobBrain({ enabled, arena, pointer, chase }: BlobBrainOption
     };
   }, [clearAsk, clearHopTimers, enabled, runCycle, setBlobState, setMode]);
 
-  // A fresh cursor should pull the blob out of standing still.
+
+  // Terminal focus drives the pose directly, so it changes on the keystroke
+  // rather than on the next tick.
   useEffect(() => {
-    if (!enabled || !chase) return;
-    const id = setInterval(() => {
-      if (modeRef.current !== "idle") return;
-      if (askingRef.current || Date.now() < lockUntil.current) return;
-      const p = pointer.current;
-      if (p && Date.now() - p.at < RULES.pointerIdleMs) {
-        clearHopTimers();
-        setMode("follow");
-        stepHop();
-      }
-    }, 300);
-    return () => clearInterval(id);
-  }, [chase, clearHopTimers, enabled, pointer, setMode, stepHop]);
+    if (!enabled) return;
+    if (typing) {
+      stopWander();
+      clearAsk();
+      setBlobState("code");
+      lockUntil.current = Date.now() + 5000;
+    } else if (stateRef.current === "code") {
+      lockUntil.current = 0;
+      setBlobState("idle");
+    }
+  }, [clearAsk, enabled, setBlobState, stopWander, typing]);
 
   return {
     state,
@@ -517,6 +487,5 @@ export function useBlobBrain({ enabled, arena, pointer, chase }: BlobBrainOption
     onPoke,
     onHover,
     placeAt,
-    caughtAt,
   };
 }

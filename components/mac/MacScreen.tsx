@@ -11,6 +11,7 @@ import {
 import { projectsMeta } from "@/lib/copy";
 import { useLang } from "@/lib/i18n";
 import { armAudio, playSfx } from "@/lib/sfx";
+import { setTyping } from "@/lib/typing";
 import { Icon } from "../icons";
 import { useTerminal } from "./useTerminal";
 
@@ -226,6 +227,9 @@ export function MacScreen() {
             defaultValue=""
             onChange={(e) => setDraft(e.target.value)}
             onKeyDown={onKeyDown}
+            // The blob types along while this field has focus.
+            onFocus={() => setTyping(true)}
+            onBlur={() => setTyping(false)}
             autoComplete="off"
             autoCorrect="off"
             autoCapitalize="off"

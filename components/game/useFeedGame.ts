@@ -8,45 +8,31 @@ export type Phase = "intro" | "playing" | "won" | "lost";
 /** Which blob pose the arena actor wears right now. */
 export type Mood = "idle" | "angry" | "boba" | "sleep";
 
-export const ROUND_SECONDS = 30;
-export const WIN_SCORE = 10;
+export const ROUND_SECONDS = 60;
+export const WIN_SCORE = 100;
 
 /** Arena actor, in arena pixels. Matches `.fg-blob` in globals.css. */
 export const BLOB = { w: 76, h: 62, floor: 12 };
 
-/** One hop: crouch, travel, land. Same cadence as the desk blob at 1.4x. */
-const HOP = { duration: 420, rest: 130, step: 38 };
-/** How far the blob commits to travelling before it turns around. */
-const STRIDE = { min: 160, spread: 200, arrived: 18 };
-
-const GRAVITY = 280;
-const DROP_SPEED = 120;
-const DROP_SPREAD = 40;
-/** Clicks below this fraction of the arena are too low to be a fair drop. */
-const DROP_ZONE = 0.62;
+const GRAVITY = 300;
+const DROP_SPEED = 130;
+const DROP_SPREAD = 60;
 
 /**
- * Base odds for a dropped item.
- *
- * Coffee is deliberately as common as a treat: the blob only nets points when
- * you aim, so a full arena of random drops is close to break-even.
+ * How often an item falls. The rain is what makes the target reachable: a 60s
+ * round drops roughly 175 items, and a player who takes every treat and dodges
+ * every coffee tops out near 175 points. WIN_SCORE of 100 therefore asks for
+ * about 60% of perfect, which leaves room to misjudge a few.
  */
-const BASE = { boba: 30, donut: 35, coffee: 35 };
+const SPAWN = { first: 500, every: 340, jitter: 120 };
 
-/**
- * Anti-spam ramp. Each drop that follows within `window` ms shifts `step`
- * percentage points from the treats onto the coffee, up to `max` — hammering
- * the arena turns the rain bitter. Spacing drops out again walks it back.
- */
-const SPAM = { window: 420, step: 8, max: 32, cool: 900 };
+/** Boba is worth double, so it stays the rarest of the three. */
+const WEIGHTS = { boba: 32, donut: 35, coffee: 33 };
 
-function pickFood(spam: number): FoodType {
-  const coffee = BASE.coffee + spam;
-  const treats = 100 - coffee;
-  const boba = (treats * BASE.boba) / (BASE.boba + BASE.donut);
+function pickFood(): FoodType {
   const roll = Math.random() * 100;
-  if (roll < boba) return "boba";
-  if (roll < treats) return "donut";
+  if (roll < WEIGHTS.boba) return "boba";
+  if (roll < WEIGHTS.boba + WEIGHTS.donut) return "donut";
   return "coffee";
 }
 
@@ -71,30 +57,28 @@ export interface Float {
   tint: string;
 }
 
-/** Why a drop was refused, so the arena can say something useful. */
-export type DropResult = "dropped" | "too-low";
-
 export function useFeedGame(arenaRef: React.RefObject<HTMLDivElement | null>) {
   const [phase, setPhase] = useState<Phase>("intro");
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(ROUND_SECONDS);
   const [items, setItems] = useState<Item[]>([]);
   const [floats, setFloats] = useState<Float[]>([]);
-  const [blob, setBlob] = useState({ x: 140, facingLeft: false, hopping: false, hopId: 0 });
+  const [blobX, setBlobX] = useState(140);
+  const [held, setHeld] = useState(false);
+  const [landing, setLanding] = useState(0);
   const [mood, setMood] = useState<Mood>("idle");
 
   const active = useRef(false);
   const scoreRef = useRef(0);
+  const posX = useRef(140);
   const bodies = useRef(new Map<number, Body>());
   const binds = useRef(new Map<number, (el: HTMLElement | null) => void>());
   const nextId = useRef(1);
-  const target = useRef(140);
-  const posX = useRef(140);
-  const lastDrop = useRef(0);
-  const spam = useRef(0);
   const frame = useRef<number | null>(null);
   const clock = useRef<ReturnType<typeof setInterval> | null>(null);
+  const spawner = useRef<ReturnType<typeof setTimeout> | null>(null);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const drag = useRef<{ pointerId: number; grabDx: number } | null>(null);
 
   const later = useCallback((fn: () => void, ms: number) => {
     const id = setTimeout(fn, ms);
@@ -102,72 +86,49 @@ export function useFeedGame(arenaRef: React.RefObject<HTMLDivElement | null>) {
     return id;
   }, []);
 
-  const clearTimers = useCallback(() => {
-    timers.current.forEach(clearTimeout);
-    timers.current = [];
-  }, []);
+  /** Keep the blob inside the arena; it only ever moves along x. */
+  const clampX = useCallback(
+    (x: number) => {
+      const arena = arenaRef.current;
+      if (!arena) return x;
+      return Math.max(8, Math.min(arena.clientWidth - BLOB.w - 8, x));
+    },
+    [arenaRef],
+  );
 
-  /** Pick a destination at least `STRIDE.min` away, kept inside the arena. */
-  const pickTarget = useCallback(() => {
+  const spawn = useCallback(() => {
     const arena = arenaRef.current;
-    if (!arena) return;
-    const maxX = arena.clientWidth - BLOB.w - 15;
-    const from = posX.current;
-    // Scale the stride to the arena so a narrow one does not turn every hop
-    // into an edge-to-edge sprint.
-    const span = Math.max(120, maxX - 15);
-    const distance =
-      Math.min(STRIDE.min, span * 0.45) + Math.random() * Math.min(STRIDE.spread, span * 0.4);
-    let dir = Math.random() < 0.5 ? -1 : 1;
-    if (from < 80) dir = 1;
-    else if (from > maxX - 80) dir = -1;
-    target.current = Math.max(15, Math.min(maxX, from + dir * distance));
+    if (!arena || !active.current) return;
+    const type = pickFood();
+    const id = nextId.current++;
+    bodies.current.set(id, {
+      x: 10 + Math.random() * Math.max(1, arena.clientWidth - FOODS[type].w - 20),
+      y: -FOODS[type].h,
+      vy: DROP_SPEED + Math.random() * DROP_SPREAD,
+      type,
+      el: null,
+    });
+    setItems((list) => [...list, { id, type }]);
+    spawner.current = setTimeout(spawn, SPAWN.every + (Math.random() - 0.5) * 2 * SPAWN.jitter);
   }, [arenaRef]);
-
-  const step = useCallback(() => {
-    if (!active.current) return;
-
-    const dx = target.current - posX.current;
-    const dist = Math.abs(dx);
-
-    if (dist < STRIDE.arrived) {
-      setBlob((b) => ({ ...b, hopping: false }));
-      later(() => {
-        if (!active.current) return;
-        pickTarget();
-        step();
-      }, 340 + Math.random() * 320);
-      return;
-    }
-
-    const dir = dx > 0 ? 1 : -1;
-    posX.current += dir * Math.min(dist, HOP.step);
-    setBlob((b) => ({
-      x: posX.current,
-      facingLeft: dir < 0,
-      hopping: true,
-      hopId: b.hopId + 1,
-    }));
-
-    later(() => playSfx("hopTakeoff", 0.4), Math.round(HOP.duration * 0.2));
-    later(() => playSfx("hopLand", 0.4), Math.round(HOP.duration * 0.85));
-    later(() => setBlob((b) => ({ ...b, hopping: false })), HOP.duration);
-    later(step, HOP.duration + HOP.rest);
-  }, [later, pickTarget]);
 
   const stop = useCallback(() => {
     active.current = false;
-    clearTimers();
+    timers.current.forEach(clearTimeout);
+    timers.current = [];
     if (clock.current) clearInterval(clock.current);
+    if (spawner.current) clearTimeout(spawner.current);
     if (frame.current !== null) cancelAnimationFrame(frame.current);
     clock.current = null;
+    spawner.current = null;
     frame.current = null;
+    drag.current = null;
     bodies.current.clear();
     binds.current.clear();
     setItems([]);
     setFloats([]);
-    setBlob((b) => ({ ...b, hopping: false }));
-  }, [clearTimers]);
+    setHeld(false);
+  }, []);
 
   const finish = useCallback(() => {
     const won = scoreRef.current >= WIN_SCORE;
@@ -176,6 +137,7 @@ export function useFeedGame(arenaRef: React.RefObject<HTMLDivElement | null>) {
     setPhase(won ? "won" : "lost");
     playSfx(won ? "win" : "lose");
   }, [stop]);
+
   const loop = useCallback(
     (now: number, prev: number) => {
       if (!active.current) return;
@@ -190,7 +152,6 @@ export function useFeedGame(arenaRef: React.RefObject<HTMLDivElement | null>) {
       const arenaRect = arena.getBoundingClientRect();
       const blobRect = actor.getBoundingClientRect();
 
-      // Read the live rect so a food still counts when the blob is mid-hop.
       const hit = {
         left: blobRect.left - arenaRect.left + 8,
         right: blobRect.left - arenaRect.left + BLOB.w - 8,
@@ -198,14 +159,15 @@ export function useFeedGame(arenaRef: React.RefObject<HTMLDivElement | null>) {
         bottom: blobRect.top - arenaRect.top + BLOB.h,
       };
 
-      const caught: number[] = [];
-      const missed: number[] = [];
+      const gone: number[] = [];
 
       bodies.current.forEach((body, id) => {
         body.vy += GRAVITY * dt;
         body.y += body.vy * dt;
         const food = FOODS[body.type];
-        if (body.el) body.el.style.transform = `translate(${Math.round(body.x)}px, ${Math.round(body.y)}px)`;
+        if (body.el) {
+          body.el.style.transform = `translate(${Math.round(body.x)}px, ${Math.round(body.y)}px)`;
+        }
 
         const overlaps =
           body.x + food.w >= hit.left &&
@@ -214,23 +176,16 @@ export function useFeedGame(arenaRef: React.RefObject<HTMLDivElement | null>) {
           body.y <= hit.bottom;
 
         if (overlaps) {
-          caught.push(id);
-          const points = food.points;
-          scoreRef.current += points;
+          gone.push(id);
+          scoreRef.current += food.points;
           setScore(scoreRef.current);
           setFloats((f) => [
             ...f,
-            {
-              id,
-              x: body.x,
-              y: body.y,
-              text: points > 0 ? `+${points}` : `${points}`,
-              tint: food.tint,
-            },
+            { id, x: body.x, y: body.y, text: food.points > 0 ? `+${food.points}` : `${food.points}`, tint: food.tint },
           ]);
           later(() => setFloats((f) => f.filter((x) => x.id !== id)), 750);
 
-          if (points > 0) {
+          if (food.points > 0) {
             playSfx(body.type === "boba" ? "coin" : "bite");
           } else {
             playSfx("ouch");
@@ -242,10 +197,9 @@ export function useFeedGame(arenaRef: React.RefObject<HTMLDivElement | null>) {
           return;
         }
 
-        if (body.y >= arena.clientHeight - 24) missed.push(id);
+        if (body.y >= arena.clientHeight) gone.push(id);
       });
 
-      const gone = [...caught, ...missed];
       if (gone.length) {
         gone.forEach((id) => {
           bodies.current.delete(id);
@@ -265,65 +219,75 @@ export function useFeedGame(arenaRef: React.RefObject<HTMLDivElement | null>) {
 
     active.current = true;
     scoreRef.current = 0;
-    spam.current = 0;
-    lastDrop.current = 0;
-    posX.current = 140;
+    const arena = arenaRef.current;
+    posX.current = arena ? Math.round(arena.clientWidth / 2 - BLOB.w / 2) : 140;
 
     setScore(0);
     setTimeLeft(ROUND_SECONDS);
     setMood("idle");
     setPhase("playing");
-    setBlob({ x: 140, facingLeft: false, hopping: false, hopId: 0 });
-
-    pickTarget();
-    step();
+    setBlobX(posX.current);
 
     clock.current = setInterval(() => setTimeLeft((t) => Math.max(0, t - 1)), 1000);
+    spawner.current = setTimeout(spawn, SPAWN.first);
 
     const t0 = performance.now();
     frame.current = requestAnimationFrame((t) => loop(t, t0));
     playSfx("success");
-  }, [loop, pickTarget, step, stop]);
+  }, [arenaRef, loop, spawn, stop]);
 
+  /* ------------------------------------------------------------- dragging */
 
-  /** Drop an item at the click, unless the click was too close to the floor. */
-  const drop = useCallback(
-    (clientX: number, clientY: number): DropResult => {
+  const onGrab = useCallback(
+    (e: React.PointerEvent<HTMLElement>) => {
+      if (!active.current) return;
       const arena = arenaRef.current;
-      if (!arena || !active.current) return "too-low";
+      if (!arena) return;
+      e.preventDefault();
       const rect = arena.getBoundingClientRect();
-      const x = clientX - rect.left;
-      const y = clientY - rect.top;
-      if (y > arena.clientHeight * DROP_ZONE) return "too-low";
-
-      const now = performance.now();
-      const gap = now - lastDrop.current;
-      if (gap < SPAM.window) spam.current = Math.min(SPAM.max, spam.current + SPAM.step);
-      else if (gap > SPAM.cool) spam.current = 0;
-      else spam.current = Math.max(0, spam.current - SPAM.step);
-      lastDrop.current = now;
-
-      const type = pickFood(spam.current);
-      const id = nextId.current++;
-      bodies.current.set(id, {
-        x: Math.max(10, Math.min(arena.clientWidth - FOODS[type].w - 10, x - 15)),
-        y: Math.max(0, y - 10),
-        vy: DROP_SPEED + Math.random() * DROP_SPREAD,
-        type,
-        el: null,
-      });
-      setItems((list) => [...list, { id, type }]);
-      playSfx("drop", 0.7);
-      return "dropped";
+      // Remember where inside the blob it was grabbed, so it does not jump.
+      drag.current = { pointerId: e.pointerId, grabDx: e.clientX - rect.left - posX.current };
+      try {
+        e.currentTarget.setPointerCapture(e.pointerId);
+      } catch {
+        // Capture is an optimisation for tracking outside the element; the
+        // drag still works through the element's own move handler without it.
+      }
+      setHeld(true);
+      setLanding(0);
+      playSfx("hopTakeoff", 0.5);
     },
     [arenaRef],
   );
 
-  /**
-   * Called by each food element so the loop can move it by writing `transform`
-   * directly — the falling items never go through React's render path.
-   * The callback is cached per id, or every re-render would detach the node.
-   */
+  const onDrag = useCallback(
+    (e: React.PointerEvent<HTMLElement>) => {
+      const d = drag.current;
+      if (!d || d.pointerId !== e.pointerId) return;
+      const arena = arenaRef.current;
+      if (!arena) return;
+      const rect = arena.getBoundingClientRect();
+      posX.current = clampX(e.clientX - rect.left - d.grabDx);
+      setBlobX(posX.current);
+    },
+    [arenaRef, clampX],
+  );
+
+  const onRelease = useCallback((e: React.PointerEvent<HTMLElement>) => {
+    const d = drag.current;
+    if (!d || d.pointerId !== e.pointerId) return;
+    drag.current = null;
+    try {
+      e.currentTarget.releasePointerCapture(e.pointerId);
+    } catch {
+      // The capture may already be gone; nothing to release.
+    }
+    setHeld(false);
+    setLanding((n) => n + 1);
+    playSfx("hopLand", 0.5);
+  }, []);
+
+  /** Called by each food element so the loop can move it without re-rendering. */
   const bindItem = useCallback((id: number) => {
     const cached = binds.current.get(id);
     if (cached) return cached;
@@ -342,6 +306,16 @@ export function useFeedGame(arenaRef: React.RefObject<HTMLDivElement | null>) {
     if (phase === "playing" && timeLeft === 0) finish();
   }, [finish, phase, timeLeft]);
 
+  // A resize can leave the blob outside the arena.
+  useEffect(() => {
+    const onResize = () => {
+      posX.current = clampX(posX.current);
+      setBlobX(posX.current);
+    };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, [clampX]);
+
   useEffect(() => stop, [stop]);
 
   return {
@@ -350,11 +324,14 @@ export function useFeedGame(arenaRef: React.RefObject<HTMLDivElement | null>) {
     timeLeft,
     items,
     floats,
-    blob,
+    blobX,
+    held,
+    landing,
     mood,
-    hopDuration: HOP.duration,
     start,
-    drop,
+    onGrab,
+    onDrag,
+    onRelease,
     bindItem,
   };
 }

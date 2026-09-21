@@ -83,10 +83,6 @@ export interface Strings {
       refused: string;
       poked: string;
       woken: string;
-      caught: string;
-      freed: string;
-      home: string;
-      pet: string;
     };
   };
   journey: {
@@ -134,8 +130,7 @@ export interface Strings {
     time: string;
     goal: string;
     pts: string;
-    dropHint: string;
-    tooLow: string;
+    dragHint: string;
     greeting: string;
     food: Record<FoodType, string>;
     introTitle: string;
@@ -190,8 +185,7 @@ const en: Strings = {
     blob: {
       label: "Nhan's blob mascot",
       sound: "SOUND",
-      pet: "PET",
-      idle: "Hi! I'm the blob. Poke me.",
+      idle: "Hi! I'm Blob. Poke me.",
       code: "Building the Black-Scholes pricer on the M1.",
       boba: "Slurp. Tapioca pearls incoming.",
       sleep: "Zzz... recharging for tomorrow's quant work.",
@@ -204,9 +198,6 @@ const en: Strings = {
       refused: "Hmph. I'll remember this.",
       poked: "Boing! That tickles.",
       woken: "Hey! I was dreaming about a giant boba!",
-      caught: "Caught your cursor!",
-      freed: "Whoa, the whole screen is mine!",
-      home: "Back to my desk.",
     },
   },
   journey: {
@@ -350,28 +341,26 @@ const en: Strings = {
     quant: "QUANT",
     setup: "SETUP",
     setupText:
-      "14-inch MacBook Pro (M1 Pro), Sofle v2.1 split mechanical keyboard, Neovim and a lot of tmux.",
+      "MacBook Pro 14 2021 (M1 Pro), Thirdwave F-13KR, Neovim and a lot of tmux.",
   },
   game: {
     kicker: "MINI CHALLENGE",
     title: "Feed the hungry blob",
     rules:
-      "Click anywhere in the top half of the arena to drop a snack. The blob hops around on its own — land the food on it.",
-    warn:
-      "Bitter coffee falls as often as the treats, and hammering the arena only makes it worse. Aim, don't flood.",
+      "Snacks rain down the arena. Drag Blob left and right along the floor and catch the ones worth points.",
+    warn: "Bitter coffee falls as often as the treats and costs you a point, so catching everything loses. Pick your targets.",
     start: "START",
     again: "PLAY AGAIN",
     score: "SCORE",
     time: "TIME",
     goal: "TARGET",
     pts: "PTS",
-    dropHint: "CLICK THE TOP HALF TO DROP A SNACK",
-    tooLow: "Too low! Drop it from the top half.",
+    dragHint: "DRAG BLOB LEFT AND RIGHT",
     greeting: "I'm starving — drop me some boba!",
     food: { boba: "BOBA", donut: "DONUT", coffee: "BITTER COFFEE" },
     introTitle: "FEED THE HUNGRY BLOB",
     introText:
-      "Drop snacks from the top half into the blob's mouth. Bitter coffee is just as likely to fall, so aim instead of spamming.",
+      "Drag Blob under the falling snacks. Boba is worth two, a donut one, and bitter coffee takes one away.",
     wonTitle: "WELL FED!",
     wonLine: "Yum! Thanks for the boba.",
     lostTitle: "THE BLOB FAINTED",
@@ -388,7 +377,7 @@ const en: Strings = {
     namePh: "eg: Nhan Nguyen",
     emailPh: "eg: xuannhan.nguyen@gmail.com",
     msgPh:
-      "Hi Nhan, I'd like to schedule a meeting... (the blob is already celebrating)",
+      "Hi Nhan, I'd like to schedule a meeting... (Blob is already celebrating)",
     btn: "SEND",
     sent: "SENT ✓ THANK YOU!",
     note: "Or write to me directly:",
@@ -423,7 +412,6 @@ const zh: Strings = {
     blob: {
       label: "阮的小水滴",
       sound: "声音",
-      pet: "放养",
       idle: "你好！我是小水滴，戳戳我吧。",
       code: "正在 M1 上写 Black-Scholes 定价模型。",
       boba: "咻——珍珠上来了。",
@@ -437,9 +425,6 @@ const zh: Strings = {
       refused: "哼。我记住了。",
       poked: "哎呀！好痒啊。",
       woken: "喂！我正梦到超大杯珍珠奶茶呢！",
-      caught: "抓到你的光标啦！",
-      freed: "哇！整个屏幕都是我的了！",
-      home: "回我的桌子上啦。",
     },
   },
   journey: {
@@ -582,23 +567,21 @@ const zh: Strings = {
     quant: "量化",
     setup: "设备",
     setupText:
-      "14 英寸 MacBook Pro（M1 Pro）、Sofle v2.1 分体机械键盘、Neovim 和大量 tmux。",
+      "MacBook Pro 14 2021（M1 Pro）、Thirdwave F-13KR、Neovim 和大量 tmux。",
   },
   game: {
     kicker: "小挑战",
     title: "喂饱小蓝团",
     rules:
-      "点击场地上半部分投下食物。小蓝团会自己跳来跳去，瞄准它再投。",
-    warn:
-      "苦咖啡出现的概率和点心一样高，连点得越快苦咖啡越多。瞄准投，别乱点。",
+      "食物会从上方落下。左右拖动小蓝团，接住能加分的那些。",
+    warn: "苦咖啡和点心一样常见，接到还扣一分，所以全接反而输。挑着接。",
     start: "开始",
     again: "再来一局",
     score: "得分",
     time: "时间",
     goal: "目标",
     pts: "分",
-    dropHint: "点击上半部分投下食物",
-    tooLow: "太低了！请从上半部分投下。",
+    dragHint: "左右拖动小蓝团",
     greeting: "我好饿，快投奶茶给我！",
     food: {
       boba: "珍珠奶茶",
@@ -607,7 +590,7 @@ const zh: Strings = {
     },
     introTitle: "喂饱饥饿的小蓝团",
     introText:
-      "从上半部分投下食物喂给小蓝团。苦咖啡同样常见，所以要瞄准，别狂点。",
+      "拖动小蓝团到落下的食物下方。奶茶两分，甜甜圈一分，苦咖啡扣一分。",
     wonTitle: "吃饱啦！",
     wonLine: "真好吃！谢谢你的奶茶。",
     lostTitle: "小蓝团晕倒了",
