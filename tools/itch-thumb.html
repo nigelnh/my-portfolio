@@ -1,0 +1,77 @@
+<!doctype html>
+<!--
+  Source for public/projects/itch-feed-handler.webp.
+
+  Every line below is verbatim output from the repo built at
+  github.com/nigelnh/itch-feed-handler, run on an Apple M1 Pro:
+    cmake -S . -B build -DCMAKE_BUILD_TYPE=Release && cmake --build build --parallel
+    ./build/itch_generate_synthetic synthetic.bin 200026
+    ./build/itch_replay synthetic.bin
+    ./build/toy_order_book
+  Re-run those and update the numbers if they drift; do not hand-edit them.
+
+  Render with:
+    "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new \
+      --hide-scrollbars --window-size=1200,750 --virtual-time-budget=8000 \
+      --screenshot=out.png file://$PWD/tools/itch-thumb.html
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=block" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  body {
+    width: 1200px; height: 750px; overflow: hidden;
+    background: #0b1420;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 21px; line-height: 1.55;
+    color: #cfe4f5;
+    display: flex; flex-direction: column;
+  }
+  .bar {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 22px;
+    background: #17263a; color: #9db8d4;
+    font-size: 18px; font-weight: 600;
+    border-bottom: 2px solid #24384f;
+  }
+  .dot { width: 13px; height: 13px; border-radius: 50%; }
+  .body { flex: 1; padding: 22px 30px; white-space: pre; }
+  .p { color: #6ee7a8; font-weight: 600; }
+  .c { color: #ffffff; font-weight: 500; }
+  .k { color: #7fb0d6; }
+  .v { color: #f0c674; font-weight: 600; }
+  .d { color: #6b89a8; }
+</style>
+</head>
+<body>
+  <div class="bar">
+    <span class="dot" style="background:#ff5f57"></span>
+    <span class="dot" style="background:#febc2e"></span>
+    <span class="dot" style="background:#28c840"></span>
+    <span style="margin-left:8px">itch-feed-handler — zsh</span>
+  </div>
+  <div class="body"><span class="p">$</span> <span class="c">./build/toy_order_book</span>
+
+<span class="k">AAPL aggregated L2 book</span>
+  BIDS (highest first)
+    <span class="v">$200.1000</span> -> 500
+    <span class="v">$200.0900</span> -> 850
+  ASKS (lowest first)
+    <span class="v">$200.1100</span> -> 320
+  Best bid: <span class="v">$200.1000</span> | Best ask: <span class="v">$200.1100</span> | Spread: <span class="v">$0.0100</span>
+  Invariants: <span class="p">valid</span>
+
+<span class="p">$</span> <span class="c">./build/itch_replay synthetic.bin</span>
+
+  Messages processed:     <span class="v">1,000,260</span>
+  Symbols reconstructed:  <span class="v">64</span>
+  Throughput:             <span class="v">7.857991</span> million messages/s
+  Average:                <span class="v">127.258996</span> ns/message
+<span class="d">
+  ITCH 5.0 · A F E C X D U S R H · L2 reconstruction · UBSan-checked</span></div>
+</body>
+</html>

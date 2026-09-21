@@ -7,38 +7,48 @@ import { useLang } from "@/lib/i18n";
 import { Panel } from "../Panel";
 
 /** Falls back to the hatched label card if the screenshot ever goes missing. */
+/** The whole thumb is the link to the live project. */
 function Thumb({
   src,
   pos,
   label,
   alt,
+  href,
+  cta,
 }: {
   src: string;
   pos: string;
   label: string;
   alt: string;
+  href: string;
+  cta: string;
 }) {
   const [failed, setFailed] = useState(false);
 
-  if (failed) {
-    return (
-      <div className="project__thumb">
-        <span>{label}</span>
-      </div>
-    );
-  }
-
   return (
-    <div className="project__thumb project__thumb--shot">
-      <Image
-        src={src}
-        alt={alt}
-        fill
-        sizes="(max-width: 880px) 92vw, 34vw"
-        style={{ objectFit: "cover", objectPosition: pos }}
-        onError={() => setFailed(true)}
-      />
-    </div>
+    <a
+      className={`project__thumb${failed ? "" : " project__thumb--shot"}`}
+      href={href}
+      target="_blank"
+      rel="noreferrer"
+      aria-label={`${alt} — ${cta}`}
+    >
+      {failed ? (
+        <span>{label}</span>
+      ) : (
+        <Image
+          src={src}
+          alt={alt}
+          fill
+          sizes="(max-width: 880px) 92vw, 40vw"
+          style={{ objectFit: "cover", objectPosition: pos }}
+          onError={() => setFailed(true)}
+        />
+      )}
+      <span className="project__cta" aria-hidden="true">
+        {cta} →
+      </span>
+    </a>
   );
 }
 
@@ -56,6 +66,8 @@ export function Projects() {
                 pos={projectsMeta[i].shotPos}
                 label={p.thumb}
                 alt={p.title}
+                href={projectsMeta[i].url}
+                cta={t.projects.visit}
               />
               <div className="project__body">
                 <span className="project__kicker">{p.kicker}</span>

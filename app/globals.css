@@ -1456,6 +1456,10 @@ textarea:focus {
 .work__detail {
   min-width: 0;
   height: 100%;
+  /* Every card is lead + three bullets + tags, so they land within a few
+     pixels of each other; the floor absorbs the rest so switching employers
+     never resizes the panel. */
+  min-height: 430px;
   padding: 20px;
   background: var(--paper);
   border: 4px solid var(--ink);
@@ -1482,6 +1486,25 @@ textarea:focus {
   margin: 0;
   font-size: 13.5px;
   line-height: 1.65;
+}
+
+.work__points {
+  margin: 0;
+  padding-left: 17px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.work__points li {
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.work__tags {
+  margin-top: auto;
+  padding-top: 8px;
 }
 
 /* ---------------------------------------------------------------------------
@@ -1519,9 +1542,46 @@ textarea:focus {
 }
 
 .project__thumb--shot {
+  background-image: none;
+}
+
+/* The thumb is an anchor: kill the global link underline, add an affordance. */
+a.project__thumb {
   position: relative;
   overflow: hidden;
-  background-image: none;
+  border-bottom: none;
+  text-decoration: none;
+}
+
+.project__cta {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  z-index: 2;
+  padding: 5px 9px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  color: var(--ink);
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  box-shadow: 2px 2px 0 var(--ink);
+  opacity: 0;
+  transition:
+    opacity 0.12s ease,
+    translate 0.12s ease;
+  translate: 0 4px;
+}
+
+a.project__thumb:hover .project__cta,
+a.project__thumb:focus-visible .project__cta {
+  opacity: 1;
+  translate: 0 0;
+}
+
+a.project__thumb:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: -3px;
 }
 
 .project__thumb span {

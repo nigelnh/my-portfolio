@@ -66,7 +66,12 @@ export function Experience() {
             </div>
             <p className="muted">{copy.role}</p>
             <p className="work__blurb">{copy.blurb}</p>
-            <div className="tags" style={{ paddingTop: 4 }}>
+            <ul className="work__points">
+              {copy.bullets.map((b) => (
+                <li key={b}>{b}</li>
+              ))}
+            </ul>
+            <div className="tags work__tags">
               {meta.stack.map((tag) => (
                 <span key={tag} className="tag">
                   {tag}
