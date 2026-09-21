@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { CONTACT_EMAIL, links, RESUME_HREF } from "@/lib/copy";
 import { useLang } from "@/lib/i18n";
 import { WaveBlob } from "../blob/BlobStage";
 import { Panel } from "../Panel";
@@ -10,7 +11,7 @@ const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 /** Set NEXT_PUBLIC_CONTACT_WEBHOOK to the n8n endpoint; without it the form
  *  falls back to opening the visitor's mail client. */
 const WEBHOOK = process.env.NEXT_PUBLIC_CONTACT_WEBHOOK;
-const FALLBACK_EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "hello@example.com";
+const FALLBACK_EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? CONTACT_EMAIL;
 
 export function Contact() {
   const { t } = useLang();
@@ -62,7 +63,21 @@ export function Contact() {
 
   return (
     <section id="contact" className="section">
-      <Panel title={t.contact.label}>
+      <Panel
+        title={t.contact.label}
+        barExtra={
+          <span className="bar-links">
+            {links.map((l) => (
+              <a key={l.label} className="bar-link" href={l.href} target="_blank" rel="noreferrer">
+                {l.label}
+              </a>
+            ))}
+            <a className="bar-link" href={RESUME_HREF} target="_blank" rel="noreferrer">
+              {t.contact.resume}
+            </a>
+          </span>
+        }
+      >
         <div className="contact">
           <form className="contact__form" onSubmit={submit} noValidate>
             <div className="contact__head">
@@ -120,7 +135,10 @@ export function Contact() {
               {sent ? t.contact.sent : t.contact.btn}
             </button>
 
-            <p className="contact__note">{t.contact.note}</p>
+            <p className="contact__note">
+              {t.contact.note}{" "}
+              <a href={`mailto:${FALLBACK_EMAIL}`}>{FALLBACK_EMAIL}</a>
+            </p>
           </form>
 
           <div className="contact__aside">

@@ -15,7 +15,7 @@ export function Panel({
   return (
     <div className="panel">
       <div className="panel__bar">
-        <span className="panel__title">{title}</span>
+        <h2 className="panel__title">{title}</h2>
         {barExtra}
       </div>
       <div className={bodyClassName}>{children}</div>

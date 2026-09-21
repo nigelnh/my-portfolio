@@ -16,10 +16,48 @@ const pixelify = Pixelify_Sans({
   display: "swap",
 });
 
+const TITLE = "Nhan Nguyen — Software Engineer & Quantitative Finance";
+const DESCRIPTION =
+  "Portfolio of Nhan Nguyen: real-time market data systems, covered warrants pricing, and full-stack engineering. Gettysburg College, class of 2027.";
+
+/**
+ * Absolute URLs for link previews. Vercel fills
+ * `VERCEL_PROJECT_PRODUCTION_URL` at build; set `NEXT_PUBLIC_SITE_URL` once
+ * there is a custom domain.
+ */
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  (process.env.VERCEL_PROJECT_PRODUCTION_URL
+    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+    : "http://localhost:3000");
+
 export const metadata: Metadata = {
-  title: "Nhan Nguyen — Software Engineer & Quantitative Finance",
-  description:
-    "Portfolio of Nhan Nguyen: real-time market data systems, covered warrants pricing, and full-stack engineering. Gettysburg College, class of 2027.",
+  metadataBase: new URL(SITE_URL),
+  title: TITLE,
+  description: DESCRIPTION,
+  openGraph: {
+    type: "website",
+    url: "/",
+    siteName: "Nhan Nguyen",
+    title: TITLE,
+    description: DESCRIPTION,
+    locale: "en_US",
+    alternateLocale: ["vi_VN", "zh_CN"],
+    images: [
+      {
+        url: "/og.png",
+        width: 1200,
+        height: 630,
+        alt: "Nhan Nguyen — Software Engineer & Quantitative Finance",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: TITLE,
+    description: DESCRIPTION,
+    images: ["/og.png"],
+  },
 };
 
 export const viewport: Viewport = {

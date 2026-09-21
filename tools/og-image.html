@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Pixelify+Sans:wght@400;600;700&display=block" rel="stylesheet">
+<style>
+  :root {
+    --ink: #12304d;
+    --page: #a8c9e4;
+    --panel: #eaf3fa;
+    --panel-2: #dcebf7;
+    --accent: #1d5c94;
+    --muted: #2c5a80;
+    --on-bar: #cfe4f5;
+    --amber: #f0c674;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body {
+    width: 1200px; height: 630px; overflow: hidden;
+    font-family: "IBM Plex Mono", monospace;
+    color: var(--ink);
+    background-color: var(--page);
+    background-image:
+      linear-gradient(to right, rgba(18,48,77,.07) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(18,48,77,.07) 1px, transparent 1px);
+    background-size: 16px 16px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .panel {
+    width: 1096px; height: 526px;
+    background: var(--panel);
+    border: 6px solid var(--ink);
+    box-shadow: 12px 12px 0 rgba(18,48,77,.28);
+    display: flex; flex-direction: column;
+  }
+  .bar {
+    display: flex; align-items: center; gap: 14px;
+    padding: 16px 26px;
+    background: var(--ink); color: var(--on-bar);
+    font-size: 19px; font-weight: 600; letter-spacing: 1.4px;
+  }
+  .bar .spacer { flex: 1; }
+  .bar .dot { width: 14px; height: 14px; background: var(--on-bar); opacity:.55; }
+  .body { flex: 1; display: flex; align-items: center; gap: 34px; padding: 36px 46px; }
+  .col { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 16px; }
+  .name {
+    font-family: "Pixelify Sans", monospace; font-weight: 700;
+    font-size: 84px; line-height: 1.02; color: var(--ink);
+  }
+  .role {
+    font-family: "Pixelify Sans", monospace; font-weight: 600;
+    font-size: 38px; line-height: 1.15; color: var(--accent);
+  }
+  .tags { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 6px; }
+  .tag {
+    font-size: 16px; font-weight: 600; letter-spacing: .4px;
+    padding: 8px 11px; background: var(--panel-2); border: 3px solid var(--ink);
+  }
+  .tag.amber { background: var(--amber); }
+  .blob { flex: 0 0 300px; display: flex; align-items: center; justify-content: center; }
+  .blob svg { width: 300px; height: auto; image-rendering: pixelated; }
+</style>
+</head>
+<body>
+  <div class="panel">
+    <div class="bar">
+      <span>PORTFOLIO</span>
+      <span class="spacer"></span>
+      <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+    </div>
+    <div class="body">
+      <div class="col">
+        <div class="name">I&#39;m Nhan Nguyen</div>
+        <div class="role">Software Engineer<br>&amp; Quantitative Finance</div>
+        <div class="tags">
+          <span class="tag amber">SENIOR AT GETTYSBURG COLLEGE</span>
+          <span class="tag">KB SECURITIES</span>
+          <span class="tag">FINBUD AI</span>
+          <span class="tag">ESMART</span>
+          <span class="tag">FPT IS</span>
+        </div>
+      </div>
+      <div class="blob">
+        <svg viewBox="0 0 32 26" fill="none" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+          <path d="M10 2H22V4H26V7H29V11H31V19H29V22H27V24H5V22H3V19H1V11H3V7H6V4H10V2Z" fill="#122c44"/>
+          <path d="M10 4H22V6H25V8H27V11H29V19H27V21H25V23H7V21H5V19H3V11H5V8H7V6H10V4Z" fill="#58b3ea"/>
+          <path d="M7 21H25V23H7V21ZM5 19H7V21H5V19ZM25 19H27V21H25V19Z" fill="#296ea6"/>
+          <path d="M10 5H17V7H10V5ZM7 8H10V11H7V8ZM6 11H8V14H6V11Z" fill="#b9e7fc"/>
+          <rect x="18" y="5" width="3" height="1" fill="#eaf6fd"/>
+          <rect x="6" y="16" width="3" height="2" fill="#ff8da1"/>
+          <rect x="23" y="16" width="3" height="2" fill="#ff8da1"/>
+          <rect x="10" y="12" width="2" height="3" fill="#122c44"/>
+          <rect x="10" y="12" width="1" height="1" fill="#ffffff"/>
+          <rect x="20" y="12" width="2" height="3" fill="#122c44"/>
+          <rect x="20" y="12" width="1" height="1" fill="#ffffff"/>
+          <rect x="15" y="16" width="2" height="1" fill="#122c44"/>
+          <rect x="14" y="15" width="1" height="1" fill="#122c44"/>
+          <rect x="17" y="15" width="1" height="1" fill="#122c44"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

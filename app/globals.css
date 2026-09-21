@@ -420,6 +420,33 @@ textarea:focus {
 .panel__title {
   flex: 1;
   min-width: 100px;
+  /* It is an <h2> for document structure, but it must look like the bar. */
+  margin: 0;
+  font: inherit;
+  letter-spacing: inherit;
+}
+
+/* Off-site links in the Contact bar, cut from the same cloth as .lang--bar. */
+.bar-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.bar-link {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  padding: 5px 8px;
+  color: var(--on-bar);
+  background: transparent;
+  border: 2px solid rgba(207, 228, 245, 0.45);
+}
+
+.bar-link:hover {
+  color: var(--ink);
+  background: var(--on-bar);
+  border-color: var(--on-bar);
 }
 
 .panel__body {

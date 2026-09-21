@@ -28,7 +28,8 @@ export function About() {
         <div className="hero">
           <div className="hero__col">
             <div className="hero__names">
-              <h1 className="h1">{t.hero.hi}</h1>
+              {/* The greeting is decoration; the name is the page's one h1. */}
+              <p className="h1">{t.hero.hi}</p>
               <h1 className="h2">{t.hero.name}</h1>
             </div>
             <p className="hero__pron">{t.hero.pron}</p>

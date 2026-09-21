@@ -24,7 +24,7 @@ export function Journey() {
             {t.journey.schools.map((school) => (
               <div key={school.id} className="journey__school-row">
                 <div className="journey__text">
-                  <h2 className="h3">{school.title}</h2>
+                  <h3 className="h3">{school.title}</h3>
                   <p className="journey__school">{school.name}</p>
                   <p className="journey__blurb">{school.blurb}</p>
                 </div>

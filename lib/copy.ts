@@ -161,6 +161,7 @@ export interface Strings {
     note: string;
     errAll: string;
     errEmail: string;
+    resume: string;
     reply: string;
   };
 }
@@ -358,7 +359,8 @@ const en: Strings = {
     msgPh: "Say something...",
     btn: "SEND",
     sent: "SENT ✓ THANK YOU!",
-    note: "Wired to an n8n automation workflow with a mailto fallback.",
+    note: "Opens your mail app. You can also write to me directly:",
+    resume: "RESUME",
     errAll: "All fields are required.",
     errEmail: "That email doesn't look right.",
     reply: "I usually reply within a day.",
@@ -565,7 +567,8 @@ const vi: Strings = {
     msgPh: "Nói gì đó...",
     btn: "GỬI",
     sent: "ĐÃ GỬI ✓ CẢM ƠN!",
-    note: "Kết nối với quy trình tự động n8n và có dự phòng mailto.",
+    note: "Mở ứng dụng mail của bạn. Bạn cũng có thể viết thẳng cho mình:",
+    resume: "HỒ SƠ",
     errAll: "Vui lòng điền hết các ô.",
     errEmail: "Email này chưa đúng định dạng.",
     reply: "Mình thường trả lời trong vòng 24 giờ.",
@@ -768,7 +771,8 @@ const zh: Strings = {
     msgPh: "说点什么…",
     btn: "发送",
     sent: "已发送 ✓ 谢谢！",
-    note: "接入 n8n 自动化工作流，并保留 mailto 兜底。",
+    note: "会打开你的邮件客户端。也可以直接写信给我：",
+    resume: "简历",
     errAll: "请填写所有字段。",
     errEmail: "这个邮箱格式不太对。",
     reply: "我通常一天内回复。",
@@ -846,6 +850,18 @@ export const skillTags = {
   infra: ["KAFKA", "REDIS", "POSTGRES", "DOCKER", "FASTAPI"],
   quant: ["BLACK-SCHOLES", "GREEKS", "HEDGING", "TIME SERIES"],
 } as const;
+
+/** Off-site profiles. Rendered in the Contact panel's title bar. */
+export const links = [
+  { label: "GITHUB", href: "https://github.com/nigelnh" },
+  { label: "LINKEDIN", href: "https://www.linkedin.com/in/nhan-nguyen-374543248/" },
+] as const;
+
+/** Served straight from `public/`, so it opens in the browser's PDF viewer. */
+export const RESUME_HREF = "/Nhan_Nguyen_Resume.pdf";
+
+/** Public contact address. `NEXT_PUBLIC_CONTACT_EMAIL` overrides it. */
+export const CONTACT_EMAIL = "xuannhan.nguyen2001@gmail.com";
 
 /** Section order drives both nav rails and scroll-spy. */
 export const SECTIONS: {
