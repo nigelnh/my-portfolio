@@ -1593,7 +1593,7 @@ textarea:focus {
    --------------------------------------------------------------------------- */
 .contact {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
   gap: 26px;
   /* The aside holds one box, so let it match the form's height. */
   align-items: stretch;
