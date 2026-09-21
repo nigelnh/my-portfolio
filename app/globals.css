@@ -1761,15 +1761,6 @@ textarea:focus {
   gap: 14px;
 }
 
-.arcade__head {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 12px;
-  padding-bottom: 14px;
-  border-bottom: 3px solid var(--ink);
-}
-
 .arcade__intro {
   min-width: 0;
   display: flex;
@@ -1814,10 +1805,6 @@ textarea:focus {
 .arcade__start:active {
   translate: 2px 2px;
   box-shadow: 2px 2px 0 var(--ink);
-}
-
-.arcade__start[data-stop="true"] {
-  background: var(--rose);
 }
 
 .arcade__legend {

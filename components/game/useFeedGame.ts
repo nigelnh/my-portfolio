@@ -285,13 +285,6 @@ export function useFeedGame(arenaRef: React.RefObject<HTMLDivElement | null>) {
     playSfx("success");
   }, [loop, pickTarget, step, stop]);
 
-  const quit = useCallback(() => {
-    stop();
-    setMood("idle");
-    setScore(0);
-    setTimeLeft(ROUND_SECONDS);
-    setPhase("intro");
-  }, [stop]);
 
   /** Drop an item at the click, unless the click was too close to the floor. */
   const drop = useCallback(
@@ -361,7 +354,6 @@ export function useFeedGame(arenaRef: React.RefObject<HTMLDivElement | null>) {
     mood,
     hopDuration: HOP.duration,
     start,
-    quit,
     drop,
     bindItem,
   };

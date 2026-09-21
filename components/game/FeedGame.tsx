@@ -49,21 +49,11 @@ export function FeedGame() {
 
   return (
     <div className="arcade">
-      <div className="arcade__head">
-        <div className="arcade__intro">
-          <span className="arcade__kicker">{g.kicker}</span>
-          <h3 className="h3">{g.title}</h3>
-          <p className="muted">{g.rules}</p>
-          <p className="arcade__warn">{g.warn}</p>
-        </div>
-        <button
-          type="button"
-          className="arcade__start"
-          data-stop={playing}
-          onClick={playing ? game.quit : begin}
-        >
-          {playing ? g.stop : g.start}
-        </button>
+      <div className="arcade__intro">
+        <span className="arcade__kicker">{g.kicker}</span>
+        <h3 className="h3">{g.title}</h3>
+        <p className="muted">{g.rules}</p>
+        <p className="arcade__warn">{g.warn}</p>
       </div>
 
       <ul className="arcade__legend">

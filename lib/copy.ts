@@ -126,7 +126,6 @@ export interface Strings {
     /** Explains why the coffee rains as hard as it does. */
     warn: string;
     start: string;
-    stop: string;
     again: string;
     score: string;
     time: string;
@@ -324,7 +323,6 @@ const en: Strings = {
     warn:
       "Bitter coffee falls as often as the treats, and hammering the arena only makes it worse. Aim, don't flood.",
     start: "START",
-    stop: "STOP",
     again: "PLAY AGAIN",
     score: "SCORE",
     time: "TIME",
@@ -527,7 +525,6 @@ const vi: Strings = {
     warn:
       "Cà phê đắng rơi nhiều ngang đồ ngọt, bấm càng dồn dập thì càng nhiều. Canh chuẩn, đừng spam.",
     start: "BẮT ĐẦU",
-    stop: "DỪNG",
     again: "CHƠI LẠI",
     score: "ĐIỂM",
     time: "THỜI GIAN",
@@ -730,7 +727,6 @@ const zh: Strings = {
     warn:
       "苦咖啡出现的概率和点心一样高，连点得越快苦咖啡越多。瞄准投，别乱点。",
     start: "开始",
-    stop: "停止",
     again: "再来一局",
     score: "得分",
     time: "时间",
