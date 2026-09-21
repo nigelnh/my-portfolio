@@ -32,7 +32,9 @@ export function About() {
               <p className="h1">{t.hero.hi}</p>
               <h1 className="h2">{t.hero.name}</h1>
             </div>
-            <p className="hero__pron">{t.hero.pron}</p>
+            {/* Vietnamese leaves this empty — no point spelling out a name
+                for native speakers. */}
+            {t.hero.pron ? <p className="hero__pron">{t.hero.pron}</p> : null}
             <ul className="hero__titles">
               {t.hero.roles.map((role, i) => (
                 <li key={role} className={i === 0 ? "hero__title--current" : undefined}>
