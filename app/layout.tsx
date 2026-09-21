@@ -42,7 +42,7 @@ export const metadata: Metadata = {
     title: TITLE,
     description: DESCRIPTION,
     locale: "en_US",
-    alternateLocale: ["vi_VN", "zh_CN"],
+    alternateLocale: ["zh_CN"],
     images: [
       {
         url: "/og.png",
