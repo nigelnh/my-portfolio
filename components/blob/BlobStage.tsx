@@ -210,19 +210,3 @@ export function BlobStage({ pet }: { pet: boolean }) {
   );
 }
 
-/** Static waving blob for the Contact box. */
-export function WaveBlob({ label, size = 72 }: { label: string; size?: number }) {
-  return (
-    <button
-      type="button"
-      className="blob-hit"
-      onClick={() => {
-        armAudio();
-        playSfx("blip");
-      }}
-      aria-label={label}
-    >
-      <BlobSprite state="wave" size={size} className="pixel-blob anim-idle" />
-    </button>
-  );
-}

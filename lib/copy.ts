@@ -22,7 +22,6 @@ export type SectionId =
   | "experience"
   | "projects"
   | "skills"
-  | "arcade"
   | "contact";
 
 export interface Milestone {
@@ -121,7 +120,6 @@ export interface Strings {
     setupText: string;
   };
   game: {
-    label: string;
     kicker: string;
     title: string;
     rules: string;
@@ -162,7 +160,6 @@ export interface Strings {
     errAll: string;
     errEmail: string;
     resume: string;
-    reply: string;
   };
 }
 
@@ -320,7 +317,6 @@ const en: Strings = {
       "14-inch MacBook Pro (M1 Pro), Sofle v2.1 split mechanical keyboard, Neovim and a lot of tmux.",
   },
   game: {
-    label: "ARCADE",
     kicker: "MINI CHALLENGE",
     title: "Feed the hungry blob",
     rules:
@@ -363,7 +359,6 @@ const en: Strings = {
     resume: "RESUME",
     errAll: "All fields are required.",
     errEmail: "That email doesn't look right.",
-    reply: "I usually reply within a day.",
   },
 };
 
@@ -524,7 +519,6 @@ const vi: Strings = {
       "MacBook Pro 14-inch (M1 Pro), bàn phím cơ chia đôi Sofle v2.1, Neovim và rất nhiều tmux.",
   },
   game: {
-    label: "GAME",
     kicker: "THỬ THÁCH NHỎ",
     title: "Cho blob đói ăn",
     rules:
@@ -571,7 +565,6 @@ const vi: Strings = {
     resume: "HỒ SƠ",
     errAll: "Vui lòng điền hết các ô.",
     errEmail: "Email này chưa đúng định dạng.",
-    reply: "Mình thường trả lời trong vòng 24 giờ.",
   },
 };
 
@@ -728,7 +721,6 @@ const zh: Strings = {
       "14 英寸 MacBook Pro（M1 Pro）、Sofle v2.1 分体机械键盘、Neovim 和大量 tmux。",
   },
   game: {
-    label: "游戏",
     kicker: "小挑战",
     title: "喂饱小蓝团",
     rules:
@@ -775,7 +767,6 @@ const zh: Strings = {
     resume: "简历",
     errAll: "请填写所有字段。",
     errEmail: "这个邮箱格式不太对。",
-    reply: "我通常一天内回复。",
   },
 };
 
@@ -833,11 +824,16 @@ export type JobId = (typeof jobsMeta)[number]["id"];
 export const projectsMeta = [
   {
     id: "cw",
+    shot: "/projects/cw-research-terminal.webp",
+    /** The thumb is squarer than the 16:9 shot, so each picks its own crop. */
+    shotPos: "left top",
     stack: ["REACT", "TYPESCRIPT", "FASTAPI", "POSTGRES", "REDIS", "OPENROUTER"],
     url: "https://cw-research-terminal.vercel.app/",
   },
   {
     id: "portal",
+    shot: "/projects/cw-portal.webp",
+    shotPos: "center top",
     stack: ["NEXT.JS", "NGINX", "FASTAPI", "KAFKA", "POSTGRES", "PYTEST"],
     url: "https://cw.kbsec.com.vn/",
   },

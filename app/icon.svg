@@ -1,6 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" shape-rendering="crispEdges">
-  <!-- Favicon: the idle blob on the page background, padded into a square. -->
-  <rect width="32" height="32" fill="#a8c9e4"/>
+  <!-- Favicon: the idle blob, on a transparent square so it sits on any tab colour. -->
   <g transform="translate(0 3)">
     <path d="M10 2H22V4H26V7H29V11H31V19H29V22H27V24H5V22H3V19H1V11H3V7H6V4H10V2Z" fill="#122c44"/>
     <path d="M10 4H22V6H25V8H27V11H29V19H27V21H25V23H7V21H5V19H3V11H5V8H7V6H10V4Z" fill="#58b3ea"/>

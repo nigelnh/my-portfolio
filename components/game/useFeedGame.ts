@@ -113,7 +113,11 @@ export function useFeedGame(arenaRef: React.RefObject<HTMLDivElement | null>) {
     if (!arena) return;
     const maxX = arena.clientWidth - BLOB.w - 15;
     const from = posX.current;
-    const distance = STRIDE.min + Math.random() * STRIDE.spread;
+    // Scale the stride to the arena so a narrow one does not turn every hop
+    // into an edge-to-edge sprint.
+    const span = Math.max(120, maxX - 15);
+    const distance =
+      Math.min(STRIDE.min, span * 0.45) + Math.random() * Math.min(STRIDE.spread, span * 0.4);
     let dir = Math.random() < 0.5 ? -1 : 1;
     if (from < 80) dir = 1;
     else if (from > maxX - 80) dir = -1;

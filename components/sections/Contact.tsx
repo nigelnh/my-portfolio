@@ -3,7 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { CONTACT_EMAIL, links, RESUME_HREF } from "@/lib/copy";
 import { useLang } from "@/lib/i18n";
-import { WaveBlob } from "../blob/BlobStage";
+import { FeedGame } from "../game/FeedGame";
 import { Panel } from "../Panel";
 
 const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
@@ -109,7 +109,7 @@ export function Contact() {
               </label>
             </div>
 
-            <label className="field">
+            <label className="field field--grow">
               <span className="field__label">{t.contact.msg}</span>
               <textarea
                 name="msg"
@@ -142,10 +142,7 @@ export function Contact() {
           </form>
 
           <div className="contact__aside">
-            <div className="contact__reply">
-              <WaveBlob size={72} label={t.contact.reply} />
-              <p>{t.contact.reply}</p>
-            </div>
+            <FeedGame />
           </div>
         </div>
       </Panel>

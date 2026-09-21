@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { SECTIONS, type SectionId } from "@/lib/copy";
 import { useLang } from "@/lib/i18n";
 import { useActiveSection } from "@/lib/useActiveSection";
@@ -29,7 +30,9 @@ export function SideRail({ showLabels = true }: { showLabels?: boolean }) {
 
   return (
     <nav className="rail" aria-label="Sections">
-      <div className="rail__mark">NN</div>
+      <div className="rail__mark">
+        <Image src="/profile.webp" alt="Nhan Nguyen" fill sizes="92px" priority />
+      </div>
       {items.map((item) => (
         <a
           key={item.id}
