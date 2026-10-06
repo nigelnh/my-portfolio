@@ -43,3 +43,13 @@ None from the architecture or contract. No source changed.
 - The `run: <id>: not deployed yet` branch of the terminal is unreachable while every project has a URL; not pinned.
 - Pin the `hits.size > 500` limiter cleanup if S3 keeps the in-memory limiter.
 - Game tests cover scoring, timer and drag; keyboard control (decision 1) will need its own tests when it lands.
+
+## Review round 1 (05-review.md, CHANGES REQUESTED) and resolution
+- F1 (major) fixed: the sliding-window test now idles to t=60 s and expects 200 then 429; the "429 recorded" test sends 5 rejections at t=30 s and expects 429 at t=60 s. Proven in a scratch copy (deleted): mutant C8 (no 429 recording) now fails 1 test, C11 (fixed window) fails 2.
+- F2: all contact quirks name S3 ("flipped by S3"), embeddable no-cache says S4; note added that the slot quirk fails after the throw quirk once S3 lands.
+- F3, F4: history duplicates test uses `ls, nonsense, nonsense` and expects `nonsense, nonsense, ls`; `ls` expects literal rows plus a separate test with `titles: {}` for the id fallback. Mutants T6 and T7 now fail 1 test each.
+- F5: `cleanup()` in `afterEach` of both hook files.
+- F6: pinned CR/LF accepted in name, no Origin check (both S3), leaked 6 s timer on fetch throw (`vi.getTimerCount() === 1`, S4); redirect follow labelled S4.
+- Nits applied: F7 (`CONTACT_EMAIL` import), F8 (race assertion before reading JSON), F9 (helper comment), F10 (`vi.stubEnv(k, undefined)`). Skipped: F11 (`.vitest/` is untracked and left uncommitted; ignoring it belongs to the harness slice).
+- Results: `npm test` 6 files, 106 tests pass; `npm run verify` clean; coverage lines unchanged (contact 94.59%, embeddable 100%, terminal 97.72%, game 92%; terminal branch 92.59%).
+- Still open from the review: reach the terminal "not deployed" branch via `vi.mock`, game resize clamp, `open` error line for selected-not-running.

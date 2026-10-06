@@ -125,6 +125,13 @@ describe("verdict reasons", () => {
     expect(await res.json()).toEqual({ embeddable: false, reason: "unreachable" });
   });
 
+  it("QUIRK (flipped by S4): the 6 s timer leaks when fetch throws (clearTimeout skipped)", async () => {
+    vi.useFakeTimers();
+    fetchMock.mockRejectedValue(new TypeError("fetch failed"));
+    await call(URL_OK);
+    expect(vi.getTimerCount()).toBe(1);
+  });
+
   it("unreachable when the 6 s abort timer fires", async () => {
     vi.useFakeTimers();
     fetchMock.mockImplementation(
@@ -137,6 +144,7 @@ describe("verdict reasons", () => {
     await vi.advanceTimersByTimeAsync(5999);
     expect(fetchMock).toHaveBeenCalledTimes(1); // still waiting
     await vi.advanceTimersByTimeAsync(1);
+    await expect(Promise.race([pending, Promise.resolve("pending")])).resolves.not.toBe("pending");
     expect(await (await pending).json()).toEqual({ embeddable: false, reason: "unreachable" });
   });
 });
@@ -148,7 +156,7 @@ describe("upstream request shape", () => {
     const [url, init] = fetchMock.mock.calls[0]!;
     expect(url).toBe(URL_OK);
     expect(init.method).toBe("HEAD");
-    expect(init.redirect).toBe("follow");
+    expect(init.redirect).toBe("follow"); // QUIRK (S4 changes it): no host check on redirects
     expect(init.cache).toBe("no-store");
     expect(init.headers["User-Agent"]).toMatch(/^Mozilla\/5\.0/); // browser-shaped UA (S4 decides)
   });
@@ -163,7 +171,7 @@ describe("upstream request shape", () => {
     expect(await res.json()).toEqual({ embeddable: false, reason: "x-frame-options: sameorigin" });
   });
 
-  it("QUIRK (S4 changes it): every call makes a fresh upstream fetch, nothing is cached", async () => {
+  it("QUIRK (flipped by S4): every call makes a fresh upstream fetch, nothing is cached", async () => {
     await call(URL_OK);
     await call(URL_OK);
     expect(fetchMock).toHaveBeenCalledTimes(2);

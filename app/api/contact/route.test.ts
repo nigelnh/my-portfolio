@@ -1,5 +1,6 @@
 // @vitest-environment node
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { CONTACT_EMAIL } from "@/lib/copy";
 
 /**
  * Characterization tests for POST /api/contact (slice S7).
@@ -29,8 +30,7 @@ async function load(env: Record<string, string | undefined> = {}) {
   vi.stubEnv("CONTACT_TO_EMAIL", "to@example.com");
   vi.stubEnv("CONTACT_FROM_EMAIL", "from@example.com");
   for (const [k, v] of Object.entries(env)) {
-    if (v === undefined) delete process.env[k];
-    else vi.stubEnv(k, v);
+    vi.stubEnv(k, v);
   }
   POST = (await import("./route")).POST;
 }
@@ -76,7 +76,7 @@ describe("POST /api/contact responses", () => {
     await POST(req(VALID));
     const sent = JSON.parse(fetchMock.mock.calls[0]![1].body);
     expect(sent.from).toBe("Portfolio <portfolio@nhanxnguyen.com>");
-    expect(sent.to).toEqual(["xuannhan.nguyen2001@gmail.com"]);
+    expect(sent.to).toEqual([CONTACT_EMAIL]);
   });
 
   it("truncates name, email and message to 120/200/5000 characters", async () => {
@@ -174,9 +174,11 @@ describe("rate limiter (in memory, 5 per 60 s per first x-forwarded-for IP)", ()
       await POST(req(VALID, ip("4.4.4.4"))); // hits at t=0,10,20,30,40 s
       await vi.advanceTimersByTimeAsync(10_000);
     }
-    // t=50 s: all five are inside the window.
-    expect((await POST(req(VALID, ip("9.9.9.9")))).status).toBe(200); // other IP unaffected
-    expect((await POST(req(VALID, ip("4.4.4.4")))).status).toBe(429); // recorded at t=50 s
+    // t=50 s: no attempt made; all five hits are inside the window.
+    await vi.advanceTimersByTimeAsync(10_000); // t=60 s: only the t=0 hit has aged out
+    expect((await POST(req(VALID, ip("4.4.4.4")))).status).toBe(200); // 4 live + this = 5
+    // A fixed window would have reset completely and still allow this one.
+    expect((await POST(req(VALID, ip("4.4.4.4")))).status).toBe(429);
   });
 
   it("QUIRK (flipped by S3): only requests that passed validation are counted", async () => {
@@ -191,17 +193,19 @@ describe("rate limiter (in memory, 5 per 60 s per first x-forwarded-for IP)", ()
     expect((await POST(req(VALID, ip("7.7.7.7")))).status).toBe(429);
   });
 
-  it("QUIRK: rejected 429 attempts are recorded too, so hammering extends the lockout", async () => {
+  it("QUIRK (flipped by S3): rejected 429 attempts are recorded, so hammering extends the lockout", async () => {
     for (let i = 0; i < 5; i++) await POST(req(VALID, ip("8.8.4.4"))); // t=0
     await vi.advanceTimersByTimeAsync(30_000);
-    expect((await POST(req(VALID, ip("8.8.4.4")))).status).toBe(429); // recorded at t=30 s
+    for (let i = 0; i < 5; i++) {
+      expect((await POST(req(VALID, ip("8.8.4.4")))).status).toBe(429); // 5 recorded at t=30 s
+    }
     await vi.advanceTimersByTimeAsync(30_000); // t=60 s: the original five are stale
-    // Only the t=30 s entry is left in the window (1 of 5), so this one passes.
-    expect((await POST(req(VALID, ip("8.8.4.4")))).status).toBe(200);
+    // The five t=30 s rejections still fill the window, so the caller stays locked out.
+    expect((await POST(req(VALID, ip("8.8.4.4")))).status).toBe(429);
   });
 });
 
-describe("known quirks (a later slice flips these)", () => {
+describe("known quirks (S3 flips these)", () => {
   it("QUIRK (flipped by S3): a network failure of the Resend fetch is an unhandled throw", async () => {
     // Today the handler has no try/catch around fetch, so the promise rejects
     // with the underlying error instead of returning 502 {error:"send_failed"}.
@@ -210,15 +214,28 @@ describe("known quirks (a later slice flips these)", () => {
     expect(errorSpy).not.toHaveBeenCalled(); // not even logged
   });
 
-  it("QUIRK: the failed attempt still consumed a limiter slot", async () => {
+  it("QUIRK (flipped by S3): the failed attempt still consumed a limiter slot", async () => {
+    // Once S3 catches the failure, rejects.toThrow() fails first; S3 must then
+    // decide again whether a failed send should use up a slot.
     fetchMock.mockRejectedValue(new TypeError("fetch failed"));
     for (let i = 0; i < 5; i++) await expect(POST(req(VALID))).rejects.toThrow();
     fetchMock.mockResolvedValue(new Response("{}", { status: 200 }));
     expect((await POST(req(VALID))).status).toBe(429);
   });
 
-  it("QUIRK: the Resend fetch has no timeout/abort signal", async () => {
+  it("QUIRK (flipped by S3): the Resend fetch has no timeout/abort signal", async () => {
     await POST(req(VALID));
     expect(fetchMock.mock.calls[0]![1].signal).toBeUndefined();
+  });
+
+  it("QUIRK (flipped by S3): CR/LF in name is accepted and lands in the subject", async () => {
+    const res = await POST(req({ ...VALID, name: "Ada\r\nBcc: x" }));
+    expect(res.status).toBe(200);
+    expect(JSON.parse(fetchMock.mock.calls[0]![1].body).subject).toBe("Portfolio — Ada\r\nBcc: x");
+  });
+
+  it("QUIRK (flipped by S3): there is no Origin check (a foreign Origin still gets 200)", async () => {
+    const res = await POST(req(VALID, { origin: "https://evil.example" }));
+    expect(res.status).toBe(200);
   });
 });

@@ -1,4 +1,4 @@
-import { act, renderHook } from "@testing-library/react";
+import { act, cleanup, renderHook } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from "vitest";
 import { STRINGS, projectsMeta } from "@/lib/copy";
 import { useTerminal } from "./useTerminal";
@@ -20,7 +20,7 @@ function setup() {
   const run = (...cmds: string[]) => {
     for (const c of cmds) act(() => hook.result.current.submit(c));
   };
-  /** Text of every line printed after the last echoed prompt line. */
+  /** Text of every line on screen, echoed prompts included. */
   const output = () => hook.result.current.lines.map((l) => l.text);
   return { hook, run, output, term: () => hook.result.current };
 }
@@ -31,6 +31,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+  cleanup();
   openSpy.mockRestore();
 });
 
@@ -85,10 +86,24 @@ describe("useTerminal commands", () => {
     expect(output().slice(1)).toHaveLength(6);
   });
 
-  it("ls lists the projects, padded to 8 columns, with a titles fallback", () => {
+  it("ls lists the projects, padded to 8 columns", () => {
     const { run, output } = setup();
     run("ls");
-    expect(output().slice(1)).toEqual(projectsMeta.map((p) => `${p.id.padEnd(8)}${titles[p.id]}`));
+    expect(output().slice(1)).toEqual([
+      "cw      CW Terminal",
+      "portal  CW Portal",
+      "itch    ITCH Handler",
+    ]);
+  });
+
+  it("ls falls back to the project id when no title is given", () => {
+    const hook = renderHook(() => useTerminal({ t, titles: {}, onShutdown }));
+    act(() => hook.result.current.submit("ls"));
+    expect(hook.result.current.lines.slice(1).map((l) => l.text)).toEqual([
+      "cw      cw",
+      "portal  portal",
+      "itch    itch",
+    ]);
   });
 
   it("whoami prints nhan", () => {
@@ -265,10 +280,11 @@ describe("useTerminal history (arrow keys)", () => {
 
   it("records unknown commands and trimmed text, keeps duplicates, skips blank input", () => {
     const { run, term } = setup();
-    run("  nonsense  ", "", "nonsense");
+    run("ls", "  nonsense  ", "", "nonsense");
     expect(term().recall(-1)).toBe("nonsense");
     expect(term().recall(-1)).toBe("nonsense");
-    expect(term().recall(-1)).toBe("nonsense"); // clamped: only two entries
+    expect(term().recall(-1)).toBe("ls");
+    expect(term().recall(-1)).toBe("ls"); // clamped
   });
 
   it("history survives `clear` and `reset`", () => {

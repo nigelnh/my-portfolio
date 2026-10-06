@@ -1,5 +1,5 @@
 import type { PointerEvent as ReactPointerEvent, RefObject } from "react";
-import { act, renderHook } from "@testing-library/react";
+import { act, cleanup, renderHook } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { armAudio, playSfx } from "@/lib/sfx";
 import { BLOB, ROUND_SECONDS, WIN_SCORE, useFeedGame } from "./useFeedGame";
@@ -78,6 +78,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+  cleanup();
   vi.restoreAllMocks();
   vi.useRealTimers();
 });
