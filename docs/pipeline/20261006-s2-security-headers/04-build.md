@@ -26,12 +26,13 @@ Open the production build (`npm run build && npm run start`) with DevTools Conso
 2. Switch language en/zh, scroll all six sections, toggle sound, play the catch game and blob (WebAudio, no network).
 3. MacBook: power on, `cd` into the first project (cw-research-terminal), `run`: iframe loads in the sandbox (check the page inside still works with `allow-scripts allow-same-origin`).
 4. Run the KB Securities project (`cw.kbsec.com.vn`): either frames or shows the blocked card; either is acceptable, a CSP violation is not.
-5. Run the GitHub project (`github.com`): expected blocked card (GitHub denies framing) via `/api/embeddable`.
+5. Run the GitHub project (`github.com`): expected blocked card (no iframe is attempted).
 6. Submit the contact form (use a throwaway message or stop before sending): `/api/contact` request is allowed.
 
 ## Deviations
 - None from the backlog. Note: the worktree started on `main`, so `chore/pipeline-bootstrap` was fast-forward merged in first (no new commit). `git branch -m` failed on a git reflog path issue, so the branch was created with `git checkout -b feat/security-headers`; the original `worktree-agent-a38312879c5b78ad1` ref remains at the old commit and can be deleted.
-- `frame-src` includes `https://github.com` because the ITCH project is in `projectsMeta` ("derive, not hard-code"); GitHub forbids framing so the card will show blocked. Decision for owner: drop it from `frame-src` by filtering non-frameable hosts if a tighter list is wanted.
+- Resolved after review: `frame-src` is still derived from `projectsMeta` but excludes `github.com` (always X-Frame-Options DENY, so never framed). `X-Frame-Options: DENY` was added next to `frame-ancestors 'none'` for older browsers. Re-run: verify and build pass; on `next start -p 3519` the CSP shows `frame-src https://cw-research-terminal.vercel.app https://cw.kbsec.com.vn` and `X-Frame-Options: DENY`.
+- Correction: cw-research-terminal.vercel.app also sends X-Frame-Options DENY today, so manual step 3 will show the blocked card; only cw.kbsec.com.vn frames.
 
 ## Follow-ups
 - Replace `'unsafe-inline'` in `script-src` with per-request nonces (needs middleware and dynamic rendering, which costs static prerender of `/`) or hash-based CSP.
