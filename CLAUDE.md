@@ -9,7 +9,7 @@ Next.js 15 (App Router), React 19, TypeScript, plain CSS with design tokens in `
 - `npm run dev`: dev server on http://localhost:3000
 - `npm run verify`: typecheck plus lint. Use this while the dev server is running.
 - `npm run build` then `npm run start`: production build
-- There is no test suite yet.
+- `npm test` runs the Vitest unit tests; `npm run test:coverage` writes a coverage report (no global floor yet).
 
 ## Gotchas
 - **Never run `npm run build` while `npm run dev` is running.** Both write `.next/` and the dev server breaks. Recovery is in README.
