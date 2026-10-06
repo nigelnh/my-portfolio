@@ -23,6 +23,7 @@ function req(body: unknown, headers: Record<string, string> = {}) {
 let POST: Post;
 let fetchMock: ReturnType<typeof vi.fn>;
 let errorSpy: ReturnType<typeof vi.spyOn>;
+let warnSpy: ReturnType<typeof vi.spyOn>;
 
 async function load(env: Record<string, string | undefined> = {}) {
   vi.resetModules(); // fresh module-level limiter Map and TO/FROM constants
@@ -41,6 +42,7 @@ beforeEach(async () => {
   fetchMock = vi.fn().mockResolvedValue(new Response("{}", { status: 200 }));
   vi.stubGlobal("fetch", fetchMock);
   errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+  warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
   await load();
 });
 
@@ -49,6 +51,7 @@ afterEach(() => {
   vi.unstubAllEnvs();
   vi.unstubAllGlobals();
   errorSpy.mockRestore();
+  warnSpy.mockRestore();
 });
 
 describe("POST /api/contact responses", () => {
@@ -181,7 +184,7 @@ describe("rate limiter (in memory, 5 per 60 s per first x-forwarded-for IP)", ()
     expect((await POST(req(VALID, ip("4.4.4.4")))).status).toBe(429);
   });
 
-  it("QUIRK (flipped by S3): only requests that passed validation are counted", async () => {
+  it("KEPT (owner decision, ADR 0002): only requests that passed validation are counted", async () => {
     // 20 invalid requests never consume the budget...
     for (let i = 0; i < 20; i++) {
       expect((await POST(req({ ...VALID, email: "bad" }, ip("7.7.7.7")))).status).toBe(400);
@@ -193,7 +196,7 @@ describe("rate limiter (in memory, 5 per 60 s per first x-forwarded-for IP)", ()
     expect((await POST(req(VALID, ip("7.7.7.7")))).status).toBe(429);
   });
 
-  it("QUIRK (flipped by S3): rejected 429 attempts are recorded, so hammering extends the lockout", async () => {
+  it("KEPT (owner decision, ADR 0002): rejected 429 attempts are recorded, so hammering extends the lockout", async () => {
     for (let i = 0; i < 5; i++) await POST(req(VALID, ip("8.8.4.4"))); // t=0
     await vi.advanceTimersByTimeAsync(30_000);
     for (let i = 0; i < 5; i++) {
@@ -249,6 +252,19 @@ describe("validation (S3, zod)", () => {
     ["DEL in name", { ...VALID, name: "Ada\u007fx" }],
     ["CR/LF in email", { ...VALID, email: "ada@example.com\r\nBcc: x@y.zz" }],
     ["control char inside email", { ...VALID, email: "ad\u0001a@example.com" }],
+    ["U+0085 NEL in name", { ...VALID, name: "Ada\u0085x" }],
+    ["C1 control U+009B in name", { ...VALID, name: "Ada\u009bx" }],
+    ["C1 control U+0080 in name", { ...VALID, name: "Ada\u0080x" }],
+    ["C1 control U+009F in name", { ...VALID, name: "Ada\u009fx" }],
+    ["line separator U+2028 in name", { ...VALID, name: "Ada Bcc: x" }],
+    ["paragraph separator U+2029 in name", { ...VALID, name: "Ada x" }],
+    ["bidi override U+202E in name", { ...VALID, name: "Ada‮x" }],
+    ["bidi embedding U+202A in name", { ...VALID, name: "Ada‪x" }],
+    ["bidi isolate U+2066 in name", { ...VALID, name: "Ada⁦x" }],
+    ["bidi isolate end U+2069 in name", { ...VALID, name: "Ada⁩x" }],
+    ["U+0085 in email", { ...VALID, email: "ada@example.com\u0085" }],
+    ["U+2028 in email", { ...VALID, email: "ada @example.com" }],
+    ["bidi override U+202E in email", { ...VALID, email: "ada‮@example.com" }],
     ["comma in email local part", { ...VALID, email: "a,b@example.com" }],
     ["angle brackets in email", { ...VALID, email: "<ada@example.com>" }],
   ])("400 bad_request for %s", async (_label, body) => {
@@ -261,6 +277,28 @@ describe("validation (S3, zod)", () => {
   it("an email whose 200-character cut is no longer a valid address is a 400 (checks run after the cap)", async () => {
     const email = `${"a".repeat(190)}@example.com`; // 202 chars; the cut leaves "@example.c"
     expect((await POST(req({ ...VALID, email }))).status).toBe(400);
+  });
+
+  it("keeps zero-width joiners in names (only Cc, line/paragraph separators and bidi controls are refused)", async () => {
+    const res = await POST(req({ ...VALID, name: "A‍da​" }));
+    expect(res.status).toBe(200);
+  });
+
+  it("message keeps tabs, newlines and line separators", async () => {
+    const res = await POST(req({ ...VALID, msg: "a\tb\nc d" }));
+    expect(res.status).toBe(200);
+  });
+
+  it("escapes HTML in the name and email in the html body", async () => {
+    await POST(req({ ...VALID, name: "<img src=x onerror=1>" }));
+    const sent = JSON.parse(fetchMock.mock.calls[0]![1].body);
+    expect(sent.html).toContain("&lt;img src=x onerror=1&gt;");
+    expect(sent.html).not.toContain("<img");
+  });
+
+  it("the email control-character refine works on its own (defense in depth beyond z.email)", async () => {
+    // z.email() already refuses these; the refine is a second guard if zod's rule is ever loosened.
+    expect((await POST(req({ ...VALID, email: "ada@example.com\u0000" }))).status).toBe(400);
   });
 
   it("still allows newlines in the message body", async () => {
@@ -293,6 +331,30 @@ describe("honeypot (S3)", () => {
     for (let i = 0; i < 5; i++) {
       expect((await POST(req(VALID, { "x-forwarded-for": "9.9.9.9" }))).status).toBe(200);
     }
+  });
+
+  it.each([
+    ["number", 1],
+    ["true", true],
+    ["array", ["x"]],
+    ["object", { a: 1 }],
+  ])("a non-string website value (%s) is also a trap hit", async (_l, website) => {
+    const res = await POST(req({ ...VALID, website }));
+    expect(res.status).toBe(200);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("null or absent website is a normal submission", async () => {
+    expect((await POST(req({ ...VALID, website: null }))).status).toBe(200);
+    expect((await POST(req(VALID))).status).toBe(200);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
+  it("logs one PII-free warning per hit so false positives can be counted", async () => {
+    await POST(req({ ...VALID, website: "secret-value" }));
+    expect(warnSpy).toHaveBeenCalledTimes(1);
+    expect(warnSpy).toHaveBeenCalledWith("contact honeypot hit");
+    expect(JSON.stringify(warnSpy.mock.calls)).not.toMatch(/secret-value|ada/);
   });
 
   it("an empty or whitespace website field is a normal submission", async () => {
@@ -362,6 +424,59 @@ describe("Origin check (S3)", () => {
   it("ACCEPTED GAP: an absent Origin header is allowed (non-browser clients, privacy setups)", async () => {
     await load({ NODE_ENV: "production", NEXT_PUBLIC_SITE_URL: "https://site.example" });
     expect((await POST(req(VALID))).status).toBe(200);
+  });
+
+  it("allows the branch alias https://$VERCEL_BRANCH_URL", async () => {
+    await load({ VERCEL_BRANCH_URL: "my-portfolio-git-feat-team.vercel.app" });
+    expect((await POST(req(VALID, origin("https://my-portfolio-git-feat-team.vercel.app")))).status).toBe(200);
+  });
+
+  it("allows each entry of CONTACT_ALLOWED_ORIGINS (comma separated, normalized, junk ignored)", async () => {
+    await load({
+      NODE_ENV: "production",
+      CONTACT_ALLOWED_ORIGINS: " https://a.example , https://B.example/path, not a url,,http://c.example:8080 ",
+    });
+    expect((await POST(req(VALID, origin("https://a.example")))).status).toBe(200);
+    expect((await POST(req(VALID, origin("https://b.example")))).status).toBe(200);
+    expect((await POST(req(VALID, origin("http://c.example:8080")))).status).toBe(200);
+    expect((await POST(req(VALID, origin("https://d.example")))).status).toBe(403);
+    expect((await POST(req(VALID, origin("https://a.example.evil.com")))).status).toBe(403);
+  });
+
+  it("a www site origin also allows the apex, and an apex also allows www (exact matches only)", async () => {
+    await load({ NODE_ENV: "production", NEXT_PUBLIC_SITE_URL: "https://www.site.example" });
+    expect((await POST(req(VALID, origin("https://site.example")))).status).toBe(200);
+    expect((await POST(req(VALID, origin("https://www.site.example")))).status).toBe(200);
+    expect((await POST(req(VALID, origin("https://wwwsite.example")))).status).toBe(403);
+    expect((await POST(req(VALID, origin("https://x.site.example")))).status).toBe(403);
+    await load({ NODE_ENV: "production", NEXT_PUBLIC_SITE_URL: "https://site.example" });
+    expect((await POST(req(VALID, origin("https://www.site.example")))).status).toBe(200);
+    expect((await POST(req(VALID, origin("http://www.site.example")))).status).toBe(403);
+  });
+
+  it("www/apex also applies to the production URL variable", async () => {
+    await load({ NODE_ENV: "production", NEXT_PUBLIC_SITE_URL: undefined, VERCEL_PROJECT_PRODUCTION_URL: "site.example" });
+    expect((await POST(req(VALID, origin("https://www.site.example")))).status).toBe(200);
+  });
+
+  it("logs one PII-free warning per rejection: the Origin value and a reason, nothing else", async () => {
+    await load({ NODE_ENV: "production", NEXT_PUBLIC_SITE_URL: "https://site.example" });
+    await POST(req(VALID, origin("https://evil.example")));
+    expect(warnSpy).toHaveBeenCalledTimes(1);
+    expect(warnSpy).toHaveBeenCalledWith("contact origin rejected", "https://evil.example", "not_allowed");
+    expect(JSON.stringify(warnSpy.mock.calls)).not.toMatch(/ada|Hello/);
+  });
+
+  it("does not log for allowed or absent Origins", async () => {
+    await load({ NODE_ENV: "production", NEXT_PUBLIC_SITE_URL: "https://site.example" });
+    await POST(req(VALID, origin("https://site.example")));
+    await POST(req(VALID));
+    expect(warnSpy).not.toHaveBeenCalled();
+  });
+
+  it("truncates an absurdly long rejected Origin in the log line", async () => {
+    await POST(req(VALID, origin("https://" + "x".repeat(1000) + ".example")));
+    expect(warnSpy.mock.calls[0]![1]).toHaveLength(200);
   });
 
   it("a malformed NEXT_PUBLIC_SITE_URL allows nothing and does not throw", async () => {

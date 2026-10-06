@@ -32,10 +32,10 @@ A request with NO Origin header is allowed. Browsers always send Origin on cross
 - "no timeout/abort signal" -> now asserts `AbortSignal.timeout(8000)` and a signal on the fetch.
 - "CR/LF in name accepted" -> now 400.
 - "no Origin check" -> now 403 for a foreign Origin (plus allow-list cases).
-- The two limiter quirks (validation-only counting, 429 attempts extend the lockout) are NOT flipped: they still hold, since limiter behavior was out of scope (accept 6 says keep it).
+- The two limiter quirks (validation-only counting, 429 attempts extend the lockout) are NOT flipped: they still hold. S3's four acceptance criteria do not mention them, so this is an owner decision (earlier text citing an "accept 6" was wrong). Their tests are now titled `KEPT (owner decision, ADR 0002)`. The audit notes malformed floods go unthrottled.
 
 ## Commands run and results
-- `npm test`: 6 files, 132 tests, all pass (contact file: 56).
+- `npm test`: 6 files, 132 tests, all pass (contact file: 56); after review round 1: 162 tests, contact file 86; contact route.ts coverage 94.73% stmts, 91.48% branches, 97.01% lines; verify clean; build ok.
 - `npm run test:coverage`: contact `route.ts` 94.02% statements, 89.18% branches, 91.66% functions, 96.61% lines; only lines 57-58 uncovered (the pre-existing `hits.size > 500` eviction, untouched). `Contact.tsx` 0% (no component test; out of scope).
 - `npm run verify` (tsc + eslint): clean.
 - `npm run build`: succeeded once, `/api/contact` listed as dynamic.
@@ -56,3 +56,22 @@ None. (No openapi or architecture doc exists for this retrofit; followed the bac
 - The honeypot label `Website` is a hard-coded English string (aria-hidden, never shown); move it to `lib/copy.ts` if the owner wants zero inline strings.
 - Add a Contact component test and an e2e check in S8 (honeypot hidden, submit works).
 - Set a Firewall rule and confirm the plan (ADR 0002).
+
+## Review round 1 fixes (05-review.md)
+- F1: `CONTROL_CHARS` is now `/[\p{Cc}\p{Zl}\p{Zp}\u202a-\u202e\u2066-\u2069]/u` for name and email. Tests cover U+0080, U+0085, U+009B, U+009F, U+2028, U+2029, U+202A, U+202E, U+2066, U+2069 in name and U+0085/U+2028/U+202E in email; a ZWJ/ZWSP name and a message with tab, newline and U+2028 stay accepted.
+- F2: origin allow-list now also takes `CONTACT_ALLOWED_ORIGINS` (name added to `.env.example`), `VERCEL_BRANCH_URL`, and the `www.`/apex twin of the site and production URLs (exact comparison). Every rejection logs `console.warn("contact origin rejected", origin (max 200 chars), "not_allowed")`.
+- Allowed origins: `NEXT_PUBLIC_SITE_URL`, `https://$VERCEL_PROJECT_PRODUCTION_URL` (both with www/apex twin), `https://$VERCEL_URL`, `https://$VERCEL_BRANCH_URL`, entries of `CONTACT_ALLOWED_ORIGINS`, `http://localhost[:port]` outside production. Absent Origin is still allowed (accepted gap, owner to confirm).
+- Owner checklist for the first preview and production deploy: see the end of ADR 0002.
+- F3: any present `website` value except null or a blank string is a trap hit (tests for number, true, array, object).
+- F5 (partly): the client shows the email error on a 400 instead of "could not send". Whether to accept internationalized addresses is left to the owner.
+- F6: limiter test titles renamed, wrong "accept 6" citation corrected above.
+- F7: new test that the name and email are HTML-escaped; mutation M13 (drop `escape` on name) now fails it (checked by hand).
+- F8: `console.warn("contact honeypot hit")`, no field values.
+- F9: fetch block re-indented. F10: comment added on the redundant email refine.
+- Mutation M5 (drop the email control refine) STILL survives: `z.email()` already rejects those characters, so no input can distinguish it. It is kept as documented defense in depth.
+
+### Skipped, needs an owner decision
+- F4: reject instead of truncate an over-long email (and zod accepting 188-char TLDs / 65-char local parts). Truncation is today's pinned S7 behavior.
+- F5: accept IDN addresses (`z.regexes.unicodeEmail`) or not.
+- F11: hard-coded honeypot label.
+- Validation-only limiter counting (F6) stays until the owner decides.

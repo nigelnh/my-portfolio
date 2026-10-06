@@ -41,6 +41,12 @@ export function Contact() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...form, website }),
       });
+      if (res.status === 400) {
+        // The server's validation is stricter than the client regex (for
+        // example non-ASCII addresses): say so instead of "could not send".
+        setError(t.contact.errEmail);
+        return;
+      }
       if (!res.ok) throw new Error(String(res.status));
       setSent(true);
     } catch {
