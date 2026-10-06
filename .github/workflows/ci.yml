@@ -27,4 +27,4 @@ jobs:
       - run: npm run lint
       - run: npm run build
       # TODO(tests): add `npm test` once a test runner exists (docs/modernization/backlog.md, P1).
-      # TODO(audit): add `npm audit --omit=dev --audit-level=high` once the baseline is clean.
+      # TODO(audit): add `npm audit --omit=dev --audit-level=high` once clean; the nested postcss 8.4.31 in next 15 blocks it until S5 (Next 16), see docs/pipeline/20261006-s1-npm-audit/04-build.md.
