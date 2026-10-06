@@ -1,6 +1,6 @@
 # my-portfolio
 
-Personal portfolio for Nhan Nguyen: a pixel-art / retro-window design in English and Chinese (`en`, `zh`; the README still says Vietnamese, which the code no longer has), deployed on Vercel. Implemented from a Claude Design artboard (see README).
+Personal portfolio for Nhan Nguyen: a pixel-art / retro-window design in English and Chinese (`en`, `zh`), deployed on Vercel. Implemented from a Claude Design artboard (see README).
 
 ## Stack
 Next.js 15 (App Router), React 19, TypeScript, plain CSS with design tokens in `app/globals.css`, `next/font`. The contact form sends mail through Resend, server-side only.
@@ -16,7 +16,7 @@ Next.js 15 (App Router), React 19, TypeScript, plain CSS with design tokens in `
 - `RESEND_API_KEY` is server-side only. Never prefix it with `NEXT_PUBLIC_`, never commit a real value (pull with `vercel env pull`). Variable names live in `.env.example`.
 - Styling is plain CSS with tokens: do not hard-code colors or spacing in components.
 - Two languages (`LANGS` in `lib/copy.ts`): visible text goes through `lib/copy.ts` and `lib/i18n.tsx`, not inline strings. Add a key to both `en` and `zh`.
-- The README is partly stale (it lists `SoundToggle.tsx`, which does not exist, and an old contact rate limit). Trust the code; the contact form allows 5 requests per minute per IP.
+- The contact form allows 5 requests per minute per IP, in memory (`app/api/contact/route.ts`). The sound switch lives in `components/blob/BlobSettings.tsx`.
 - Icons come from the registry in `components/icons.tsx`.
 
 ## Standards and pipeline
