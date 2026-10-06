@@ -1,7 +1,6 @@
 // @vitest-environment node
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { projectsMeta } from "@/lib/copy";
-import { GET } from "./route";
 
 /**
  * Characterization tests for GET /api/embeddable (slice S7).
@@ -10,6 +9,10 @@ import { GET } from "./route";
  */
 
 const URL_OK = projectsMeta[0].url; // an allow-listed project url
+const URL_OTHER = projectsMeta.find((p) => p.url !== URL_OK)!.url;
+
+// The route keeps a module-level cache, so every test gets a fresh module.
+let GET: (req: Request) => Promise<Response>;
 
 const call = (url?: string) => {
   const qs = url === undefined ? "" : `?url=${encodeURIComponent(url)}`;
@@ -21,7 +24,9 @@ const reply = (status: number, headers: Record<string, string> = {}) =>
 
 let fetchMock: ReturnType<typeof vi.fn>;
 
-beforeEach(() => {
+beforeEach(async () => {
+  vi.resetModules();
+  ({ GET } = await import("./route"));
   fetchMock = vi.fn().mockResolvedValue(reply(200));
   vi.stubGlobal("fetch", fetchMock);
 });
@@ -45,10 +50,11 @@ describe("GET /api/embeddable input", () => {
   });
 
   it("accepts every url listed in projectsMeta", async () => {
-    for (const p of projectsMeta) {
-      expect((await call(p.url)).status).toBe(200);
+    const urls = new Set(projectsMeta.map((p) => p.url));
+    for (const u of urls) {
+      expect((await call(u)).status).toBe(200);
     }
-    expect(fetchMock).toHaveBeenCalledTimes(projectsMeta.length);
+    expect(fetchMock).toHaveBeenCalledTimes(urls.size);
   });
 });
 
@@ -125,11 +131,13 @@ describe("verdict reasons", () => {
     expect(await res.json()).toEqual({ embeddable: false, reason: "unreachable" });
   });
 
-  it("QUIRK (flipped by S4): the 6 s timer leaks when fetch throws (clearTimeout skipped)", async () => {
+  it("S4: no timer is left pending after a success or after a fetch throw", async () => {
     vi.useFakeTimers();
-    fetchMock.mockRejectedValue(new TypeError("fetch failed"));
     await call(URL_OK);
-    expect(vi.getTimerCount()).toBe(1);
+    expect(vi.getTimerCount()).toBe(0);
+    fetchMock.mockRejectedValue(new TypeError("fetch failed"));
+    await call(URL_OTHER);
+    expect(vi.getTimerCount()).toBe(0);
   });
 
   it("unreachable when the 6 s abort timer fires", async () => {
@@ -156,9 +164,9 @@ describe("upstream request shape", () => {
     const [url, init] = fetchMock.mock.calls[0]!;
     expect(url).toBe(URL_OK);
     expect(init.method).toBe("HEAD");
-    expect(init.redirect).toBe("follow"); // QUIRK (S4 changes it): no host check on redirects
+    expect(init.redirect).toBe("manual"); // S4: redirects are followed by hand, same host only
     expect(init.cache).toBe("no-store");
-    expect(init.headers["User-Agent"]).toMatch(/^Mozilla\/5\.0/); // browser-shaped UA (S4 decides)
+    expect(init.headers["User-Agent"]).toMatch(/^Mozilla\/5\.0/); // browser-shaped UA (S4: kept on purpose)
   });
 
   it("falls back to a GET when HEAD is not ok, and uses the GET's headers for the verdict", async () => {
@@ -171,9 +179,133 @@ describe("upstream request shape", () => {
     expect(await res.json()).toEqual({ embeddable: false, reason: "x-frame-options: sameorigin" });
   });
 
-  it("QUIRK (flipped by S4): every call makes a fresh upstream fetch, nothing is cached", async () => {
+  it("S4: repeated calls for one url make no further upstream fetch", async () => {
+    const first = await (await call(URL_OK)).json();
+    const second = await (await call(URL_OK)).json();
+    expect(second).toEqual(first);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("caching (S4)", () => {
+  const TTL = 10 * 60_000;
+
+  it("caches per url", async () => {
     await call(URL_OK);
+    await call(URL_OTHER);
     await call(URL_OK);
     expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
+  it("refetches after the 10 minute TTL", async () => {
+    vi.useFakeTimers();
+    await call(URL_OK);
+    vi.advanceTimersByTime(TTL - 1);
+    await call(URL_OK);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    vi.advanceTimersByTime(1);
+    await call(URL_OK);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
+  it("caches blocking verdicts for the full TTL", async () => {
+    fetchMock.mockResolvedValue(reply(200, { "x-frame-options": "deny" }));
+    await call(URL_OK);
+    await call(URL_OK);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("caches `unreachable` for only 30 s", async () => {
+    vi.useFakeTimers();
+    fetchMock.mockRejectedValue(new TypeError("fetch failed"));
+    await call(URL_OK);
+    vi.advanceTimersByTime(29_999);
+    await call(URL_OK);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    fetchMock.mockResolvedValue(reply(200));
+    vi.advanceTimersByTime(1);
+    expect(await (await call(URL_OK)).json()).toEqual({ embeddable: true, reason: "ok" });
+  });
+
+  it("caches a 5xx for only 30 s", async () => {
+    vi.useFakeTimers();
+    fetchMock.mockResolvedValue(reply(503));
+    await call(URL_OK);
+    vi.advanceTimersByTime(30_000);
+    fetchMock.mockResolvedValue(reply(200));
+    expect((await (await call(URL_OK)).json()).embeddable).toBe(true);
+  });
+
+  it("does not cache the 400 for unknown urls", async () => {
+    await call("https://evil.example.com/");
+    await call("https://evil.example.com/");
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+});
+
+describe("redirects (S4)", () => {
+  const host = new URL(URL_OK).origin;
+  const redirect = (location: string, status = 302) => reply(status, { location });
+
+  it("follows a same-host redirect by hand and judges the final response", async () => {
+    fetchMock
+      .mockResolvedValueOnce(redirect("/landing"))
+      .mockResolvedValueOnce(reply(200, { "x-frame-options": "deny" }));
+    expect(await (await call(URL_OK)).json()).toEqual({
+      embeddable: false,
+      reason: "x-frame-options: deny",
+    });
+    expect(fetchMock.mock.calls[1]![0]).toBe(`${host}/landing`);
+    expect(fetchMock.mock.calls[1]![1].redirect).toBe("manual");
+  });
+
+  it("a redirect to another host returns `redirected off-site` (200) without fetching it", async () => {
+    fetchMock.mockResolvedValue(redirect("https://other.example.org/"));
+    const res = await call(URL_OK);
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ embeddable: false, reason: "redirected off-site" });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("a non-http(s) Location counts as off-site", async () => {
+    fetchMock.mockResolvedValue(redirect("javascript:alert(1)"));
+    expect((await (await call(URL_OK)).json()).reason).toBe("redirected off-site");
+  });
+
+  it("a look-alike host is off-site", async () => {
+    const h = new URL(URL_OK).hostname;
+    fetchMock.mockResolvedValue(redirect(`https://${h}.evil.example/`));
+    expect((await (await call(URL_OK)).json()).reason).toBe("redirected off-site");
+  });
+
+  it("follows at most 3 hops", async () => {
+    fetchMock
+      .mockResolvedValueOnce(redirect("/a"))
+      .mockResolvedValueOnce(redirect("/b"))
+      .mockResolvedValueOnce(redirect("/c"))
+      .mockResolvedValueOnce(reply(200));
+    expect(await (await call(URL_OK)).json()).toEqual({ embeddable: true, reason: "ok" });
+    expect(fetchMock).toHaveBeenCalledTimes(4);
+  });
+
+  it("a fourth redirect gives `too many redirects`", async () => {
+    fetchMock.mockResolvedValue(redirect("/loop"));
+    expect(await (await call(URL_OK)).json()).toEqual({
+      embeddable: false,
+      reason: "too many redirects",
+    });
+    expect(fetchMock).toHaveBeenCalledTimes(4);
+  });
+
+  it("an off-site redirect on the GET fallback is also caught", async () => {
+    fetchMock
+      .mockResolvedValueOnce(reply(405))
+      .mockResolvedValueOnce(redirect("https://other.example.org/"));
+    expect((await (await call(URL_OK)).json()).reason).toBe("redirected off-site");
+  });
+
+  it("a 3xx without Location reports `http <status>`", async () => {
+    fetchMock.mockResolvedValue(reply(304));
+    expect((await (await call(URL_OK)).json()).reason).toBe("http 304");
   });
 });
