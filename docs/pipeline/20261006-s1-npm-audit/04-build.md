@@ -6,8 +6,8 @@ Branch: `chore/npm-audit-clear` (created from `chore/pipeline-bootstrap`). Tier 
 Slice S1 (audit "Dependencies"). Apply the highest in-range versions, clear whatever `npm audit` clears without a major bump, declare `engines.node`, add the CI audit step only if clean.
 
 ## Files changed
-- `package.json`: next and eslint-config-next `^15.5.27`; react, react-dom, @types/react, @types/react-dom `^19.3.0`; `engines.node >=22`.
-- `package-lock.json`: regenerated (includes `npm audit fix` without `--force`: sharp 0.35.5, source-map-js 1.2.2).
+- `package.json`: next and eslint-config-next `^15.5.27`; react, react-dom, @types/react, @types/react-dom `^19.3.0`; `engines.node ^22.22.2` (owner decision: stays on the Node 22 line CI and the owner use, and satisfies jsdom 30, added by a later slice, which needs >=22.22.2).
+- `package-lock.json`: regenerated. Includes `npm audit fix` without `--force` (sharp 0.35.5, source-map-js 1.2.2, brace-expansion 1.1.18 to 1.1.21 and nested 5.0.9 to 5.0.12), scheduler 0.27.0 to 0.28.0 (required by react-dom 19.3.0), the next SWC platform binaries for 15.5.27, and the restored `@img/sharp-*` optional platform packages (the old lockfile recorded only darwin-arm64 and wasm32, so the Linux binaries CI and Vercel need were missing).
 - `.github/workflows/ci.yml`: audit step NOT added; `TODO(audit)` comment updated with the reason.
 - This file.
 
@@ -26,7 +26,7 @@ Slice S1 (audit "Dependencies"). Apply the highest in-range versions, clear what
 Production:
 - postcss <=8.5.22 (high) bundled at 8.4.31 inside next 15: GHSA-qx2v-qp2m-jg93, GHSA-6g55-p6wh-862q, GHSA-fxqj-rqcc-2cmp, GHSA-r28c-9q8g-f849.
 - next itself (moderate, flagged only through the postcss dependency). `npm audit` says the fix is next@16.3.8, a major.
-Dev-only (`npm audit` full, not in `--omit=dev`): braces GHSA-vfj7-8cjw-p6xm via micromatch, fast-glob, @next/eslint-plugin-next, eslint-config-next 15. Clears with eslint-config-next 16 in S5.
+Dev-only (`npm audit` full, not in `--omit=dev`): braces GHSA-vfj7-8cjw-p6xm via micromatch, fast-glob, @next/eslint-plugin-next, eslint-config-next. No fixed braces version exists as of 2026-10-06 and eslint-config-next 16 still depends on it, so S5 does not close it. It stays accepted: dev-only, and lint-time globs come from repo config. The CI gate stays at `--omit=dev`.
 Exposure note: the postcss issues concern CSS stringify and source maps of untrusted CSS; the site processes only its own CSS at build time.
 
 ## Deviations
