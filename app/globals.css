@@ -1727,6 +1727,17 @@ a.project__thumb:focus-visible {
   gap: 14px;
 }
 
+/* Honeypot field: moved offscreen, not display:none (bots skip hidden fields).
+   Absolute, so it takes no space in the form's flex column or gap. */
+.contact__trap {
+  position: absolute;
+  left: -10000px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
 .contact__head {
   display: flex;
   flex-direction: column;

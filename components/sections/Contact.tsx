@@ -11,6 +11,8 @@ const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 export function Contact() {
   const { t } = useLang();
   const [form, setForm] = useState({ name: "", email: "", msg: "" });
+  // Honeypot: stays empty for people; the route drops submissions where it is filled.
+  const [website, setWebsite] = useState("");
   const [error, setError] = useState("");
   const [sent, setSent] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -37,8 +39,14 @@ export function Contact() {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, website }),
       });
+      if (res.status === 400) {
+        // The server's validation is stricter than the client regex (for
+        // example non-ASCII addresses): say so instead of "could not send".
+        setError(t.contact.errEmail);
+        return;
+      }
       if (!res.ok) throw new Error(String(res.status));
       setSent(true);
     } catch {
@@ -106,6 +114,21 @@ export function Contact() {
                 placeholder={t.contact.msgPh}
               />
             </label>
+
+            {/* Honeypot, moved offscreen by CSS (not display:none, which some bots skip). */}
+            <div className="contact__trap" aria-hidden="true">
+              <label>
+                Website
+                <input
+                  name="website"
+                  type="text"
+                  value={website}
+                  onChange={(e) => setWebsite(e.target.value)}
+                  tabIndex={-1}
+                  autoComplete="off"
+                />
+              </label>
+            </div>
 
             {error ? (
               <p className="contact__error" role="alert">
