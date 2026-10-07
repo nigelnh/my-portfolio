@@ -1,7 +1,7 @@
 # my-portfolio
 
 Personal portfolio site for Nhan Nguyen — a pixel-art / retro-window take on a
-developer portfolio, in English, Vietnamese and Chinese.
+developer portfolio, in English and Chinese.
 
 Implemented from the Claude Design artboard `Portfolio.dc.html`
 ([source project](https://claude.ai/design/p/dcc9033f-001c-4557-bccc-c6d803bb5200)).
@@ -48,22 +48,27 @@ components/
   Panel.tsx         the bordered window with its coloured title bar
   icons.tsx         icon registry — see below
   LangSwitcher.tsx
-  SoundToggle.tsx
   blob/
     sprites.tsx     the six avatar states, ported from the animation studio
     useBlobBrain.ts the mascot's state machine — see below
-    BlobStage.tsx   the roaming blob and the static waving one
-    BlobSettings.tsx  shared pet/sound switches, shown beside the languages
+    BlobStage.tsx   the roaming blob in the About panel
+    BlobSettings.tsx  the sound switch, shown beside the languages
+  game/
+    FeedGame.tsx    the catch game in the Contact section
+    useFeedGame.ts  its rules and loop
+    sprites.tsx     food sprites
   mac/
     MacScreen.tsx   power, boot animation, shell, live project preview
     useTerminal.ts  the shell's commands
   sections/         About, Journey, Experience, Projects, Stack, Contact
+app/api/contact/     contact form mail via Resend
 app/api/embeddable/  header check behind the MacBook's live preview
 lib/
-  copy.ts           all EN/VI/ZH content + language-independent metadata
+  copy.ts           all EN/ZH content + language-independent metadata
   i18n.tsx          language context, persisted to localStorage
   sfx.ts            8-bit sound synthesis (Web Audio, no assets)
   site.ts           pixel-grid and nav-label switches
+  typing.ts         whether the visitor is typing in the MacBook shell
   useActiveSection.ts  scroll-spy for the nav
 ```
 
@@ -73,31 +78,26 @@ Every icon renders through `<Icon name="..." />`, which looks the name up in the
 `ICONS` registry in `components/icons.tsx`. Swapping in a new icon set means
 editing that one file — no call sites change.
 
-The current set is the **Pixel Blob Icon Kit** (16 sprites, ported verbatim from
-`pixel_blob_icon_kit_interactive_showcase.html`). Unlike a monochrome icon font
-these are full-colour 24×24 sprites: the fills are part of the artwork, so they
-do *not* follow `currentColor`. Keep rendered sizes on integer multiples of 24
+The current set is the **Pixel Blob Icon Kit**, ported verbatim from
+`pixel_blob_icon_kit_interactive_showcase.html`. Unlike a monochrome icon font
+these are full-colour sprites: the fills are part of the artwork, so they do
+*not* follow `currentColor`. Keep rendered sizes on integer multiples of 24
 (24 / 48 / 72) so the pixel grid lands on whole device pixels.
 
 Where each sprite is used:
 
 | Sprite | Placement |
 | --- | --- |
-| `graduation-cap` | nav — About |
-| `school-building` | nav — Journey |
-| `split-keyboard` | nav — Work |
-| `retro-monitor` | nav — Projects |
-| `pixel-envelope` | nav — Contact |
-| `ai-brain-chip` | job — Finbud AI |
-| `rocket-launch` | job — eSmart Solutions Agency |
-| `scooter-vespa` | job — FPT IS |
-| `bull-finance` | job — KB Securities |
-| `blob-idle` / `blob-wink` | hero mascot, before / after a poke |
-| `blob-wave` | Contact reply box |
-| `coffee-cup` | beside the hero mascot |
-| `diploma-scroll` | Journey — MILESTONES heading |
-| `macbook-m1` | Stack — SETUP card |
-| `pixel-star` | Contact — ELSEWHERE heading |
+| `graduation-cap`, `school-building`, `split-keyboard`, `retro-monitor`, `pixel-envelope` | nav: About, Journey, Work, Projects, Contact |
+| `logo-kb`, `logo-finbud`, `logo-esmart`, `logo-fpt` | Experience: one per employer |
+| `diploma-scroll` | Journey: milestones heading |
+| `macbook-m1` | Stack: setup card |
+| `apple-chin` | About: laptop chin |
+| `apple-glow`, `apple-silver`, `touch-id-power` | MacBook boot screen and power button |
+| `retro-monitor` | MacBook screen: project preview |
+
+The registry also holds sprites kept for reference and not currently placed
+(for example `coffee-cup`, `pixel-star`, `bull-finance`).
 
 Nav and job icons come from `SECTIONS[].icon` and `jobsMeta[].icon` in
 `lib/copy.ts`, both typed as `IconName` so a bad name fails the build.
@@ -109,33 +109,18 @@ states live in `components/blob/sprites.tsx` (32×26 viewBox, animated inner
 elements driven by the kit's `.zzz-*`, `.pearl-anim-*`, `.smoke-*` and
 `.paw-tap-*` classes in `globals.css`). The current kit ships five poses; `wave`
 is carried over from the previous revision, which is the last one that had it,
-and the Contact box still uses it.
+and no component currently renders it.
 
-### Free roaming, screen pet, cursor chasing
+### Free roaming
 
-The blob hops between random destinations in two dimensions at **1.4×** speed —
+The blob hops between random destinations in two dimensions at **1.4×** speed:
 28px steps, 420ms per hop, 200ms rest (`HOP` in `useBlobBrain.ts`; `1` and `2`
 are there too if you want to change gear). Each hop plays one `singleHop`
 animation, with the takeoff and landing sounds fired at 20% and 85% of it so
 they land on the squash and the stretch.
 
-Its arena is whatever the stage measures, in pixels:
-
-- **Screen pet (default)** — the stage is `position: fixed` over the whole
-  viewport, so the blob roams the entire page. It is click-through everywhere
-  except the blob itself, and on narrow screens the arena stops 60px short of
-  the bottom so it never sits on the tab bar.
-- **Contained** — the stage is the laptop block, as before.
-
-The **PET** button in the About title bar switches between them and remembers
-the choice in `localStorage`.
-
-With a fine pointer in screen-pet mode the blob chases the cursor: it hops
-toward it while the pointer has moved in the last 2.5s, rests once it is within
-28px, and goes back to free wandering when the pointer sits still. Rules 1–3
-still interrupt the chase, so it will break off to sleep, drink or code — only
-the idle/wander shuffle (rule 4) is suspended while chasing. Touch devices have
-no cursor to follow, so they just wander.
+Its arena is the stage beside the laptop block in the About panel, measured in
+pixels and re-read on every hop so a resize is picked up.
 
 ### State rules
 
@@ -159,8 +144,7 @@ Poking: one poke is friendly (`energy +4`, `codeUrge +6`); **3 pokes inside
 
 `prefers-reduced-motion: reduce` stops the roaming and leaves a still idle blob.
 The blob's vitals are mirrored onto `data-energy` / `data-boba` / `data-code` on
-`.blob-actor`, which is what the kit's HUD reads and makes its decisions easy to
-inspect.
+`.blob-actor`, which makes its decisions easy to inspect.
 
 ## The MacBook
 
@@ -203,8 +187,9 @@ pointed at arbitrary hosts.
 ## Sound
 
 `lib/sfx.ts` synthesises the kit's chiptune cues with oscillators — no audio
-files. Two gates guard it: the visitor's own toggle in the About title bar
-(**off by default**, since the blob hops every second or so), and a check that a
+files. Two gates guard it: the visitor's own sound switch (`BlobSettings.tsx`, in the About
+title bar and the nav rail; **off by default**, since the blob hops every second
+or so), and a check that a
 user gesture has happened, because browsers refuse to start an AudioContext
 before one.
 
@@ -214,7 +199,7 @@ The form validates locally, then POSTs to `app/api/contact/route.ts`, which
 sends the mail through Resend. The key stays on the server: a `NEXT_PUBLIC_`
 variable would ship it to every visitor.
 
-The route also rate-limits to three submissions per IP per minute, sets
+The route also rate-limits to five submissions per IP per minute (`MAX_PER_WINDOW` and `WINDOW_MS` in the route; in memory, per server instance), sets
 `reply_to` to the visitor so a reply reaches them rather than the site, and
 returns 503 when `RESEND_API_KEY` is missing — in which case the form says so
 instead of claiming the message was sent.
@@ -230,6 +215,6 @@ See `.env.example` for the optional overrides.
 
 ## Content
 
-All prose lives in `lib/copy.ts` under `STRINGS.en` / `.zh`. Stack tags,
+All prose lives in `lib/copy.ts` under `STRINGS.en` / `.zh` (`LANGS`). Stack tags,
 employers and project metadata are language-independent and sit alongside it, so
 a translation change never touches structure.
