@@ -25,6 +25,6 @@ jobs:
       - run: npm ci
       - run: npm run typecheck
       - run: npm run lint
+      - run: npm test
       - run: npm run build
-      # TODO(tests): add `npm test` once a test runner exists (docs/modernization/backlog.md, P1).
       # TODO(audit): add `npm audit --omit=dev --audit-level=high` once the baseline is clean.
