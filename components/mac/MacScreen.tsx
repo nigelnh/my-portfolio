@@ -253,6 +253,9 @@ export function MacScreen() {
               src={runningProject.url}
               title={titles[runningProject.id]}
               className="mac__frame"
+              sandbox="allow-scripts allow-same-origin"
+              referrerPolicy="no-referrer"
+              loading="lazy"
               style={{
                 width: PREVIEW_W,
                 height: PREVIEW_H,
